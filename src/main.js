@@ -10,12 +10,12 @@ let shotsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
 
-// set selected ship on mousedown
-let selectedShip;
+// set dragged ship on mousedown
+let draggedShip;
 const shipsLi = document.querySelectorAll("#ships ul li");
 shipsLi.forEach((i) =>
   i.addEventListener("mousedown", (e) => {
-    selectedShip = i.id;
+    draggedShip = i.id;
   })
 );
 
@@ -23,9 +23,14 @@ shipsLi.forEach((i) =>
 let rowBelowCursor, columnBelowCursor;
 document.body.addEventListener("mouseup", ({ target: cellBelowCursor }) => {
   // check cell position
-  rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
-  columnBelowCursor = cellBelowCursor.cellIndex;
+  const targetInBoard = ((cellBelowCursor.closest("table") || 0).id || 0) == "board";
+  if (draggedShip && targetInBoard) {
+    rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
+    columnBelowCursor = cellBelowCursor.cellIndex;
+  } else {
+    rowBelowCursor = columnBelowCursor = null;
+  }
 
-  console.log(selectedShip, rowBelowCursor, columnBelowCursor);
-  selectedShip = null; // reset
+  console.log(draggedShip, rowBelowCursor, columnBelowCursor);
+  draggedShip = null; // reset
 });
