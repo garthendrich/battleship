@@ -33,9 +33,10 @@
   margin: 10vh;
 }
 
-table {
+#board {
   height: 80vh;
   width: 80vh;
+  border-collapse: collapse;
 }
 
 td {
