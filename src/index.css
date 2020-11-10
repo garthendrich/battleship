@@ -1,0 +1,23 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10vh;
+}
+
+table {
+  height: 80vh;
+  width: 80vh;
+}
+
+td {
+  border: 1px solid black;
+}
