@@ -6,6 +6,26 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+#ships {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid black;
+}
+
+#ships li {
+  list-style-type: none;
+  padding: 10px;
+  margin: 10px;
+  border: 1px solid black;
+  border-radius: 5px;
+  text-align: center;
+}
+
 #main {
   display: flex;
   align-items: center;

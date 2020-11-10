@@ -3,12 +3,29 @@
 // File implementation for high scores
 // A smart AI opponent
 
-let ships = Array(10)
+let shipsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
-let shots = Array(10)
+let shotsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
 
-console.table(ships);
-console.table(shots);
+// set selected ship on mousedown
+let selectedShip;
+const shipsLi = document.querySelectorAll("#ships ul li");
+shipsLi.forEach((i) =>
+  i.addEventListener("mousedown", (e) => {
+    selectedShip = i.id;
+  })
+);
+
+// mouseup
+let rowBelowCursor, columnBelowCursor;
+document.body.addEventListener("mouseup", ({ target: cellBelowCursor }) => {
+  // check cell position
+  rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
+  columnBelowCursor = cellBelowCursor.cellIndex;
+
+  console.log(selectedShip, rowBelowCursor, columnBelowCursor);
+  selectedShip = null; // reset
+});
