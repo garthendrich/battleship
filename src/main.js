@@ -1,7 +1,9 @@
-// Must include:
-// Saving and loading the current state of the game using files
-// File implementation for high scores
-// A smart AI opponent
+/* 
+Must include:
+Saving and loading the current state of the game using files
+File implementation for high scores
+A smart AI opponent
+ */
 
 let shipsTable = Array(10)
   .fill()
@@ -9,6 +11,22 @@ let shipsTable = Array(10)
 let shotsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
+
+const isPlaced = {
+  c: 0,
+  b: 0,
+  d: 0,
+  s: 0,
+  p: 0,
+};
+
+const shipLength = {
+  c: 5,
+  b: 4,
+  d: 3,
+  s: 3,
+  p: 2,
+};
 
 // set dragged ship on mousedown
 let draggedShip;
@@ -22,15 +40,37 @@ shipsLi.forEach((i) =>
 // mouseup
 let rowBelowCursor, columnBelowCursor;
 document.body.addEventListener("mouseup", ({ target: cellBelowCursor }) => {
-  // check cell position
   const targetInBoard = ((cellBelowCursor.closest("table") || 0).id || 0) == "board";
-  if (draggedShip && targetInBoard) {
-    rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
-    columnBelowCursor = cellBelowCursor.cellIndex;
-  } else {
-    rowBelowCursor = columnBelowCursor = null;
-  }
+  if (!draggedShip || !targetInBoard) return;
 
-  console.log(draggedShip, rowBelowCursor, columnBelowCursor);
-  draggedShip = null; // reset
+  // check cell position
+  rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
+  columnBelowCursor = cellBelowCursor.cellIndex;
+
+  if (isModifyShipAllowed()) modifyShips();
+
+  draggedShip = rowBelowCursor = columnBelowCursor = null; // reset
 });
+
+function isModifyShipAllowed() {
+  // is ship already placed - horizontal check
+  let isShipOverlap = shipsTable[rowBelowCursor]
+    .slice(columnBelowCursor, columnBelowCursor + shipLength[draggedShip])
+    .includes(1);
+
+  return !isPlaced[draggedShip] && !isShipOverlap;
+}
+
+function modifyShips() {
+  let startingPoint;
+
+  // add ship horizontally
+  shipLength[draggedShip] - 1 + columnBelowCursor > 9 // does ship extend outside board
+    ? (startingPoint = 9 - (shipLength[draggedShip] - 1))
+    : (startingPoint = columnBelowCursor);
+  for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[rowBelowCursor][startingPoint + i] = 1;
+
+  isPlaced[draggedShip] = 1;
+
+  console.table(shipsTable);
+}
