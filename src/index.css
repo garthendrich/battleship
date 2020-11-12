@@ -1,3 +1,7 @@
+:root {
+  --cell-size: 8vh;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -6,7 +10,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-#ships {
+#shipMenu {
   position: absolute;
   left: 0;
   top: 0;
@@ -17,7 +21,7 @@
   border-right: 1px solid black;
 }
 
-#ships li {
+#shipMenu li {
   list-style-type: none;
   padding: 10px;
   margin: 10px;
@@ -34,11 +38,42 @@
 }
 
 #board {
-  height: 80vh;
-  width: 80vh;
+  height: calc(var(--cell-size) * 10);
+  width: calc(var(--cell-size) * 10);
   border-collapse: collapse;
 }
 
 td {
   border: 1px solid black;
+  position: relative;
+}
+
+.ship {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #3d518c;
+  height: var(--cell-size);
+}
+
+.ship.vert {
+  transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
+  transform-origin: top left;
+}
+
+#cShip {
+  width: calc(var(--cell-size) * 5);
+}
+
+#bShip {
+  width: calc(var(--cell-size) * 4);
+}
+
+#dShip,
+#sShip {
+  width: calc(var(--cell-size) * 3);
+}
+
+#pShip {
+  width: calc(var(--cell-size) * 2);
 }

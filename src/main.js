@@ -30,7 +30,7 @@ const shipLength = {
 
 // set dragged ship on mousedown
 let draggedShip;
-const shipsLi = document.querySelectorAll("#ships ul li");
+const shipsLi = document.querySelectorAll("#shipMenu ul li");
 shipsLi.forEach((i) =>
   i.addEventListener("mousedown", (e) => {
     draggedShip = i.id;
@@ -47,7 +47,7 @@ document.body.addEventListener("mouseup", ({ target: cellBelowCursor }) => {
   rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
   columnBelowCursor = cellBelowCursor.cellIndex;
 
-  if (isModifyShipAllowed()) modifyShips();
+  if (isModifyShipAllowed()) modifyShips(cellBelowCursor);
 
   draggedShip = rowBelowCursor = columnBelowCursor = null; // reset
 });
@@ -61,7 +61,7 @@ function isModifyShipAllowed() {
   return !isPlaced[draggedShip] && !isShipOverlap;
 }
 
-function modifyShips() {
+function modifyShips(cell) {
   let startingPoint;
 
   // add ship horizontally
@@ -71,6 +71,12 @@ function modifyShips() {
   for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[rowBelowCursor][startingPoint + i] = 1;
 
   isPlaced[draggedShip] = 1;
+
+  ship = document.createElement("div");
+  ship.classList.add("ship");
+  // ship.className += " ship"; // * Backup class adder
+  ship.setAttribute("id", draggedShip + "Ship");
+  cell.append(ship);
 
   console.table(shipsTable);
 }
