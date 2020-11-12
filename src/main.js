@@ -5,6 +5,12 @@ File implementation for high scores
 A smart AI opponent
  */
 
+/*
+  TODO
+  * selected ship
+  * rotate and delete ship
+ */
+
 let shipsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
@@ -41,15 +47,15 @@ shipsLi.forEach((i) =>
 let rowBelowCursor, columnBelowCursor;
 document.body.addEventListener("mouseup", ({ target: cellBelowCursor }) => {
   const targetInBoard = ((cellBelowCursor.closest("table") || 0).id || 0) == "board";
-  if (!draggedShip || !targetInBoard) return;
+  if (!draggedShip || !targetInBoard) return (draggedShip = null);
 
   // check cell position
   rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
   columnBelowCursor = cellBelowCursor.cellIndex;
 
-  if (isModifyShipAllowed()) modifyShips(cellBelowCursor);
+  if (isModifyShipAllowed()) modifyShips();
 
-  draggedShip = rowBelowCursor = columnBelowCursor = null; // reset
+  draggedShip = rowBelowCursor = columnBelowCursor = null;
 });
 
 function isModifyShipAllowed() {
@@ -61,7 +67,7 @@ function isModifyShipAllowed() {
   return !isPlaced[draggedShip] && !isShipOverlap;
 }
 
-function modifyShips(cell) {
+function modifyShips() {
   let startingPoint;
 
   // add ship horizontally
@@ -72,11 +78,15 @@ function modifyShips(cell) {
 
   isPlaced[draggedShip] = 1;
 
-  ship = document.createElement("div");
-  ship.classList.add("ship");
-  // ship.className += " ship"; // * Backup class adder
-  ship.setAttribute("id", draggedShip + "Ship");
-  cell.append(ship);
+  const shipObj = document.createElement("div");
+  shipObj.classList.add("ship");
+  shipObj.setAttribute("id", draggedShip + "Ship");
+  // add ship horizontally
+  const firstCellObj = document.querySelector(`#board tr:nth-child(${rowBelowCursor + 1}) td:nth-child(${startingPoint + 1})`);
+  firstCellObj.append(shipObj);
+
+  menuShip = document.querySelector("#shipMenu #" + draggedShip);
+  menuShip.classList.add("placed");
 
   console.table(shipsTable);
 }

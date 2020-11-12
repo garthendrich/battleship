@@ -30,6 +30,10 @@
   text-align: center;
 }
 
+#shipMenu li.placed {
+  opacity: 0.3;
+}
+
 #main {
   display: flex;
   align-items: center;
