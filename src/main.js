@@ -7,9 +7,16 @@ A smart AI opponent
 
 /*
   TODO
+  * move ship
   * selected ship
   * rotate and delete ship
- */
+*/
+
+/* 
+  TODO - move ship
+  * object for specific boat origins and orientation
+  * ship point under cursor
+*/
 
 let shipsTable = Array(10)
   .fill()
@@ -18,12 +25,21 @@ let shotsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
 
-const isPlaced = {
-  c: 0,
-  b: 0,
-  d: 0,
-  s: 0,
-  p: 0,
+const shipInfo = {
+  origin: {
+    c: null,
+    b: null,
+    d: null,
+    s: null,
+    p: null,
+  },
+  orientation: {
+    c: "h",
+    b: "h",
+    d: "h",
+    s: "h",
+    p: "h",
+  },
 };
 
 const shipLength = {
@@ -44,46 +60,55 @@ shipsLi.forEach((i) =>
 );
 
 // mouseup
-let rowBelowCursor, columnBelowCursor;
-document.body.addEventListener("mouseup", ({ target: cellBelowCursor }) => {
-  const targetInBoard = ((cellBelowCursor.closest("table") || 0).id || 0) == "board";
+let rowUnderCursor, columnUnderCursor;
+document.body.addEventListener("mouseup", ({ target: cellUnderCursor }) => {
+  const targetInBoard = ((cellUnderCursor.closest("table") || 0).id || 0) == "board";
   if (!draggedShip || !targetInBoard) return (draggedShip = null);
 
-  // check cell position
-  rowBelowCursor = cellBelowCursor.closest("tr").rowIndex;
-  columnBelowCursor = cellBelowCursor.cellIndex;
+  // get cell position
+  rowUnderCursor = cellUnderCursor.closest("tr").rowIndex;
+  columnUnderCursor = cellUnderCursor.cellIndex;
 
-  if (isModifyShipAllowed()) modifyShips();
+  if (isShipNotOverlap()) modifyShips();
 
-  draggedShip = rowBelowCursor = columnBelowCursor = null;
+  draggedShip = rowUnderCursor = columnUnderCursor = null;
 });
 
-function isModifyShipAllowed() {
-  // is ship already placed - horizontal check
-  let isShipOverlap = shipsTable[rowBelowCursor]
-    .slice(columnBelowCursor, columnBelowCursor + shipLength[draggedShip])
-    .includes(1);
+let shipPointUnderCursor, cellOrigin;
+function isShipNotOverlap() {
+  let isShipNotPlaced = !shipInfo.origin[draggedShip];
+  if (isShipNotPlaced) shipPointUnderCursor = 1;
 
-  return !isPlaced[draggedShip] && !isShipOverlap;
+  let notOverlap;
+  if (shipInfo.orientation[draggedShip] == "h") {
+    // set cell starting point
+    columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursor > 9 // does ship extend outside board
+      ? (cellOrigin = 9 - (shipLength[draggedShip] - 1))
+      : (cellOrigin = columnUnderCursor);
+
+    // does ship overlap others
+    notOverlap = !shipsTable[rowUnderCursor].slice(columnUnderCursor, columnUnderCursor + shipLength[draggedShip]).includes(1);
+  }
+
+  return notOverlap;
 }
 
 function modifyShips() {
-  let startingPoint;
+  if (shipInfo.orientation[draggedShip] == "h") {
+    for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[rowUnderCursor][cellOrigin + i] = 1;
+  }
 
-  // add ship horizontally
-  shipLength[draggedShip] - 1 + columnBelowCursor > 9 // does ship extend outside board
-    ? (startingPoint = 9 - (shipLength[draggedShip] - 1))
-    : (startingPoint = columnBelowCursor);
-  for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[rowBelowCursor][startingPoint + i] = 1;
-
-  isPlaced[draggedShip] = 1;
+  shipInfo.origin[draggedShip] = cellOrigin;
 
   const shipObj = document.createElement("div");
   shipObj.classList.add("ship");
   shipObj.setAttribute("id", draggedShip + "Ship");
-  // add ship horizontally
-  const firstCellObj = document.querySelector(`#board tr:nth-child(${rowBelowCursor + 1}) td:nth-child(${startingPoint + 1})`);
-  firstCellObj.append(shipObj);
+
+  let cellOriginObj;
+  if (shipInfo.orientation[draggedShip] == "h") {
+    cellOriginObj = document.querySelector(`#board tr:nth-child(${rowUnderCursor + 1}) td:nth-child(${cellOrigin + 1})`);
+  }
+  cellOriginObj.append(shipObj);
 
   menuShip = document.querySelector("#shipMenu #" + draggedShip);
   menuShip.classList.add("placed");
