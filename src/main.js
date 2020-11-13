@@ -8,20 +8,17 @@ A smart AI opponent
 /*
   TODO
   * move ship
-  * selected ship
+  * highlighted ship
   * rotate and delete ship
+
+  ! fix bug: when moving a ship over another ship, ship disappears
+  * possible solution: save last origin
 */
 
-/* 
-  TODO - move ship
-  * object for specific boat origins and orientation
-  * ship point under cursor
-*/
-
-let shipsTable = Array(10)
+var shipsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
-let shotsTable = Array(10)
+var shotsTable = Array(10)
   .fill()
   .map(() => Array(10).fill(0));
 
@@ -50,17 +47,40 @@ const shipLength = {
   p: 2,
 };
 
-// set dragged ship on mousedown
-let draggedShip;
+// set dragged ship on mousedown - from ship menu
+var draggedShip, shipPointUnderCursor;
 const shipsLi = document.querySelectorAll("#shipMenu ul li");
 shipsLi.forEach((i) =>
   i.addEventListener("mousedown", (e) => {
-    if (e.target.classList.value != "placed") draggedShip = i.id;
+    if (e.target.classList.value != "placed") {
+      draggedShip = i.id;
+
+      // set shipPointUnderCursor if ship is not yet placed
+      shipPointUnderCursor = 1;
+    }
   })
 );
 
-// mouseup
-let rowUnderCursor, columnUnderCursor;
+// set dragged ship on mousedown - from board; already placed ship
+document.body.addEventListener("mousedown", (e) => {
+  const shipToMove = e.target.closest(".ship") || 0;
+  if (shipToMove) {
+    draggedShip = shipToMove.id[0];
+
+    // set shipPointUnderCursor if ship is already placed
+    if (shipInfo.orientation[draggedShip] == "h") {
+      let cursorPosFromShipOrigin = e.clientX - shipToMove.getBoundingClientRect().left;
+      shipPointUnderCursor = Math.ceil(cursorPosFromShipOrigin / shipToMove.getBoundingClientRect().height);
+    }
+
+    // if already placed, remove
+    const placedShip = document.querySelector(`#board #${draggedShip}Ship`);
+    if (placedShip) placedShip.remove();
+  }
+});
+
+// release dragged ship
+var rowUnderCursor, columnUnderCursor;
 document.body.addEventListener("mouseup", (e) => {
   const targetInBoard = ((e.target.closest("table") || 0).id || 0) == "board";
   if (!draggedShip || !targetInBoard) return (draggedShip = null);
@@ -74,17 +94,20 @@ document.body.addEventListener("mouseup", (e) => {
   draggedShip = rowUnderCursor = columnUnderCursor = null;
 });
 
-let shipPointUnderCursor, cellOrigin;
+var cellOrigin;
 function isShipNotOverlap() {
-  let isShipNotPlaced = !shipInfo.origin[draggedShip];
-  if (isShipNotPlaced) shipPointUnderCursor = 1;
-
   let notOverlap;
   if (shipInfo.orientation[draggedShip] == "h") {
-    // set cell starting point
-    columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursor > 9 // does ship extend outside board
-      ? (cellOrigin = 9 - (shipLength[draggedShip] - 1))
-      : (cellOrigin = columnUnderCursor);
+    // set cell origin
+    let firstCell = columnUnderCursor - (shipPointUnderCursor - 1);
+    let lastCell = columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursor;
+    if (lastCell > 9) {
+      cellOrigin = 9 - (shipLength[draggedShip] - 1);
+    } else if (firstCell < 0) {
+      cellOrigin = 0;
+    } else {
+      cellOrigin = firstCell;
+    }
 
     // does ship overlap others
     notOverlap = !shipsTable[rowUnderCursor].slice(columnUnderCursor, columnUnderCursor + shipLength[draggedShip]).includes(1);
@@ -98,7 +121,9 @@ function modifyShips() {
     for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[rowUnderCursor][cellOrigin + i] = 1;
   }
 
-  shipInfo.origin[draggedShip] = cellOrigin;
+  if (shipInfo.orientation[draggedShip] == "h") {
+    shipInfo.origin[draggedShip] = [rowUnderCursor, cellOrigin];
+  }
 
   const shipObj = document.createElement("div");
   shipObj.classList.add("ship");
@@ -113,5 +138,5 @@ function modifyShips() {
   menuShip = document.querySelector("#shipMenu #" + draggedShip);
   menuShip.classList.add("placed");
 
-  console.table(shipsTable);
+  // console.table(shipsTable);
 }
