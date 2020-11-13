@@ -55,19 +55,19 @@ let draggedShip;
 const shipsLi = document.querySelectorAll("#shipMenu ul li");
 shipsLi.forEach((i) =>
   i.addEventListener("mousedown", (e) => {
-    draggedShip = i.id;
+    if (e.target.classList.value != "placed") draggedShip = i.id;
   })
 );
 
 // mouseup
 let rowUnderCursor, columnUnderCursor;
-document.body.addEventListener("mouseup", ({ target: cellUnderCursor }) => {
-  const targetInBoard = ((cellUnderCursor.closest("table") || 0).id || 0) == "board";
+document.body.addEventListener("mouseup", (e) => {
+  const targetInBoard = ((e.target.closest("table") || 0).id || 0) == "board";
   if (!draggedShip || !targetInBoard) return (draggedShip = null);
 
   // get cell position
-  rowUnderCursor = cellUnderCursor.closest("tr").rowIndex;
-  columnUnderCursor = cellUnderCursor.cellIndex;
+  rowUnderCursor = e.target.closest("tr").rowIndex;
+  columnUnderCursor = e.target.cellIndex;
 
   if (isShipNotOverlap()) modifyShips();
 
