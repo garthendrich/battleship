@@ -58,6 +58,7 @@ td {
   left: 0;
   background: #3d518c;
   height: var(--cell-size);
+  z-index: 1;
 }
 
 .ship.vert {
