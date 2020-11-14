@@ -43,13 +43,15 @@ const shipLength = {
   p: 2,
 };
 
+const runByShipOrientation = (h, v) => (shipInfo.orientation[draggedShip] == "h" ? h() : v());
+
 // set dragged ship on mousedown - from ship menu
 var draggedShip, shipPointUnderCursor;
 const shipsLi = document.querySelectorAll("#shipMenu ul li");
-shipsLi.forEach((i) =>
-  i.addEventListener("mousedown", (e) => {
+shipsLi.forEach((elem) =>
+  elem.addEventListener("mousedown", (e) => {
     if (e.target.classList.value != "placed") {
-      draggedShip = i.id;
+      draggedShip = elem.id;
 
       // set shipPointUnderCursor if ship is not yet placed
       shipPointUnderCursor = 1;
@@ -64,13 +66,17 @@ document.body.addEventListener("mousedown", (e) => {
   if (shipToMove) {
     draggedShip = shipToMove.id[0];
 
-    // set shipPointUnderCursor if ship is already placed
-    if (shipInfo.orientation[draggedShip] == "h") {
-      let cursorPosFromShipOrigin = e.clientX - shipToMove.getBoundingClientRect().left;
-      shipPointUnderCursor = Math.ceil(cursorPosFromShipOrigin / shipToMove.getBoundingClientRect().height);
+    runByShipOrientation(
+      () => {
+        let cursorPosFromShipOrigin = e.clientX - shipToMove.getBoundingClientRect().left;
+        shipPointUnderCursor = Math.ceil(cursorPosFromShipOrigin / shipToMove.getBoundingClientRect().height);
 
-      prevCellOrigin = shipInfo.origin[draggedShip];
-    }
+        prevCellOrigin = shipInfo.origin[draggedShip];
+      },
+      () => {
+        // vertical
+      }
+    );
 
     removeShip(prevCellOrigin);
   }
@@ -80,9 +86,12 @@ function removeShip([row, column]) {
   const placedShip = document.querySelector(`#board #${draggedShip}Ship`);
   placedShip.remove();
 
-  if (shipInfo.orientation[draggedShip] == "h") {
-    for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 0;
-  }
+  runByShipOrientation(
+    () => {
+      for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 0;
+    },
+    () => {}
+  );
 }
 
 // release dragged ship
@@ -90,8 +99,9 @@ var rowUnderCursor, columnUnderCursor;
 document.body.addEventListener("mouseup", (e) => {
   if (!draggedShip) return;
 
-  const targetInBoard = ((e.target.closest("table") || 0).id || 0) == "board";
-  if (!targetInBoard) {
+  const isTargetInBoard = ((e.target.closest("table") || 0).id || 0) == "board";
+  const isTargetACell = e.target.classList.value != "ship";
+  if (!isTargetInBoard || !isTargetACell) {
     if (prevCellOrigin) modifyShips(prevCellOrigin);
     draggedShip = prevCellOrigin = null;
     return;
@@ -103,51 +113,59 @@ document.body.addEventListener("mouseup", (e) => {
 
   getCellOrigin();
 
-  isShipNotOverlap() && e.target.classList.value != "ship" ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
+  isShipNotOverlap() ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
 
   draggedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
 });
 
+var cellOrigin;
 function getCellOrigin() {
-  if (shipInfo.orientation[draggedShip] == "h") {
-    let firstCell = columnUnderCursor - (shipPointUnderCursor - 1);
-    let lastCell = columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursor;
-    if (lastCell > 9) {
-      cellOrigin = [rowUnderCursor, 9 - (shipLength[draggedShip] - 1)];
-    } else if (firstCell < 0) {
-      cellOrigin = [rowUnderCursor, 0];
-    } else {
-      cellOrigin = [rowUnderCursor, firstCell];
-    }
-  }
+  runByShipOrientation(
+    () => {
+      let firstCell = columnUnderCursor - (shipPointUnderCursor - 1);
+      let lastCell = columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursor;
+      if (lastCell > 9) {
+        cellOrigin = [rowUnderCursor, 9 - (shipLength[draggedShip] - 1)];
+      } else if (firstCell < 0) {
+        cellOrigin = [rowUnderCursor, 0];
+      } else {
+        cellOrigin = [rowUnderCursor, firstCell];
+      }
+    },
+    () => {}
+  );
 }
 
-var cellOrigin;
 function isShipNotOverlap() {
-  if (shipInfo.orientation[draggedShip] == "h") {
-    return !shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[draggedShip]).includes(1);
-  }
+  return runByShipOrientation(
+    () => !shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[draggedShip]).includes(1),
+    () => {}
+  );
 }
 
 function modifyShips([row, column]) {
-  if (shipInfo.orientation[draggedShip] == "h") {
-    for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 1;
+  runByShipOrientation(
+    () => {
+      for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 1;
 
-    shipInfo.origin[draggedShip] = [row, column];
-  }
+      shipInfo.origin[draggedShip] = [row, column];
+    },
+    () => {}
+  );
+
+  console.table(shipsTable);
 
   const shipObj = document.createElement("div");
   shipObj.classList.add("ship");
   shipObj.setAttribute("id", draggedShip + "Ship");
 
   let cellOriginObj;
-  if (shipInfo.orientation[draggedShip] == "h") {
-    cellOriginObj = document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`);
-  }
+  runByShipOrientation(
+    () => (cellOriginObj = document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`)),
+    () => {}
+  );
   cellOriginObj.append(shipObj);
 
   menuShip = document.querySelector("#shipMenu #" + draggedShip);
   menuShip.classList.add("placed");
-
-  console.table(shipsTable);
 }
