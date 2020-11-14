@@ -56,7 +56,7 @@ td {
   position: absolute;
   top: 0;
   left: 0;
-  background: #3d518c;
+  background: #4a6fa5;
   height: var(--cell-size);
   z-index: 1;
 }
@@ -64,6 +64,43 @@ td {
 .ship.vert {
   transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
   transform-origin: top left;
+}
+
+.ship .popup {
+  content: "";
+  position: absolute;
+  bottom: 110%;
+  left: calc(50% - 86px / 2);
+  width: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: white;
+  box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.ship .popup div {
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ship .popup div:hover {
+  background: #ddd;
+}
+
+.ship .popup svg {
+  height: 80%;
+  width: 80%;
+  fill: #007f49;
+}
+
+.ship .popup svg#remove {
+  fill: #b15042;
 }
 
 #cShip {
