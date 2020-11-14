@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 10vh;
+  padding: 10vh;
 }
 
 #board {

@@ -1,18 +1,14 @@
-/* 
-Must include:
-Saving and loading the current state of the game using files
-File implementation for high scores
-A smart AI opponent
+/*
+ * Must include:
+ * Saving and loading the current state of the game using files
+ * File implementation for high scores
+ * A smart AI opponent
  */
 
 /*
   TODO
-  * move ship
   * highlighted ship
   * rotate and delete ship
-
-  ! fix bug: when moving a ship over another ship, ship disappears
-  * possible solution: save last origin
 */
 
 var shipsTable = Array(10)
@@ -62,6 +58,7 @@ shipsLi.forEach((i) =>
 );
 
 // set dragged ship on mousedown - from board; already placed ship
+var prevCellOrigin;
 document.body.addEventListener("mousedown", (e) => {
   const shipToMove = e.target.closest(".ship") || 0;
   if (shipToMove) {
@@ -71,58 +68,72 @@ document.body.addEventListener("mousedown", (e) => {
     if (shipInfo.orientation[draggedShip] == "h") {
       let cursorPosFromShipOrigin = e.clientX - shipToMove.getBoundingClientRect().left;
       shipPointUnderCursor = Math.ceil(cursorPosFromShipOrigin / shipToMove.getBoundingClientRect().height);
+
+      prevCellOrigin = shipInfo.origin[draggedShip];
     }
 
-    // if already placed, remove
-    const placedShip = document.querySelector(`#board #${draggedShip}Ship`);
-    if (placedShip) placedShip.remove();
+    removeShip(prevCellOrigin);
   }
 });
+
+function removeShip([row, column]) {
+  const placedShip = document.querySelector(`#board #${draggedShip}Ship`);
+  placedShip.remove();
+
+  if (shipInfo.orientation[draggedShip] == "h") {
+    for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 0;
+  }
+}
 
 // release dragged ship
 var rowUnderCursor, columnUnderCursor;
 document.body.addEventListener("mouseup", (e) => {
+  if (!draggedShip) return;
+
   const targetInBoard = ((e.target.closest("table") || 0).id || 0) == "board";
-  if (!draggedShip || !targetInBoard) return (draggedShip = null);
+  if (!targetInBoard) {
+    if (prevCellOrigin) modifyShips(prevCellOrigin);
+    draggedShip = prevCellOrigin = null;
+    return;
+  }
 
   // get cell position
   rowUnderCursor = e.target.closest("tr").rowIndex;
   columnUnderCursor = e.target.cellIndex;
 
-  if (isShipNotOverlap()) modifyShips();
+  getCellOrigin();
 
-  draggedShip = rowUnderCursor = columnUnderCursor = null;
+  isShipNotOverlap() && e.target.classList.value != "ship" ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
+
+  draggedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
 });
 
-var cellOrigin;
-function isShipNotOverlap() {
-  let notOverlap;
+function getCellOrigin() {
   if (shipInfo.orientation[draggedShip] == "h") {
-    // set cell origin
     let firstCell = columnUnderCursor - (shipPointUnderCursor - 1);
     let lastCell = columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursor;
     if (lastCell > 9) {
-      cellOrigin = 9 - (shipLength[draggedShip] - 1);
+      cellOrigin = [rowUnderCursor, 9 - (shipLength[draggedShip] - 1)];
     } else if (firstCell < 0) {
-      cellOrigin = 0;
+      cellOrigin = [rowUnderCursor, 0];
     } else {
-      cellOrigin = firstCell;
+      cellOrigin = [rowUnderCursor, firstCell];
     }
-
-    // does ship overlap others
-    notOverlap = !shipsTable[rowUnderCursor].slice(columnUnderCursor, columnUnderCursor + shipLength[draggedShip]).includes(1);
   }
-
-  return notOverlap;
 }
 
-function modifyShips() {
+var cellOrigin;
+function isShipNotOverlap() {
   if (shipInfo.orientation[draggedShip] == "h") {
-    for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[rowUnderCursor][cellOrigin + i] = 1;
+    return !shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[draggedShip]).includes(1);
   }
+}
 
+function modifyShips([row, column]) {
   if (shipInfo.orientation[draggedShip] == "h") {
-    shipInfo.origin[draggedShip] = [rowUnderCursor, cellOrigin];
+    for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 1;
+
+    shipInfo.origin[draggedShip] = [row, column];
   }
 
   const shipObj = document.createElement("div");
@@ -131,12 +142,12 @@ function modifyShips() {
 
   let cellOriginObj;
   if (shipInfo.orientation[draggedShip] == "h") {
-    cellOriginObj = document.querySelector(`#board tr:nth-child(${rowUnderCursor + 1}) td:nth-child(${cellOrigin + 1})`);
+    cellOriginObj = document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`);
   }
   cellOriginObj.append(shipObj);
 
   menuShip = document.querySelector("#shipMenu #" + draggedShip);
   menuShip.classList.add("placed");
 
-  // console.table(shipsTable);
+  console.table(shipsTable);
 }
