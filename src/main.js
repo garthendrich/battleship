@@ -58,14 +58,28 @@ shipsLi.forEach((elem) =>
   })
 );
 
-// set dragged ship on mousedown - from board; already placed ship
-var prevCellOrigin;
+var shipToMove, isMoveShipAllowed;
 document.body.addEventListener("mousedown", (e) => {
+  shipToMove = e.target.closest(".ship") || 0;
+  if (shipToMove) isMoveShipAllowed = true;
+
+  // reset highlighted ship
   const prevHighlightedShipPopupObj = document.querySelector(`#board #${highlightedShip}Ship .popup`) || 0;
   if (prevHighlightedShipPopupObj) prevHighlightedShipPopupObj.style.display = "none";
   highlightedShip = null;
+});
 
-  const shipToMove = e.target.closest(".ship") || 0;
+// set dragged ship on mousedown - from board; already placed ship
+document.body.addEventListener("mousemove", (e) => {
+  if (isMoveShipAllowed && e.target.className != "ship") {
+    prepareShipToMove(e);
+
+    isMoveShipAllowed = false; // check only once
+  }
+});
+
+var prevCellOrigin;
+function prepareShipToMove(e) {
   const isTargetPopup = e.target.closest(".popup") || 0;
   if (shipToMove && !isTargetPopup) {
     draggedShip = shipToMove.id[0];
@@ -84,7 +98,7 @@ document.body.addEventListener("mousedown", (e) => {
 
     removeShip(prevCellOrigin);
   }
-});
+}
 
 function removeShip([row, column]) {
   const placedShip = document.querySelector(`#board #${draggedShip}Ship`);
@@ -101,7 +115,12 @@ function removeShip([row, column]) {
 // release dragged ship
 var rowUnderCursor, columnUnderCursor, highlightedShip;
 document.body.addEventListener("mouseup", (e) => {
-  if (draggedShip && e.target.nodeName == "TD") {
+  isMoveShipAllowed = false;
+
+  if (e.target.className == "ship") {
+    highlightedShip = e.target.id[0];
+    e.target.firstChild.removeAttribute("style"); // show popup
+  } else if (draggedShip && e.target.nodeName == "TD") {
     highlightedShip = draggedShip;
 
     rowUnderCursor = e.target.closest("tr").rowIndex;
@@ -111,8 +130,6 @@ document.body.addEventListener("mouseup", (e) => {
 
     isShipNotOverlap() ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
   } else if (draggedShip && prevCellOrigin) modifyShips(prevCellOrigin);
-
-  // TODO - show ship popup
 
   draggedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
 });

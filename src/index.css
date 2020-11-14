@@ -70,8 +70,8 @@ td {
   content: "";
   position: absolute;
   bottom: 110%;
-  left: calc(50% - 86px / 2);
-  width: 86px;
+  left: calc(50% - 110px / 2);
+  width: 110px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -81,8 +81,8 @@ td {
 }
 
 .ship .popup div {
-  height: 40px;
-  width: 40px;
+  height: 50px;
+  width: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
