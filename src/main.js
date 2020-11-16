@@ -60,6 +60,11 @@ menuShipElems.forEach((elem) =>
 
 var shipToMoveElem, canMoveShip, prevCellOrigin, willRotate;
 document.body.addEventListener("mousedown", (e) => {
+  if (!e.target.closest("#board")) {
+    hideShipPopups();
+    return;
+  }
+
   // store ship info to move ship
   e.target.classList.contains("ship") ? (shipToMoveElem = e.target) : (shipToMoveElem = null);
   if (shipToMoveElem) {
