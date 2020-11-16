@@ -42,69 +42,76 @@ const shipLength = {
   p: 2,
 };
 
-const runByShipOrientation = (h, v) => (shipInfo.orientation[draggedShip] == "h" ? h() : v());
+const runByShipOrientation = (h, v) => (shipInfo.orientation[selectedShip] == "h" ? h() : v());
 
 // set dragged ship on mousedown - from ship menu
-var draggedShip, shipPointUnderCursorOnMousedown;
+var selectedShip, shipPointUnderCursorOnMousedown;
 const menuShipElems = document.querySelectorAll("#shipMenu ul li");
 menuShipElems.forEach((elem) =>
   elem.addEventListener("mousedown", (e) => {
     if (e.target.className != "placed") {
-      draggedShip = elem.id;
+      selectedShip = elem.id;
 
       shipPointUnderCursorOnMousedown = 1;
     }
   })
 );
 
-var shipToMoveElem, isMoveShipAllowed, prevCellOrigin;
+var shipToMoveElem, canMoveShip, prevCellOrigin, willRotate;
 document.body.addEventListener("mousedown", (e) => {
-  e.target.className == "ship" ? (shipToMoveElem = e.target) : (shipToMoveElem = null);
+  // store ship info to move ship
+  e.target.classList.contains("ship") ? (shipToMoveElem = e.target) : (shipToMoveElem = null);
   if (shipToMoveElem) {
-    isMoveShipAllowed = true;
+    canMoveShip = true;
 
-    draggedShip = shipToMoveElem.id[0];
+    selectedShip = shipToMoveElem.id[0];
 
     shipPointUnderCursorOnMousedown = getCurrentShipPointUnderCursor(e);
 
-    runByShipOrientation(
-      () => (prevCellOrigin = shipInfo.origin[draggedShip]),
-      () => {}
-    );
+    prevCellOrigin = shipInfo.origin[selectedShip];
   }
 
-  // remove all ship popups
-  const prevHighlightedShipPopupElem = document.querySelectorAll(`#board .ship .popup`) || 0;
-  if (prevHighlightedShipPopupElem.length) prevHighlightedShipPopupElem.forEach((popup) => (popup.style.display = "none"));
+  willRotate = false;
+  if (e.target.closest(".rotate")) willRotate = true;
 });
 
 function getCurrentShipPointUnderCursor(e) {
-  let cursorPosFromShipOrigin;
-  runByShipOrientation(
-    () => (cursorPosFromShipOrigin = e.clientX - shipToMoveElem.getBoundingClientRect().left),
-    () => {}
+  return runByShipOrientation(
+    () => {
+      let cursorPosFromShipOrigin = e.clientX - shipToMoveElem.getBoundingClientRect().left;
+      return Math.ceil(cursorPosFromShipOrigin / shipToMoveElem.getBoundingClientRect().height);
+    },
+    () => {
+      let cursorPosFromShipOrigin = e.clientY - shipToMoveElem.getBoundingClientRect().top;
+      return Math.ceil(cursorPosFromShipOrigin / shipToMoveElem.getBoundingClientRect().width);
+    }
   );
-  return Math.ceil(cursorPosFromShipOrigin / shipToMoveElem.getBoundingClientRect().height);
 }
 
 // set dragged ship on mousedown - from board; already placed ship
 document.body.addEventListener("mousemove", (e) => {
   if (
-    isMoveShipAllowed &&
-    (!(e.target.id[0] == draggedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e))
+    canMoveShip &&
+    (!(e.target.id[0] == selectedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e))
   ) {
+    canMoveShip = false; // check only once
     if (shipToMoveElem) removeShip(prevCellOrigin);
-    isMoveShipAllowed = false; // check only once
+    hideShipPopups();
   }
 });
 
+function hideShipPopups() {
+  const prevHighlightedShipPopupElem = document.querySelectorAll(`#board .ship .popup`) || 0;
+  if (prevHighlightedShipPopupElem.length) prevHighlightedShipPopupElem.forEach((popup) => (popup.style.display = "none"));
+}
+
 function removeShip([row, column]) {
-  const placedShipElem = document.querySelector(`#board #${draggedShip}Ship`);
+  const placedShipElem = document.querySelector(`#board #${selectedShip}Ship`);
   placedShipElem.remove();
 
   runByShipOrientation(
     () => {
-      for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 0;
+      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row][column + i] = 0;
     },
     () => {}
   );
@@ -113,36 +120,48 @@ function removeShip([row, column]) {
 // release dragged ship
 var rowUnderCursor, columnUnderCursor;
 document.body.addEventListener("mouseup", (e) => {
-  isMoveShipAllowed = false;
+  canMoveShip = false;
 
-  if (draggedShip) {
-    if (e.target.id[0] == draggedShip) e.target.firstChild.removeAttribute("style");
+  hideShipPopups();
+
+  if (willRotate && e.target.closest(".rotate")) {
+    const shipObj = e.target.closest(".ship");
+    selectedShip = shipObj.id[0];
+    runByShipOrientation(
+      () => {
+        shipInfo.orientation[selectedShip] = "v";
+        shipObj.className += " vert";
+      },
+      () => {
+        shipInfo.orientation[selectedShip] = "h";
+        shipObj.classList.remove("vert");
+      }
+    );
+  } else if (selectedShip) {
+    if (e.target.classList.contains("ship") && e.target.id[0] == selectedShip) e.target.firstChild.removeAttribute("style");
     else if (e.target.nodeName == "TD") {
       rowUnderCursor = e.target.closest("tr").rowIndex;
       columnUnderCursor = e.target.cellIndex;
 
-      getCellOrigin();
+      cellOrigin = getCellOrigin();
 
       isShipNotOverlap() ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
     } else if (prevCellOrigin) modifyShips(prevCellOrigin);
   }
 
-  draggedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
+  selectedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
 });
 
 var cellOrigin;
 function getCellOrigin() {
-  runByShipOrientation(
+  return runByShipOrientation(
     () => {
       let firstCell = columnUnderCursor - (shipPointUnderCursorOnMousedown - 1);
-      let lastCell = columnUnderCursor + shipLength[draggedShip] - shipPointUnderCursorOnMousedown;
-      if (lastCell > 9) {
-        cellOrigin = [rowUnderCursor, 9 - (shipLength[draggedShip] - 1)];
-      } else if (firstCell < 0) {
-        cellOrigin = [rowUnderCursor, 0];
-      } else {
-        cellOrigin = [rowUnderCursor, firstCell];
-      }
+      let lastCell = columnUnderCursor + shipLength[selectedShip] - shipPointUnderCursorOnMousedown;
+
+      if (lastCell > 9) return [rowUnderCursor, 9 - (shipLength[selectedShip] - 1)];
+      else if (firstCell < 0) return [rowUnderCursor, 0];
+      else return [rowUnderCursor, firstCell];
     },
     () => {}
   );
@@ -150,7 +169,7 @@ function getCellOrigin() {
 
 function isShipNotOverlap() {
   return runByShipOrientation(
-    () => !shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[draggedShip]).includes(1),
+    () => !shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[selectedShip]).includes(1),
     () => {}
   );
 }
@@ -158,18 +177,17 @@ function isShipNotOverlap() {
 function modifyShips([row, column]) {
   runByShipOrientation(
     () => {
-      for (let i = 0; i < shipLength[draggedShip]; i++) shipsTable[row][column + i] = 1;
-
-      shipInfo.origin[draggedShip] = [row, column];
+      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row][column + i] = 1;
     },
     () => {}
   );
+  shipInfo.origin[selectedShip] = [row, column];
 
-  console.table(shipsTable);
+  // console.table(shipsTable);
 
   const shipObj = document.createElement("div");
   shipObj.className = "ship";
-  shipObj.id = draggedShip + "Ship";
+  shipObj.id = selectedShip + "Ship";
   shipObj.append(createShipPopup());
 
   runByShipOrientation(
@@ -177,7 +195,7 @@ function modifyShips([row, column]) {
     () => {}
   );
 
-  menuShipElem = document.querySelector("#shipMenu #" + draggedShip);
+  menuShipElem = document.querySelector("#shipMenu #" + selectedShip);
   menuShipElem.className = "placed";
 }
 
@@ -190,10 +208,11 @@ function createShipPopup() {
   const parsedRotateSVG = new DOMParser().parseFromString(rotateSVG, "image/svg+xml").firstChild;
   const parsedRemoveSVG = new DOMParser().parseFromString(removeSVG, "image/svg+xml").firstChild;
 
-  parsedRemoveSVG.id = "remove";
-
   const rotateButton = document.createElement("div");
   const removeButton = document.createElement("div");
+
+  rotateButton.className = "rotate";
+  removeButton.className = "remove";
 
   rotateButton.append(parsedRotateSVG);
   removeButton.append(parsedRemoveSVG);
