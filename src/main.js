@@ -7,7 +7,6 @@
 
 /*
   TODO
-  * highlighted ship
   * rotate and delete ship
 */
 
@@ -74,10 +73,9 @@ document.body.addEventListener("mousedown", (e) => {
     );
   }
 
-  // reset highlighted ship
-  const prevHighlightedShipPopupElem = document.querySelector(`#board #${highlightedShip}Ship .popup`) || 0;
-  if (prevHighlightedShipPopupElem) prevHighlightedShipPopupElem.style.display = "none";
-  highlightedShip = null;
+  // remove all ship popups
+  const prevHighlightedShipPopupElem = document.querySelectorAll(`#board .ship .popup`) || 0;
+  if (prevHighlightedShipPopupElem.length) prevHighlightedShipPopupElem.forEach((popup) => (popup.style.display = "none"));
 });
 
 function getCurrentShipPointUnderCursor(e) {
@@ -95,15 +93,10 @@ document.body.addEventListener("mousemove", (e) => {
     isMoveShipAllowed &&
     (e.target.className != "ship" || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e))
   ) {
-    prepareShipToMove(e);
+    if (shipToMoveElem) removeShip(prevCellOrigin);
     isMoveShipAllowed = false; // check only once
   }
 });
-
-function prepareShipToMove(e) {
-  const isTargetPopup = e.target.closest(".popup") || 0;
-  if (shipToMoveElem && !isTargetPopup) removeShip(prevCellOrigin);
-}
 
 function removeShip([row, column]) {
   const placedShipElem = document.querySelector(`#board #${draggedShip}Ship`);
@@ -118,23 +111,21 @@ function removeShip([row, column]) {
 }
 
 // release dragged ship
-var rowUnderCursor, columnUnderCursor, highlightedShip;
+var rowUnderCursor, columnUnderCursor;
 document.body.addEventListener("mouseup", (e) => {
   isMoveShipAllowed = false;
 
-  if (e.target.className == "ship") {
-    highlightedShip = e.target.id[0];
-    e.target.firstChild.removeAttribute("style"); // show popup
-  } else if (draggedShip && e.target.nodeName == "TD") {
-    highlightedShip = draggedShip;
+  if (draggedShip) {
+    if (e.target.id[0] == draggedShip) e.target.firstChild.removeAttribute("style");
+    else if (e.target.nodeName == "TD") {
+      rowUnderCursor = e.target.closest("tr").rowIndex;
+      columnUnderCursor = e.target.cellIndex;
 
-    rowUnderCursor = e.target.closest("tr").rowIndex;
-    columnUnderCursor = e.target.cellIndex;
+      getCellOrigin();
 
-    getCellOrigin();
-
-    isShipNotOverlap() ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
-  } else if (draggedShip && prevCellOrigin) modifyShips(prevCellOrigin);
+      isShipNotOverlap() ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
+    } else if (prevCellOrigin) modifyShips(prevCellOrigin);
+  }
 
   draggedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
 });
