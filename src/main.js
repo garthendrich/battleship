@@ -19,6 +19,7 @@ var shotsTable = Array(10)
 
 const shipInfo = {
   origin: {
+    // [row, column]
     c: null,
     b: null,
     d: null,
@@ -113,7 +114,9 @@ function removeShip([row, column]) {
     () => {
       for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row][column + i] = 0;
     },
-    () => {}
+    () => {
+      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row + i][column] = 0;
+    }
   );
 }
 
@@ -127,6 +130,11 @@ document.body.addEventListener("mouseup", (e) => {
   if (willRotate && e.target.closest(".rotate")) {
     const shipObj = e.target.closest(".ship");
     selectedShip = shipObj.id[0];
+    cellOrigin = shipInfo.origin[selectedShip];
+
+    // TODO - change cell origin if ship overlaps
+
+    removeShip(cellOrigin);
     runByShipOrientation(
       () => {
         shipInfo.orientation[selectedShip] = "v";
@@ -137,6 +145,7 @@ document.body.addEventListener("mouseup", (e) => {
         shipObj.classList.remove("vert");
       }
     );
+    modifyShip(cellOrigin);
   } else if (selectedShip) {
     if (e.target.classList.contains("ship") && e.target.id[0] == selectedShip) e.target.firstChild.removeAttribute("style");
     else if (e.target.nodeName == "TD") {
@@ -145,8 +154,9 @@ document.body.addEventListener("mouseup", (e) => {
 
       cellOrigin = getCellOrigin();
 
-      isShipNotOverlap() ? modifyShips(cellOrigin) : modifyShips(prevCellOrigin);
-    } else if (prevCellOrigin) modifyShips(prevCellOrigin);
+      if (!isShipOverlap()) modifyShip(cellOrigin);
+      else if (prevCellOrigin) modifyShip(prevCellOrigin);
+    } else if (prevCellOrigin) modifyShip(prevCellOrigin);
   }
 
   selectedShip = rowUnderCursor = columnUnderCursor = prevCellOrigin = null;
@@ -156,47 +166,63 @@ var cellOrigin;
 function getCellOrigin() {
   return runByShipOrientation(
     () => {
-      let firstCell = columnUnderCursor - (shipPointUnderCursorOnMousedown - 1);
-      let lastCell = columnUnderCursor + shipLength[selectedShip] - shipPointUnderCursorOnMousedown;
+      let firstCellColumn = columnUnderCursor - (shipPointUnderCursorOnMousedown - 1);
+      let lastCellColumn = columnUnderCursor + shipLength[selectedShip] - shipPointUnderCursorOnMousedown;
 
-      if (lastCell > 9) return [rowUnderCursor, 9 - (shipLength[selectedShip] - 1)];
-      else if (firstCell < 0) return [rowUnderCursor, 0];
-      else return [rowUnderCursor, firstCell];
+      if (lastCellColumn > 9) return [rowUnderCursor, 9 - (shipLength[selectedShip] - 1)];
+      if (firstCellColumn < 0) return [rowUnderCursor, 0];
+      return [rowUnderCursor, firstCellColumn];
     },
-    () => {}
+    () => {
+      let firstCellRow = rowUnderCursor - (shipPointUnderCursorOnMousedown - 1);
+      let lastCellRow = rowUnderCursor + shipLength[selectedShip] - shipPointUnderCursorOnMousedown;
+
+      if (lastCellRow > 9) return [9 - (shipLength[selectedShip] - 1), columnUnderCursor];
+      if (firstCellRow < 0) return [0, columnUnderCursor];
+      return [firstCellRow, columnUnderCursor];
+    }
   );
 }
 
-function isShipNotOverlap() {
+function isShipOverlap() {
   return runByShipOrientation(
-    () => !shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[selectedShip]).includes(1),
-    () => {}
+    () => shipsTable[rowUnderCursor].slice(cellOrigin[1], cellOrigin[1] + shipLength[selectedShip]).includes(1),
+    () => {
+      for (let i = cellOrigin[0]; i < cellOrigin[0] + shipLength[selectedShip]; i++)
+        if (shipsTable[i][columnUnderCursor] == 1) return true;
+      return false;
+    }
   );
 }
 
-function modifyShips([row, column]) {
+function modifyShip([row, column]) {
   runByShipOrientation(
     () => {
       for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row][column + i] = 1;
     },
-    () => {}
+    () => {
+      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row + i][column] = 1;
+    }
   );
   shipInfo.origin[selectedShip] = [row, column];
 
-  // console.table(shipsTable);
+  console.table(shipsTable);
 
-  const shipObj = document.createElement("div");
-  shipObj.className = "ship";
-  shipObj.id = selectedShip + "Ship";
-  shipObj.append(createShipPopup());
-
-  runByShipOrientation(
-    () => document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(shipObj),
-    () => {}
-  );
+  document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
 
   menuShipElem = document.querySelector("#shipMenu #" + selectedShip);
   menuShipElem.className = "placed";
+}
+
+function createShip() {
+  const shipObj = document.createElement("div");
+  runByShipOrientation(
+    () => (shipObj.className = "ship"),
+    () => (shipObj.className = "ship vert")
+  );
+  shipObj.id = selectedShip + "Ship";
+  shipObj.append(createShipPopup());
+  return shipObj;
 }
 
 function createShipPopup() {
