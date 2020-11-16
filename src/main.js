@@ -91,7 +91,7 @@ function getCurrentShipPointUnderCursor(e) {
 document.body.addEventListener("mousemove", (e) => {
   if (
     isMoveShipAllowed &&
-    (e.target.className != "ship" || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e))
+    (!(e.target.id[0] == draggedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e))
   ) {
     if (shipToMoveElem) removeShip(prevCellOrigin);
     isMoveShipAllowed = false; // check only once
