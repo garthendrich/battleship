@@ -1,5 +1,9 @@
 :root {
   --cell-size: 8vh;
+  --popup-height: 50px;
+  --popup-gap: 10px;
+
+  --popup-width: calc(var(--popup-height) * 2 + var(--popup-gap));
 }
 
 * {
@@ -69,9 +73,10 @@ td {
 .ship .popup {
   content: "";
   position: absolute;
-  bottom: calc(100% + 10px);
-  left: calc(50% - 110px / 2);
-  width: 110px;
+  bottom: calc(100% + var(--popup-gap));
+  left: calc(50% - var(--popup-width) / 2);
+  height: var(--popup-height);
+  width: var(--popup-width);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,16 +87,15 @@ td {
 
 .ship.vert .popup {
   transform: rotate(-90deg);
-  transform-origin: bottom right;
-  right: calc(100% + 10px);
-  top: calc(-50% - 110px / 2);
+  transform-origin: top left;
+  left: calc(0px - var(--popup-gap) - var(--popup-height));
+  top: calc(50% + var(--popup-width) / 2);
   bottom: auto;
-  left: auto;
 }
 
 .ship .popup div {
-  height: 50px;
-  width: 50px;
+  height: var(--popup-height);
+  width: var(--popup-height);
   display: flex;
   align-items: center;
   justify-content: center;
