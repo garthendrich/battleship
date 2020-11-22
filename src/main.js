@@ -7,7 +7,11 @@
 
 /*
   TODO
-  * feature: delete ship
+  * ship randomizer
+  * class Player
+  * class User (subclass)
+  * class AI (subclass)
+  * html two boards
 */
 
 var shipsTable = Array(10)
@@ -49,11 +53,11 @@ var selectedShip;
 const menuShipElems = document.querySelectorAll("#shipMenu ul li");
 menuShipElems.forEach((elem) =>
   elem.addEventListener("mousedown", (e) => {
-    if (e.target.className != "placed") selectedShip = elem.id;
+    if (!e.target.classList.contains("placed")) selectedShip = elem.id[0];
   })
 );
 
-var willRotate, selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCellOrigin;
+var willRotate, willRemove, selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCellOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest("#board")) {
@@ -64,6 +68,12 @@ document.body.addEventListener("mousedown", (e) => {
   // if mousedown on rotate button
   if (e.target.closest(".rotate")) {
     willRotate = true;
+    return;
+  }
+
+  // if mousedown on remove button
+  if (e.target.closest(".remove")) {
+    willRemove = true;
     return;
   }
 
@@ -124,7 +134,6 @@ document.body.addEventListener("mouseup", (e) => {
   // if clicked rotate button
   if (willRotate && e.target.closest(".rotate")) {
     selectedShipElem = e.target.closest(".ship");
-
     selectedShip = selectedShipElem.id[0];
     removeSelectedShip();
 
@@ -138,6 +147,22 @@ document.body.addEventListener("mouseup", (e) => {
 
     selectedShip = null; //reset
     willRotate = false; // reset
+    return;
+  }
+
+  // if clicked remove button
+  if (willRemove && e.target.closest(".remove")) {
+    selectedShipElem = e.target.closest(".ship");
+    selectedShip = selectedShipElem.id[0];
+    removeSelectedShip();
+
+    shipInfo.orientation[selectedShip] = "h";
+
+    const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
+    menuShipElem.classList.remove("placed");
+
+    selectedShip = null; //reset
+    willRemove = false; // reset
     return;
   }
 
@@ -165,7 +190,7 @@ function rotateSelectedShip() {
   runBySelectedShipOrientation(
     () => {
       shipInfo.orientation[selectedShip] = "v";
-      selectedShipElem.className += " vert";
+      selectedShipElem.classList.add("vert");
 
       shipCellOrigin[1] += lengthFromMiddleOfShip;
       shipCellOrigin[0] -= lengthFromMiddleOfShip;
@@ -256,15 +281,15 @@ function modifyShip([row, column]) {
 
   document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
 
-  menuShipElem = document.querySelector("#shipMenu #" + selectedShip);
-  menuShipElem.className = "placed";
+  const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
+  menuShipElem.classList.add("placed");
 }
 
 function createShip() {
   const newShipObj = document.createElement("div");
   runBySelectedShipOrientation(
-    () => (newShipObj.className = "ship"),
-    () => (newShipObj.className = "ship vert")
+    () => newShipObj.classList.add("ship"),
+    () => newShipObj.classList.add("ship", "vert")
   );
   newShipObj.id = selectedShip + "Ship";
   newShipObj.append(createShipPopup());
