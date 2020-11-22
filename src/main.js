@@ -128,9 +128,10 @@ document.body.addEventListener("mouseup", (e) => {
 
     selectedShip = selectedShipElem.id[0];
     removeSelectedShip();
-    rotateSelectedShip();
 
     shipCellOrigin = shipInfo.origin[selectedShip];
+    rotateSelectedShip();
+
     adjustShipCellOriginToInsideBoard();
     adjustShipCellOriginToAvailableSpace();
 
@@ -161,14 +162,21 @@ document.body.addEventListener("mouseup", (e) => {
 });
 
 function rotateSelectedShip() {
+  const lengthFromMiddleOfShip = Math.round(shipLength[selectedShip] / 2) - 1;
   runBySelectedShipOrientation(
     () => {
       shipInfo.orientation[selectedShip] = "v";
       selectedShipElem.className += " vert";
+
+      shipCellOrigin[1] += lengthFromMiddleOfShip;
+      shipCellOrigin[0] -= lengthFromMiddleOfShip;
     },
     () => {
       shipInfo.orientation[selectedShip] = "h";
       selectedShipElem.classList.remove("vert");
+
+      shipCellOrigin[0] += lengthFromMiddleOfShip;
+      shipCellOrigin[1] -= lengthFromMiddleOfShip;
     }
   );
 }
