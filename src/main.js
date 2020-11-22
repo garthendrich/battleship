@@ -33,14 +33,13 @@ const shipInfo = {
     s: "h",
     p: "h",
   },
-};
-
-const shipLength = {
-  c: 5,
-  b: 4,
-  d: 3,
-  s: 3,
-  p: 2,
+  length: {
+    c: 5,
+    b: 4,
+    d: 3,
+    s: 3,
+    p: 2,
+  },
 };
 
 const runBySelectedShipOrientation = (h, v) => (shipInfo.orientation[selectedShip] == "h" ? h() : v());
@@ -110,10 +109,10 @@ function removeSelectedShip() {
   let [row, column] = shipInfo.origin[selectedShip];
   runBySelectedShipOrientation(
     () => {
-      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row][column + i] = 0;
+      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row][column + i] = 0;
     },
     () => {
-      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row + i][column] = 0;
+      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row + i][column] = 0;
     }
   );
 }
@@ -162,7 +161,7 @@ document.body.addEventListener("mouseup", (e) => {
 });
 
 function rotateSelectedShip() {
-  const lengthFromMiddleOfShip = Math.round(shipLength[selectedShip] / 2) - 1;
+  const lengthFromMiddleOfShip = Math.round(shipInfo.length[selectedShip] / 2) - 1;
   runBySelectedShipOrientation(
     () => {
       shipInfo.orientation[selectedShip] = "v";
@@ -189,18 +188,18 @@ function adjustShipCellOriginToInsideBoard(shipPoint = 1) {
     () => {
       // adjust column
       let firstShipColumn = column - (shipPoint - 1);
-      let lastShipColumn = column - shipPoint + shipLength[selectedShip];
+      let lastShipColumn = column - shipPoint + shipInfo.length[selectedShip];
 
-      if (lastShipColumn > 9) column = 9 - (shipLength[selectedShip] - 1);
+      if (lastShipColumn > 9) column = 9 - (shipInfo.length[selectedShip] - 1);
       else if (firstShipColumn < 0) column = 0;
       else column = firstShipColumn;
     },
     () => {
       // adjust row
       let firstShipRow = row - (shipPoint - 1);
-      let lastShipRow = row - shipPoint + shipLength[selectedShip];
+      let lastShipRow = row - shipPoint + shipInfo.length[selectedShip];
 
-      if (lastShipRow > 9) row = 9 - (shipLength[selectedShip] - 1);
+      if (lastShipRow > 9) row = 9 - (shipInfo.length[selectedShip] - 1);
       else if (firstShipRow < 0) row = 0;
       else row = firstShipRow;
     }
@@ -218,13 +217,13 @@ function adjustShipCellOriginToAvailableSpace() {
     () => ([cellForwards, cellSideways] = [0, 1])
   );
 
-  let cellChecksInOneLine = 9 - shipLength[selectedShip];
+  let cellChecksInOneLine = 9 - shipInfo.length[selectedShip];
   while (doesSelectedShipOverlapOthers()) {
     if (!cellChecksInOneLine) {
       shipCellOrigin[cellSideways] >= 9 ? (shipCellOrigin[cellSideways] = 0) : shipCellOrigin[cellSideways]++;
       cellChecksInOneLine = 9;
     }
-    shipCellOrigin[cellForwards] >= 9 - (shipLength[selectedShip] - 1)
+    shipCellOrigin[cellForwards] >= 9 - (shipInfo.length[selectedShip] - 1)
       ? (shipCellOrigin[cellForwards] = 0)
       : shipCellOrigin[cellForwards]++;
     cellChecksInOneLine--;
@@ -234,9 +233,9 @@ function adjustShipCellOriginToAvailableSpace() {
 function doesSelectedShipOverlapOthers() {
   let [row, column] = shipCellOrigin;
   return runBySelectedShipOrientation(
-    () => shipsTable[row].slice(column, column + shipLength[selectedShip]).includes(1),
+    () => shipsTable[row].slice(column, column + shipInfo.length[selectedShip]).includes(1),
     () => {
-      for (let i = row; i < row + shipLength[selectedShip]; i++) if (shipsTable[i][column] == 1) return true;
+      for (let i = row; i < row + shipInfo.length[selectedShip]; i++) if (shipsTable[i][column] == 1) return true;
       return false;
     }
   );
@@ -245,10 +244,10 @@ function doesSelectedShipOverlapOthers() {
 function modifyShip([row, column]) {
   runBySelectedShipOrientation(
     () => {
-      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row][column + i] = 1;
+      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row][column + i] = 1;
     },
     () => {
-      for (let i = 0; i < shipLength[selectedShip]; i++) shipsTable[row + i][column] = 1;
+      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row + i][column] = 1;
     }
   );
   shipInfo.origin[selectedShip] = [row, column];
