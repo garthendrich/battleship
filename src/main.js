@@ -12,6 +12,8 @@
   * class User (subclass)
   * class AI (subclass)
   * html two boards
+
+  ! Fix bug - ship disappears when dragged outside body
 */
 
 "use strict";
@@ -64,23 +66,11 @@ menuShipElems.forEach((elem) =>
   })
 );
 
-var willRotate, willRemove, selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCellOrigin;
+var selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCellOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest("#board")) {
     hideAllShipPopups(); // reset
-    return;
-  }
-
-  // if mousedown on rotate button
-  if (e.target.closest(".rotate")) {
-    willRotate = true;
-    return;
-  }
-
-  // if mousedown on remove button
-  if (e.target.closest(".remove")) {
-    willRemove = true;
     return;
   }
 
@@ -121,6 +111,7 @@ document.body.addEventListener("mousemove", (e) => {
 });
 
 function removeSelectedShip() {
+  removeShipHandlers();
   selectedShipElem.remove();
 
   let [row, column] = user.shipInfo.origin[selectedShip];
@@ -134,44 +125,17 @@ function removeSelectedShip() {
   );
 }
 
+// to prevent memory leaks
+function removeShipHandlers() {
+  const rotateButton = document.querySelector(`#board #${selectedShip}Ship .rotate`);
+  const removeButton = document.querySelector(`#board #${selectedShip}Ship .remove`);
+  rotateButton.removeEventListener("click", rotateButtonHandler);
+  removeButton.removeEventListener("click", removeButtonHandler);
+}
+
 document.body.addEventListener("mouseup", (e) => {
   canMoveShip = false; // reset
   hideAllShipPopups(); // reset
-
-  // if clicked rotate button
-  if (willRotate && e.target.closest(".rotate")) {
-    selectedShipElem = e.target.closest(".ship");
-    selectedShip = selectedShipElem.id[0];
-    removeSelectedShip();
-
-    shipCellOrigin = user.shipInfo.origin[selectedShip];
-    rotateSelectedShip();
-
-    adjustShipCellOriginToInsideBoard();
-    adjustShipCellOriginToAvailableSpace();
-
-    modifyShip(shipCellOrigin);
-
-    selectedShip = null; //reset
-    willRotate = false; // reset
-    return;
-  }
-
-  // if clicked remove button
-  if (willRemove && e.target.closest(".remove")) {
-    selectedShipElem = e.target.closest(".ship");
-    selectedShip = selectedShipElem.id[0];
-    removeSelectedShip();
-
-    user.shipInfo.orientation[selectedShip] = "h";
-
-    const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
-    menuShipElem.classList.remove("placed");
-
-    selectedShip = null; //reset
-    willRemove = false; // reset
-    return;
-  }
 
   if (selectedShip) {
     // if clicked ship, show popup
@@ -316,8 +280,40 @@ function createShipPopup() {
   removeButton.className = "remove";
   rotateButton.append(parsedRotateSVG);
   removeButton.append(parsedRemoveSVG);
+  rotateButton.addEventListener("click", rotateButtonHandler);
+  removeButton.addEventListener("click", removeButtonHandler);
+
   const popupObj = document.createElement("div");
   popupObj.className = "popup";
   popupObj.append(rotateButton, removeButton);
   return popupObj;
+}
+
+function rotateButtonHandler(e) {
+  selectedShipElem = e.target.closest(".ship");
+  selectedShip = selectedShipElem.id[0];
+  removeSelectedShip();
+
+  shipCellOrigin = user.shipInfo.origin[selectedShip];
+  rotateSelectedShip();
+
+  adjustShipCellOriginToInsideBoard();
+  adjustShipCellOriginToAvailableSpace();
+
+  modifyShip(shipCellOrigin);
+
+  selectedShip = null; //reset
+}
+
+function removeButtonHandler(e) {
+  selectedShipElem = e.target.closest(".ship");
+  selectedShip = selectedShipElem.id[0];
+  removeSelectedShip();
+
+  user.shipInfo.orientation[selectedShip] = "h";
+
+  const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
+  menuShipElem.classList.remove("placed");
+
+  selectedShip = null; //reset
 }
