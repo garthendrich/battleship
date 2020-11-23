@@ -14,6 +14,8 @@
   * html two boards
 */
 
+"use strict";
+
 class Player {
   constructor() {
     this.shipsTable = Array(10)
@@ -176,8 +178,8 @@ document.body.addEventListener("mouseup", (e) => {
     if (e.target.classList.contains("ship") && e.target.id[0] == selectedShip) e.target.firstChild.removeAttribute("style");
     // if dragged ship to cell
     else if (selectedShip && e.target.nodeName == "TD") {
-      rowUnderCursor = e.target.closest("tr").rowIndex;
-      columnUnderCursor = e.target.cellIndex;
+      let rowUnderCursor = e.target.closest("tr").rowIndex;
+      let columnUnderCursor = e.target.cellIndex;
       shipCellOrigin = [rowUnderCursor, columnUnderCursor];
       adjustShipCellOriginToInsideBoard(shipPointUnderCursorOnMousedown);
 
