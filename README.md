@@ -1,1 +1,3 @@
-# battleship
+# Battleship
+
+Ongoing project.
