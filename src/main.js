@@ -152,33 +152,33 @@ document.body.addEventListener("mouseup", (e) => {
     } else if (prevShipCellOrigin) modifyShip(prevShipCellOrigin);
   }
 
-  selectedShip = prevShipCellOrigin = null; // reset
-  shipPointUnderCursorOnMousedown = undefined; // reset (undefined so default value of adjustShipCellOriginToInsideBoard() will work)
+  selectedShip = prevShipCellOrigin = shipPointUnderCursorOnMousedown = null; // reset
 });
 
 function rotateSelectedShip() {
-  const lengthFromMiddleOfShip = Math.round(user.shipInfo.length[selectedShip] / 2) - 1;
+  const middleOfShip = Math.round(user.shipInfo.length[selectedShip] / 2);
   runBySelectedShipOrientation(
     () => {
       user.shipInfo.orientation[selectedShip] = "v";
       selectedShipElem.classList.add("vert");
 
-      shipCellOrigin[1] += lengthFromMiddleOfShip;
-      shipCellOrigin[0] -= lengthFromMiddleOfShip;
+      shipCellOrigin[1] += middleOfShip - 1;
     },
     () => {
       user.shipInfo.orientation[selectedShip] = "h";
       selectedShipElem.classList.remove("vert");
 
-      shipCellOrigin[0] += lengthFromMiddleOfShip;
-      shipCellOrigin[1] -= lengthFromMiddleOfShip;
+      shipCellOrigin[0] += middleOfShip - 1;
     }
   );
 }
 
 var shipCellOrigin;
 // adjust ship cell origin to avoid ship outside board
-function adjustShipCellOriginToInsideBoard(shipPoint = 1) {
+function adjustShipCellOriginToInsideBoard(shipPoint) {
+  const middleOfShip = Math.round(user.shipInfo.length[selectedShip] / 2);
+  if (!shipPoint) shipPoint = middleOfShip;
+
   let [row, column] = shipCellOrigin;
   runBySelectedShipOrientation(
     () => {
