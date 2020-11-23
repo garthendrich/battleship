@@ -14,39 +14,44 @@
   * html two boards
 */
 
-var shipsTable = Array(10)
-  .fill()
-  .map(() => Array(10).fill(0));
-var shotsTable = Array(10)
-  .fill()
-  .map(() => Array(10).fill(0));
+class Player {
+  constructor() {
+    this.shipsTable = Array(10)
+      .fill()
+      .map(() => Array(10).fill(0));
+    this.shotsTable = Array(10)
+      .fill()
+      .map(() => Array(10).fill(0));
+    this.shipInfo = {
+      origin: {
+        // [row, column]
+        c: null,
+        b: null,
+        d: null,
+        s: null,
+        p: null,
+      },
+      orientation: {
+        c: "h",
+        b: "h",
+        d: "h",
+        s: "h",
+        p: "h",
+      },
+      length: {
+        c: 5,
+        b: 4,
+        d: 3,
+        s: 3,
+        p: 2,
+      },
+    };
+  }
+}
 
-const shipInfo = {
-  origin: {
-    // [row, column]
-    c: null,
-    b: null,
-    d: null,
-    s: null,
-    p: null,
-  },
-  orientation: {
-    c: "h",
-    b: "h",
-    d: "h",
-    s: "h",
-    p: "h",
-  },
-  length: {
-    c: 5,
-    b: 4,
-    d: 3,
-    s: 3,
-    p: 2,
-  },
-};
+const user = new Player();
 
-const runBySelectedShipOrientation = (h, v) => (shipInfo.orientation[selectedShip] == "h" ? h() : v());
+const runBySelectedShipOrientation = (h, v) => (user.shipInfo.orientation[selectedShip] == "h" ? h() : v());
 
 var selectedShip;
 // mousedown on ship menu item
@@ -83,7 +88,7 @@ document.body.addEventListener("mousedown", (e) => {
     canMoveShip = true;
     selectedShip = selectedShipElem.id[0];
     shipPointUnderCursorOnMousedown = getCurrentShipPointUnderCursor(e);
-    prevShipCellOrigin = shipInfo.origin[selectedShip];
+    prevShipCellOrigin = user.shipInfo.origin[selectedShip];
   }
 });
 
@@ -116,13 +121,13 @@ document.body.addEventListener("mousemove", (e) => {
 function removeSelectedShip() {
   selectedShipElem.remove();
 
-  let [row, column] = shipInfo.origin[selectedShip];
+  let [row, column] = user.shipInfo.origin[selectedShip];
   runBySelectedShipOrientation(
     () => {
-      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row][column + i] = 0;
+      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row][column + i] = 0;
     },
     () => {
-      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row + i][column] = 0;
+      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row + i][column] = 0;
     }
   );
 }
@@ -137,7 +142,7 @@ document.body.addEventListener("mouseup", (e) => {
     selectedShip = selectedShipElem.id[0];
     removeSelectedShip();
 
-    shipCellOrigin = shipInfo.origin[selectedShip];
+    shipCellOrigin = user.shipInfo.origin[selectedShip];
     rotateSelectedShip();
 
     adjustShipCellOriginToInsideBoard();
@@ -156,7 +161,7 @@ document.body.addEventListener("mouseup", (e) => {
     selectedShip = selectedShipElem.id[0];
     removeSelectedShip();
 
-    shipInfo.orientation[selectedShip] = "h";
+    user.shipInfo.orientation[selectedShip] = "h";
 
     const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
     menuShipElem.classList.remove("placed");
@@ -186,17 +191,17 @@ document.body.addEventListener("mouseup", (e) => {
 });
 
 function rotateSelectedShip() {
-  const lengthFromMiddleOfShip = Math.round(shipInfo.length[selectedShip] / 2) - 1;
+  const lengthFromMiddleOfShip = Math.round(user.shipInfo.length[selectedShip] / 2) - 1;
   runBySelectedShipOrientation(
     () => {
-      shipInfo.orientation[selectedShip] = "v";
+      user.shipInfo.orientation[selectedShip] = "v";
       selectedShipElem.classList.add("vert");
 
       shipCellOrigin[1] += lengthFromMiddleOfShip;
       shipCellOrigin[0] -= lengthFromMiddleOfShip;
     },
     () => {
-      shipInfo.orientation[selectedShip] = "h";
+      user.shipInfo.orientation[selectedShip] = "h";
       selectedShipElem.classList.remove("vert");
 
       shipCellOrigin[0] += lengthFromMiddleOfShip;
@@ -213,18 +218,18 @@ function adjustShipCellOriginToInsideBoard(shipPoint = 1) {
     () => {
       // adjust column
       let firstShipColumn = column - (shipPoint - 1);
-      let lastShipColumn = column - shipPoint + shipInfo.length[selectedShip];
+      let lastShipColumn = column - shipPoint + user.shipInfo.length[selectedShip];
 
-      if (lastShipColumn > 9) column = 9 - (shipInfo.length[selectedShip] - 1);
+      if (lastShipColumn > 9) column = 9 - (user.shipInfo.length[selectedShip] - 1);
       else if (firstShipColumn < 0) column = 0;
       else column = firstShipColumn;
     },
     () => {
       // adjust row
       let firstShipRow = row - (shipPoint - 1);
-      let lastShipRow = row - shipPoint + shipInfo.length[selectedShip];
+      let lastShipRow = row - shipPoint + user.shipInfo.length[selectedShip];
 
-      if (lastShipRow > 9) row = 9 - (shipInfo.length[selectedShip] - 1);
+      if (lastShipRow > 9) row = 9 - (user.shipInfo.length[selectedShip] - 1);
       else if (firstShipRow < 0) row = 0;
       else row = firstShipRow;
     }
@@ -242,13 +247,13 @@ function adjustShipCellOriginToAvailableSpace() {
     () => ([cellForwards, cellSideways] = [0, 1])
   );
 
-  let cellChecksInOneLine = 9 - shipInfo.length[selectedShip];
+  let cellChecksInOneLine = 9 - user.shipInfo.length[selectedShip];
   while (doesSelectedShipOverlapOthers()) {
     if (!cellChecksInOneLine) {
       shipCellOrigin[cellSideways] >= 9 ? (shipCellOrigin[cellSideways] = 0) : shipCellOrigin[cellSideways]++;
       cellChecksInOneLine = 9;
     }
-    shipCellOrigin[cellForwards] >= 9 - (shipInfo.length[selectedShip] - 1)
+    shipCellOrigin[cellForwards] >= 9 - (user.shipInfo.length[selectedShip] - 1)
       ? (shipCellOrigin[cellForwards] = 0)
       : shipCellOrigin[cellForwards]++;
     cellChecksInOneLine--;
@@ -258,9 +263,9 @@ function adjustShipCellOriginToAvailableSpace() {
 function doesSelectedShipOverlapOthers() {
   let [row, column] = shipCellOrigin;
   return runBySelectedShipOrientation(
-    () => shipsTable[row].slice(column, column + shipInfo.length[selectedShip]).includes(1),
+    () => user.shipsTable[row].slice(column, column + user.shipInfo.length[selectedShip]).includes(1),
     () => {
-      for (let i = row; i < row + shipInfo.length[selectedShip]; i++) if (shipsTable[i][column] == 1) return true;
+      for (let i = row; i < row + user.shipInfo.length[selectedShip]; i++) if (user.shipsTable[i][column] == 1) return true;
       return false;
     }
   );
@@ -269,15 +274,15 @@ function doesSelectedShipOverlapOthers() {
 function modifyShip([row, column]) {
   runBySelectedShipOrientation(
     () => {
-      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row][column + i] = 1;
+      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row][column + i] = 1;
     },
     () => {
-      for (let i = 0; i < shipInfo.length[selectedShip]; i++) shipsTable[row + i][column] = 1;
+      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row + i][column] = 1;
     }
   );
-  shipInfo.origin[selectedShip] = [row, column];
+  user.shipInfo.origin[selectedShip] = [row, column];
 
-  console.table(shipsTable);
+  console.table(user.shipsTable);
 
   document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
 
