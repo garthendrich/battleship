@@ -207,23 +207,22 @@ function adjustShipCellOriginToInsideBoard(shipPoint) {
 
 // adjust ship cell origin so ship would not overlap with other ships
 function adjustShipCellOriginToAvailableSpace() {
-  // 0: row, 1: column
   let cellForwards, cellSideways;
   runBySelectedShipOrientation(
+    // 0: row, 1: column
     () => ([cellForwards, cellSideways] = [1, 0]),
     () => ([cellForwards, cellSideways] = [0, 1])
   );
 
-  let cellChecksInOneLine = 9 - user.shipInfo.length[selectedShip];
+  let firstIndex = shipCellOrigin[cellForwards];
+  let highestIndex = 10 - user.shipInfo.length[selectedShip];
   while (doesSelectedShipOverlapOthers()) {
-    if (!cellChecksInOneLine) {
-      shipCellOrigin[cellSideways] >= 9 ? (shipCellOrigin[cellSideways] = 0) : shipCellOrigin[cellSideways]++;
-      cellChecksInOneLine = 9;
-    }
-    shipCellOrigin[cellForwards] >= 9 - (user.shipInfo.length[selectedShip] - 1)
-      ? (shipCellOrigin[cellForwards] = 0)
-      : shipCellOrigin[cellForwards]++;
-    cellChecksInOneLine--;
+    shipCellOrigin[cellForwards]++;
+    shipCellOrigin[cellForwards] %= highestIndex + 1; // if ship extends outside board, reset back to 0
+
+    // if every possible index is checked, move to next line
+    if (shipCellOrigin[cellForwards] == firstIndex)
+      shipCellOrigin[cellSideways] == 9 ? (shipCellOrigin[cellSideways] = 0) : shipCellOrigin[cellSideways]++;
   }
 }
 
