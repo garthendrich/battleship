@@ -11,7 +11,17 @@
   padding: 0;
   box-sizing: border-box;
   user-select: none;
+  outline: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+svg {
+  height: 80%;
+  width: 80%;
+}
+
+button {
+  background: none;
 }
 
 #shipMenu {
@@ -19,13 +29,20 @@
   left: 0;
   top: 0;
   height: 100%;
+  width: 15vw;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
   border-right: 1px solid black;
 }
 
-#shipMenu li {
+#shipMenu ul {
+  width: 100%;
+}
+
+#shipMenu li,
+button#random {
   list-style-type: none;
   padding: 10px;
   margin: 10px;
@@ -107,8 +124,6 @@ td {
 }
 
 .ship .popup svg {
-  height: 80%;
-  width: 80%;
   fill: #007f49;
 }
 
