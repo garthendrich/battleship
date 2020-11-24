@@ -6,15 +6,18 @@
  */
 
 /*
-  TODO
-  * ship randomizer
-  * class Player
-  * class User (subclass)
-  * class AI (subclass)
-  * html two boards
-*/
+ TODO
+ * implement BEM
+ * move randomizer in Player class as function
+ * remover of all ships
+ * class User (subclass)
+ * class AI (subclass)
+ * html two boards
+ */
 
 "use strict";
+
+const shipNames = "cbdsp";
 
 class Player {
   constructor() {
@@ -111,7 +114,7 @@ document.body.addEventListener("mousemove", (e) => {
 });
 
 function removeSelectedShip() {
-  removeShipHandlers();
+  removeSelectedShipHandlers();
   selectedShipElem.remove();
 
   let [row, column] = user.shipInfo.origin[selectedShip];
@@ -123,10 +126,12 @@ function removeSelectedShip() {
       for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row + i][column] = 0;
     }
   );
+
+  user.shipInfo.origin[selectedShip] = null;
 }
 
 // to prevent memory leaks
-function removeShipHandlers() {
+function removeSelectedShipHandlers() {
   const rotateButton = document.querySelector(`#board #${selectedShip}Ship .rotate`);
   const removeButton = document.querySelector(`#board #${selectedShip}Ship .remove`);
   rotateButton.removeEventListener("click", rotateButtonHandler);
@@ -291,9 +296,9 @@ function createShipPopup() {
 function rotateButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
   selectedShip = selectedShipElem.id[0];
-  removeSelectedShip();
-
   shipCellOrigin = user.shipInfo.origin[selectedShip];
+
+  removeSelectedShip();
   rotateSelectedShip();
 
   adjustShipCellOriginToInsideBoard();
@@ -316,3 +321,31 @@ function removeButtonHandler(e) {
 
   selectedShip = null; //reset
 }
+
+const randomizeButton = document.querySelector(".arrange #random");
+randomizeButton.addEventListener("click", () => {
+  // remove all ships
+  for (let ship of shipNames) {
+    if (!user.shipInfo.origin[ship]) continue;
+    selectedShip = ship;
+    selectedShipElem = document.querySelector(`#board #${selectedShip}Ship`);
+    removeSelectedShip();
+  }
+
+  // randomize orientations
+  for (let ship of shipNames) user.shipInfo.orientation[ship] = (Math.floor(Math.random() * 2) && "h") || "v";
+
+  // randomize ship cell origins
+  for (let i = 0; i < 5; i++) {
+    do {
+      shipCellOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+      selectedShip = shipNames[i];
+      adjustShipCellOriginToInsideBoard();
+    } while (doesSelectedShipOverlapOthers());
+    modifyShip(shipCellOrigin);
+  }
+
+  hideAllShipPopups();
+
+  selectedShip = null; // reset
+});
