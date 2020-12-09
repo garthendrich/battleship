@@ -50,23 +50,115 @@ class Player {
         p: 2,
       },
     };
+
+    this.selectedShip;
+    this.shipOrigin;
+  }
+
+  runBySelectedShipOrientation(h, v) {
+    return this.shipInfo.orientation[this.selectedShip] == "h" ? h() : v();
+  }
+
+  // adjust ship cell origin to avoid ship outside board
+  adjustShipCellOriginToInsideBoard(shipPoint) {
+    const middleOfShip = Math.round(this.shipInfo.length[this.selectedShip] / 2);
+    if (!shipPoint) shipPoint = middleOfShip;
+
+    let [row, column] = this.shipOrigin;
+    this.runBySelectedShipOrientation(
+      () => {
+        // adjust column
+        const firstShipColumn = column - (shipPoint - 1);
+        const lastShipColumn = column - shipPoint + this.shipInfo.length[this.selectedShip];
+
+        if (lastShipColumn > 9) column = 9 - (this.shipInfo.length[this.selectedShip] - 1);
+        else if (firstShipColumn < 0) column = 0;
+        else column = firstShipColumn;
+      },
+      () => {
+        // adjust row
+        const firstShipRow = row - (shipPoint - 1);
+        const lastShipRow = row - shipPoint + this.shipInfo.length[this.selectedShip];
+
+        if (lastShipRow > 9) row = 9 - (this.shipInfo.length[this.selectedShip] - 1);
+        else if (firstShipRow < 0) row = 0;
+        else row = firstShipRow;
+      }
+    );
+
+    this.shipOrigin = [row, column];
+  }
+
+  // adjust ship cell origin so ship would not overlap with other ships
+  adjustShipCellOriginToAvailableSpace() {
+    let shipForwardDir, shipSidewayDir;
+    this.runBySelectedShipOrientation(
+      // 0: row, 1: column
+      () => ([shipForwardDir, shipSidewayDir] = [1, 0]),
+      () => ([shipForwardDir, shipSidewayDir] = [0, 1])
+    );
+
+    let firstIndex = this.shipOrigin[shipForwardDir];
+    let highestIndex = 10 - this.shipInfo.length[this.selectedShip];
+    while (this.doesSelectedShipOverlapOthers()) {
+      this.shipOrigin[shipForwardDir]++;
+      this.shipOrigin[shipForwardDir] %= highestIndex + 1; // if ship extends outside board, reset back to 0
+
+      // if every possible index is checked, move to next line
+      if (this.shipOrigin[shipForwardDir] == firstIndex)
+        this.shipOrigin[shipSidewayDir] == 9 ? (this.shipOrigin[shipSidewayDir] = 0) : this.shipOrigin[shipSidewayDir]++;
+    }
+  }
+
+  doesSelectedShipOverlapOthers() {
+    const [row, column] = this.shipOrigin;
+    return this.runBySelectedShipOrientation(
+      () => this.shipsTable[row].slice(column, column + this.shipInfo.length[this.selectedShip]).includes(1),
+      () => {
+        for (let i = row; i < row + this.shipInfo.length[this.selectedShip]; i++) if (this.shipsTable[i][column] == 1) return true;
+        return false;
+      }
+    );
+  }
+
+  addShip([row, column]) {
+    this.runBySelectedShipOrientation(
+      () => {
+        for (let i = 0; i < this.shipInfo.length[this.selectedShip]; i++) this.shipsTable[row][column + i] = 1;
+      },
+      () => {
+        for (let i = 0; i < this.shipInfo.length[this.selectedShip]; i++) this.shipsTable[row + i][column] = 1;
+      }
+    );
+    this.shipInfo.origin[this.selectedShip] = [row, column];
   }
 }
 
-const user = new Player();
+class User extends Player {
+  addShip(shipOrigin) {
+    const [row, column] = shipOrigin ? shipOrigin : this.shipOrigin;
+    super.addShip([row, column]);
 
-const runBySelectedShipOrientation = (h, v) => (user.shipInfo.orientation[selectedShip] == "h" ? h() : v());
+    console.table(this.shipsTable);
 
-var selectedShip;
+    document.querySelector(`.board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
+
+    const menuShipElem = document.querySelector(`.ship-menu__item#${this.selectedShip}`);
+    menuShipElem.classList.add("ship-menu__item--placed");
+  }
+}
+
+const user = new User();
+
 // mousedown on ship menu item
 const menuShipElems = document.querySelectorAll(".ship-menu__item");
 menuShipElems.forEach((elem) =>
   elem.addEventListener("mousedown", (e) => {
-    if (!e.target.classList.contains(".ship-menu__item--placed")) selectedShip = elem.id;
+    if (!e.target.classList.contains(".ship-menu__item--placed")) user.selectedShip = elem.id;
   })
 );
 
-var selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCellOrigin;
+var selectedShipElem, canMoveShip, shipPointOnMousedown, prevShipOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest(".board")) {
@@ -75,15 +167,15 @@ document.body.addEventListener("mousedown", (e) => {
   }
 
   // if previous dragging did not mouseup on body, skip collecting new ship info
-  if (selectedShip) return;
+  if (user.selectedShip) return;
 
   // if mousedown on ship, collect ship info
   selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
   if (selectedShipElem) {
     canMoveShip = true;
-    selectedShip = selectedShipElem.id;
-    shipPointUnderCursorOnMousedown = getCurrentShipPointUnderCursor(e);
-    prevShipCellOrigin = user.shipInfo.origin[selectedShip];
+    user.selectedShip = selectedShipElem.id;
+    shipPointOnMousedown = getCurrentShipPointUnderCursor(e);
+    prevShipOrigin = user.shipInfo.origin[user.selectedShip];
   }
 });
 
@@ -93,7 +185,7 @@ function hideAllShipPopups() {
 }
 
 function getCurrentShipPointUnderCursor(e) {
-  return runBySelectedShipOrientation(
+  return user.runBySelectedShipOrientation(
     () => Math.ceil((e.clientX - selectedShipElem.getBoundingClientRect().left) / selectedShipElem.getBoundingClientRect().height),
     () => Math.ceil((e.clientY - selectedShipElem.getBoundingClientRect().top) / selectedShipElem.getBoundingClientRect().width)
   );
@@ -102,9 +194,8 @@ function getCurrentShipPointUnderCursor(e) {
 document.body.addEventListener("mousemove", (e) => {
   // if mousedown on ship
   if (canMoveShip) {
-    // willMoveShip: cursor outside selected ship || cursor outside cell where it started mousedown
-    let willMoveShip = !(e.target.id == selectedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e);
-    if (willMoveShip) {
+    // if ship will be moved -- if cursor outside selected ship || cursor outside cell where it started mousedown
+    if (!(e.target.id == user.selectedShip) || shipPointOnMousedown != getCurrentShipPointUnderCursor(e)) {
       canMoveShip = false; // reset; pass only once
       removeSelectedShip();
       hideAllShipPopups();
@@ -116,23 +207,23 @@ function removeSelectedShip() {
   removeSelectedShipHandlers();
   selectedShipElem.remove();
 
-  let [row, column] = user.shipInfo.origin[selectedShip];
-  runBySelectedShipOrientation(
+  let [row, column] = user.shipInfo.origin[user.selectedShip];
+  user.runBySelectedShipOrientation(
     () => {
-      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row][column + i] = 0;
+      for (let i = 0; i < user.shipInfo.length[user.selectedShip]; i++) user.shipsTable[row][column + i] = 0;
     },
     () => {
-      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row + i][column] = 0;
+      for (let i = 0; i < user.shipInfo.length[user.selectedShip]; i++) user.shipsTable[row + i][column] = 0;
     }
   );
 
-  user.shipInfo.origin[selectedShip] = null;
+  user.shipInfo.origin[user.selectedShip] = null;
 }
 
 // to prevent memory leaks
 function removeSelectedShipHandlers() {
-  const rotateButton = document.querySelector(`.ship#${selectedShip} .ship__button--rotate`);
-  const removeButton = document.querySelector(`.ship#${selectedShip} .ship__button--remove`);
+  const rotateButton = document.querySelector(`.ship#${user.selectedShip} .ship__button--rotate`);
+  const removeButton = document.querySelector(`.ship#${user.selectedShip} .ship__button--remove`);
   rotateButton.removeEventListener("click", rotateButtonHandler);
   removeButton.removeEventListener("click", removeButtonHandler);
 }
@@ -141,134 +232,52 @@ document.body.addEventListener("mouseup", (e) => {
   canMoveShip = false; // reset
   hideAllShipPopups();
 
-  if (selectedShip) {
+  if (user.selectedShip) {
     // if mouseup on same ship
-    if (e.target.classList.contains("ship") && e.target.id == selectedShip) e.target.firstChild.style.display = null;
+    if (e.target.classList.contains("ship") && e.target.id == user.selectedShip) e.target.firstChild.style.display = null;
     // else if mouseup on cell
     else if (e.target.nodeName == "TD") {
-      let rowUnderCursor = e.target.closest("tr").rowIndex;
-      let columnUnderCursor = e.target.cellIndex;
-      shipCellOrigin = [rowUnderCursor, columnUnderCursor];
-      adjustShipCellOriginToInsideBoard(shipPointUnderCursorOnMousedown);
+      const rowUnderCursor = e.target.closest("tr").rowIndex;
+      const columnUnderCursor = e.target.cellIndex;
+      user.shipOrigin = [rowUnderCursor, columnUnderCursor];
+      user.adjustShipCellOriginToInsideBoard(shipPointOnMousedown);
 
-      if (!doesSelectedShipOverlapOthers()) modifyShip(shipCellOrigin);
-      else if (prevShipCellOrigin) modifyShip(prevShipCellOrigin);
+      if (!user.doesSelectedShipOverlapOthers()) user.addShip();
+      else if (prevShipOrigin) user.addShip(prevShipOrigin);
     } // else if mouseup not on cell
-    else if (prevShipCellOrigin) modifyShip(prevShipCellOrigin);
+    else if (prevShipOrigin) user.addShip(prevShipOrigin);
   }
 
-  selectedShip = prevShipCellOrigin = shipPointUnderCursorOnMousedown = null; // reset
+  user.selectedShip = prevShipOrigin = shipPointOnMousedown = null; // reset
 });
 
 function rotateSelectedShip() {
-  const middleOfShip = Math.round(user.shipInfo.length[selectedShip] / 2);
-  runBySelectedShipOrientation(
+  const middleOfShip = Math.round(user.shipInfo.length[user.selectedShip] / 2);
+  user.runBySelectedShipOrientation(
     () => {
-      user.shipInfo.orientation[selectedShip] = "v";
+      user.shipInfo.orientation[user.selectedShip] = "v";
       selectedShipElem.classList.remove("ship--hori");
       selectedShipElem.classList.add("ship--vert");
 
-      shipCellOrigin[1] += middleOfShip - 1;
+      user.shipOrigin[1] += middleOfShip - 1;
     },
     () => {
-      user.shipInfo.orientation[selectedShip] = "h";
+      user.shipInfo.orientation[user.selectedShip] = "h";
       selectedShipElem.classList.remove("ship--vert");
       selectedShipElem.classList.add("ship--hori");
 
-      shipCellOrigin[0] += middleOfShip - 1;
+      user.shipOrigin[0] += middleOfShip - 1;
     }
   );
-}
-
-var shipCellOrigin;
-// adjust ship cell origin to avoid ship outside board
-function adjustShipCellOriginToInsideBoard(shipPoint) {
-  const middleOfShip = Math.round(user.shipInfo.length[selectedShip] / 2);
-  if (!shipPoint) shipPoint = middleOfShip;
-
-  let [row, column] = shipCellOrigin;
-  runBySelectedShipOrientation(
-    () => {
-      // adjust column
-      let firstShipColumn = column - (shipPoint - 1);
-      let lastShipColumn = column - shipPoint + user.shipInfo.length[selectedShip];
-
-      if (lastShipColumn > 9) column = 9 - (user.shipInfo.length[selectedShip] - 1);
-      else if (firstShipColumn < 0) column = 0;
-      else column = firstShipColumn;
-    },
-    () => {
-      // adjust row
-      let firstShipRow = row - (shipPoint - 1);
-      let lastShipRow = row - shipPoint + user.shipInfo.length[selectedShip];
-
-      if (lastShipRow > 9) row = 9 - (user.shipInfo.length[selectedShip] - 1);
-      else if (firstShipRow < 0) row = 0;
-      else row = firstShipRow;
-    }
-  );
-
-  shipCellOrigin = [row, column];
-}
-
-// adjust ship cell origin so ship would not overlap with other ships
-function adjustShipCellOriginToAvailableSpace() {
-  let cellForwards, cellSideways;
-  runBySelectedShipOrientation(
-    // 0: row, 1: column
-    () => ([cellForwards, cellSideways] = [1, 0]),
-    () => ([cellForwards, cellSideways] = [0, 1])
-  );
-
-  let firstIndex = shipCellOrigin[cellForwards];
-  let highestIndex = 10 - user.shipInfo.length[selectedShip];
-  while (doesSelectedShipOverlapOthers()) {
-    shipCellOrigin[cellForwards]++;
-    shipCellOrigin[cellForwards] %= highestIndex + 1; // if ship extends outside board, reset back to 0
-
-    // if every possible index is checked, move to next line
-    if (shipCellOrigin[cellForwards] == firstIndex)
-      shipCellOrigin[cellSideways] == 9 ? (shipCellOrigin[cellSideways] = 0) : shipCellOrigin[cellSideways]++;
-  }
-}
-
-function doesSelectedShipOverlapOthers() {
-  let [row, column] = shipCellOrigin;
-  return runBySelectedShipOrientation(
-    () => user.shipsTable[row].slice(column, column + user.shipInfo.length[selectedShip]).includes(1),
-    () => {
-      for (let i = row; i < row + user.shipInfo.length[selectedShip]; i++) if (user.shipsTable[i][column] == 1) return true;
-      return false;
-    }
-  );
-}
-
-function modifyShip([row, column]) {
-  runBySelectedShipOrientation(
-    () => {
-      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row][column + i] = 1;
-    },
-    () => {
-      for (let i = 0; i < user.shipInfo.length[selectedShip]; i++) user.shipsTable[row + i][column] = 1;
-    }
-  );
-  user.shipInfo.origin[selectedShip] = [row, column];
-
-  console.table(user.shipsTable);
-
-  document.querySelector(`.board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
-
-  const menuShipElem = document.querySelector(`.ship-menu__item#${selectedShip}`);
-  menuShipElem.classList.add("ship-menu__item--placed");
 }
 
 function createShip() {
   const newShipObj = document.createElement("div");
-  runBySelectedShipOrientation(
+  user.runBySelectedShipOrientation(
     () => newShipObj.classList.add("ship", "ship--hori"),
     () => newShipObj.classList.add("ship", "ship--vert")
   );
-  newShipObj.id = selectedShip;
+  newShipObj.id = user.selectedShip;
   newShipObj.append(createShipPopup());
   return newShipObj;
 }
@@ -296,31 +305,31 @@ function createShipPopup() {
 
 function rotateButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
-  selectedShip = selectedShipElem.id;
-  shipCellOrigin = user.shipInfo.origin[selectedShip];
+  user.selectedShip = selectedShipElem.id;
+  user.shipOrigin = user.shipInfo.origin[user.selectedShip];
 
   removeSelectedShip();
   rotateSelectedShip();
 
-  adjustShipCellOriginToInsideBoard();
-  adjustShipCellOriginToAvailableSpace();
+  user.adjustShipCellOriginToInsideBoard();
+  user.adjustShipCellOriginToAvailableSpace();
 
-  modifyShip(shipCellOrigin);
+  user.addShip();
 
-  selectedShip = null; //reset
+  user.selectedShip = null; //reset
 }
 
 function removeButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
-  selectedShip = selectedShipElem.id;
+  user.selectedShip = selectedShipElem.id;
   removeSelectedShip();
 
-  user.shipInfo.orientation[selectedShip] = "h";
+  user.shipInfo.orientation[user.selectedShip] = "h";
 
-  const menuShipElem = document.querySelector(`.ship-menu__item#${selectedShip}`);
+  const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
   menuShipElem.classList.remove("ship-menu__item--placed");
 
-  selectedShip = null; //reset
+  user.selectedShip = null; //reset
 }
 
 const randomizeButton = document.querySelector(".ship-menu__button--random");
@@ -328,8 +337,8 @@ randomizeButton.addEventListener("click", () => {
   // remove all placed ships
   for (let ship of shipNames) {
     if (!user.shipInfo.origin[ship]) continue; // if not placed
-    selectedShip = ship;
-    selectedShipElem = document.querySelector(`.ship#${selectedShip}`);
+    user.selectedShip = ship;
+    selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
     removeSelectedShip();
   }
 
@@ -339,14 +348,14 @@ randomizeButton.addEventListener("click", () => {
   // randomize ship cell origins
   for (let i = 0; i < 5; i++) {
     do {
-      shipCellOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-      selectedShip = shipNames[i];
-      adjustShipCellOriginToInsideBoard();
-    } while (doesSelectedShipOverlapOthers());
-    modifyShip(shipCellOrigin);
+      user.shipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+      user.selectedShip = shipNames[i];
+      user.adjustShipCellOriginToInsideBoard();
+    } while (user.doesSelectedShipOverlapOthers());
+    user.addShip();
   }
 
   hideAllShipPopups();
 
-  selectedShip = null; // reset
+  user.selectedShip = null; // reset
 });
