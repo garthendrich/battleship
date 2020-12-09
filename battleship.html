@@ -7,16 +7,16 @@
     <title>Battleship</title>
   </head>
   <body>
-    <div id="shipMenu">
-      <ul>
-        <li id="cMenu">Carrier</li>
-        <li id="bMenu">Battleship</li>
-        <li id="dMenu">Destroyer</li>
-        <li id="sMenu">Submarine</li>
-        <li id="pMenu">Patrol Boat</li>
+    <div class="ship-menu">
+      <ul class="ship-menu__list">
+        <li class="ship-menu__item" id="c">Carrier</li>
+        <li class="ship-menu__item" id="b">Battleship</li>
+        <li class="ship-menu__item" id="d">Destroyer</li>
+        <li class="ship-menu__item" id="s">Submarine</li>
+        <li class="ship-menu__item" id="p">Patrol Boat</li>
       </ul>
-      <div class="arrange">
-        <button id="random">
+      <div class="ship-menu__buttons">
+        <button class="ship-menu__button--random">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
             <path
               d="M17,17h-1.559l-9.7-10.673C5.552,6.119,5.283,6,5.001,6H2v2h2.559l4.09,4.5l-4.09,4.501H2v2h3.001 c0.282,0,0.551-0.119,0.74-0.327L10,13.987l4.259,4.686C14.448,18.881,14.717,19,14.999,19H17v3l5-4l-5-4V17z"
@@ -26,8 +26,8 @@
         </button>
       </div>
     </div>
-    <div id="main">
-      <table id="board">
+    <div class="board-container">
+      <table class="board">
         <tr>
           <td></td>
           <td></td>

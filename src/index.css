@@ -24,7 +24,7 @@ button {
   background: none;
 }
 
-#shipMenu {
+.ship-menu {
   position: absolute;
   left: 0;
   top: 0;
@@ -37,12 +37,12 @@ button {
   border-right: 1px solid black;
 }
 
-#shipMenu ul {
+.ship-menu__list {
   width: 100%;
 }
 
-#shipMenu li,
-button#random {
+.ship-menu__item,
+.ship-menu__button {
   list-style-type: none;
   padding: 10px;
   margin: 10px;
@@ -51,18 +51,18 @@ button#random {
   text-align: center;
 }
 
-#shipMenu li.placed {
+.ship-menu__item.placed {
   opacity: 0.3;
 }
 
-#main {
+.board-container {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 10vh;
 }
 
-#board {
+.board {
   height: calc(var(--cell-size) * 10);
   width: calc(var(--cell-size) * 10);
   border-collapse: collapse;
@@ -83,7 +83,7 @@ td {
   z-index: 1;
 }
 
-.ship.vert {
+.ship--vert {
   transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
   transform-origin: top left;
 }

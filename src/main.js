@@ -60,17 +60,17 @@ const runBySelectedShipOrientation = (h, v) => (user.shipInfo.orientation[select
 
 var selectedShip;
 // mousedown on ship menu item
-const menuShipElems = document.querySelectorAll("#shipMenu ul li");
+const menuShipElems = document.querySelectorAll(".ship-menu__item");
 menuShipElems.forEach((elem) =>
   elem.addEventListener("mousedown", (e) => {
-    if (!e.target.classList.contains("placed")) selectedShip = elem.id[0];
+    if (!e.target.classList.contains("placed")) selectedShip = elem.id;
   })
 );
 
 var selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCellOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
-  if (!e.target.closest("#board")) {
+  if (!e.target.closest(".board")) {
     hideAllShipPopups();
     return;
   }
@@ -255,19 +255,19 @@ function modifyShip([row, column]) {
 
   console.table(user.shipsTable);
 
-  document.querySelector(`#board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
+  document.querySelector(`.board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
 
-  const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
+  const menuShipElem = document.querySelector(`.ship-menu__item#${selectedShip}`);
   menuShipElem.classList.add("placed");
 }
 
 function createShip() {
   const newShipObj = document.createElement("div");
   runBySelectedShipOrientation(
-    () => newShipObj.classList.add("ship"),
-    () => newShipObj.classList.add("ship", "vert")
+    () => newShipObj.classList.add("ship", "ship--hori"),
+    () => newShipObj.classList.add("ship", "ship--vert")
   );
-  newShipObj.id = selectedShip + "Ship";
+  newShipObj.id = selectedShip;
   newShipObj.append(createShipPopup());
   return newShipObj;
 }
@@ -316,13 +316,13 @@ function removeButtonHandler(e) {
 
   user.shipInfo.orientation[selectedShip] = "h";
 
-  const menuShipElem = document.querySelector(`#shipMenu #${selectedShip}Menu`);
+  const menuShipElem = document.querySelector(`.ship-menu__item#${selectedShip}`);
   menuShipElem.classList.remove("placed");
 
   selectedShip = null; //reset
 }
 
-const randomizeButton = document.querySelector(".arrange #random");
+const randomizeButton = document.querySelector(".ship-menu__button--random");
 randomizeButton.addEventListener("click", () => {
   // remove all placed ships
   for (let ship of shipNames) {
