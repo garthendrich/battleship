@@ -9,7 +9,6 @@
 
 /*
  TODO
- * implement BEM
  * move randomizer in Player class as function
  * remover of all ships
  * class User (subclass)
@@ -63,7 +62,7 @@ var selectedShip;
 const menuShipElems = document.querySelectorAll(".ship-menu__item");
 menuShipElems.forEach((elem) =>
   elem.addEventListener("mousedown", (e) => {
-    if (!e.target.classList.contains("placed")) selectedShip = elem.id;
+    if (!e.target.classList.contains(".ship-menu__item--placed")) selectedShip = elem.id;
   })
 );
 
@@ -82,14 +81,14 @@ document.body.addEventListener("mousedown", (e) => {
   selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
   if (selectedShipElem) {
     canMoveShip = true;
-    selectedShip = selectedShipElem.id[0];
+    selectedShip = selectedShipElem.id;
     shipPointUnderCursorOnMousedown = getCurrentShipPointUnderCursor(e);
     prevShipCellOrigin = user.shipInfo.origin[selectedShip];
   }
 });
 
 function hideAllShipPopups() {
-  const shipPopupElems = document.querySelectorAll(`#board .ship .popup`) || null;
+  const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
   if (shipPopupElems.length) shipPopupElems.forEach((popup) => (popup.style.display = "none"));
 }
 
@@ -104,7 +103,7 @@ document.body.addEventListener("mousemove", (e) => {
   // if mousedown on ship
   if (canMoveShip) {
     // willMoveShip: cursor outside selected ship || cursor outside cell where it started mousedown
-    let willMoveShip = !(e.target.id[0] == selectedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e);
+    let willMoveShip = !(e.target.id == selectedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e);
     if (willMoveShip) {
       canMoveShip = false; // reset; pass only once
       removeSelectedShip();
@@ -132,8 +131,8 @@ function removeSelectedShip() {
 
 // to prevent memory leaks
 function removeSelectedShipHandlers() {
-  const rotateButton = document.querySelector(`#board #${selectedShip}Ship .rotate`);
-  const removeButton = document.querySelector(`#board #${selectedShip}Ship .remove`);
+  const rotateButton = document.querySelector(`.ship#${selectedShip} .ship__button--rotate`);
+  const removeButton = document.querySelector(`.ship#${selectedShip} .ship__button--remove`);
   rotateButton.removeEventListener("click", rotateButtonHandler);
   removeButton.removeEventListener("click", removeButtonHandler);
 }
@@ -144,7 +143,7 @@ document.body.addEventListener("mouseup", (e) => {
 
   if (selectedShip) {
     // if mouseup on same ship
-    if (e.target.classList.contains("ship") && e.target.id[0] == selectedShip) e.target.firstChild.style.display = null;
+    if (e.target.classList.contains("ship") && e.target.id == selectedShip) e.target.firstChild.style.display = null;
     // else if mouseup on cell
     else if (e.target.nodeName == "TD") {
       let rowUnderCursor = e.target.closest("tr").rowIndex;
@@ -166,13 +165,15 @@ function rotateSelectedShip() {
   runBySelectedShipOrientation(
     () => {
       user.shipInfo.orientation[selectedShip] = "v";
-      selectedShipElem.classList.add("vert");
+      selectedShipElem.classList.remove("ship--hori");
+      selectedShipElem.classList.add("ship--vert");
 
       shipCellOrigin[1] += middleOfShip - 1;
     },
     () => {
       user.shipInfo.orientation[selectedShip] = "h";
-      selectedShipElem.classList.remove("vert");
+      selectedShipElem.classList.remove("ship--vert");
+      selectedShipElem.classList.add("ship--hori");
 
       shipCellOrigin[0] += middleOfShip - 1;
     }
@@ -258,7 +259,7 @@ function modifyShip([row, column]) {
   document.querySelector(`.board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
 
   const menuShipElem = document.querySelector(`.ship-menu__item#${selectedShip}`);
-  menuShipElem.classList.add("placed");
+  menuShipElem.classList.add("ship-menu__item--placed");
 }
 
 function createShip() {
@@ -280,22 +281,22 @@ function createShipPopup() {
   const parsedRemoveSVG = new DOMParser().parseFromString(removeSVG, "image/svg+xml").firstChild;
   const rotateButton = document.createElement("div");
   const removeButton = document.createElement("div");
-  rotateButton.className = "rotate";
-  removeButton.className = "remove";
+  rotateButton.className = "ship__button ship__button--rotate";
+  removeButton.className = "ship__button ship__button--remove";
   rotateButton.append(parsedRotateSVG);
   removeButton.append(parsedRemoveSVG);
   rotateButton.addEventListener("click", rotateButtonHandler);
   removeButton.addEventListener("click", removeButtonHandler);
 
   const popupObj = document.createElement("div");
-  popupObj.className = "popup";
+  popupObj.className = "ship__popup";
   popupObj.append(rotateButton, removeButton);
   return popupObj;
 }
 
 function rotateButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
-  selectedShip = selectedShipElem.id[0];
+  selectedShip = selectedShipElem.id;
   shipCellOrigin = user.shipInfo.origin[selectedShip];
 
   removeSelectedShip();
@@ -311,13 +312,13 @@ function rotateButtonHandler(e) {
 
 function removeButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
-  selectedShip = selectedShipElem.id[0];
+  selectedShip = selectedShipElem.id;
   removeSelectedShip();
 
   user.shipInfo.orientation[selectedShip] = "h";
 
   const menuShipElem = document.querySelector(`.ship-menu__item#${selectedShip}`);
-  menuShipElem.classList.remove("placed");
+  menuShipElem.classList.remove("ship-menu__item--placed");
 
   selectedShip = null; //reset
 }
@@ -328,7 +329,7 @@ randomizeButton.addEventListener("click", () => {
   for (let ship of shipNames) {
     if (!user.shipInfo.origin[ship]) continue; // if not placed
     selectedShip = ship;
-    selectedShipElem = document.querySelector(`#board #${selectedShip}Ship`);
+    selectedShipElem = document.querySelector(`.ship#${selectedShip}`);
     removeSelectedShip();
   }
 
