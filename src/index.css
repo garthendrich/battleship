@@ -78,6 +78,7 @@ td {
   top: 0;
   left: 0;
   background: #4a6fa5;
+  border: 3px #404756 solid;
   height: var(--cell-size);
   z-index: 1;
 }

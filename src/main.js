@@ -1,3 +1,5 @@
+"use strict";
+
 /*
  * Must include:
  * Saving and loading the current state of the game using files
@@ -14,8 +16,6 @@
  * class AI (subclass)
  * html two boards
  */
-
-"use strict";
 
 const shipNames = "cbdsp";
 
@@ -71,7 +71,7 @@ var selectedShipElem, canMoveShip, shipPointUnderCursorOnMousedown, prevShipCell
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest("#board")) {
-    hideAllShipPopups(); // reset
+    hideAllShipPopups();
     return;
   }
 
@@ -79,7 +79,7 @@ document.body.addEventListener("mousedown", (e) => {
   if (selectedShip) return;
 
   // if mousedown on ship, collect ship info
-  selectedShipElem = (e.target.classList.contains("ship") && e.target) || null;
+  selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
   if (selectedShipElem) {
     canMoveShip = true;
     selectedShip = selectedShipElem.id[0];
@@ -107,8 +107,8 @@ document.body.addEventListener("mousemove", (e) => {
     let willMoveShip = !(e.target.id[0] == selectedShip) || shipPointUnderCursorOnMousedown != getCurrentShipPointUnderCursor(e);
     if (willMoveShip) {
       canMoveShip = false; // reset; pass only once
-      removeSelectedShip(); // reset
-      hideAllShipPopups(); // reset
+      removeSelectedShip();
+      hideAllShipPopups();
     }
   }
 });
@@ -140,7 +140,7 @@ function removeSelectedShipHandlers() {
 
 document.body.addEventListener("mouseup", (e) => {
   canMoveShip = false; // reset
-  hideAllShipPopups(); // reset
+  hideAllShipPopups();
 
   if (selectedShip) {
     // if mouseup on same ship
@@ -324,16 +324,16 @@ function removeButtonHandler(e) {
 
 const randomizeButton = document.querySelector(".arrange #random");
 randomizeButton.addEventListener("click", () => {
-  // remove all ships
+  // remove all placed ships
   for (let ship of shipNames) {
-    if (!user.shipInfo.origin[ship]) continue;
+    if (!user.shipInfo.origin[ship]) continue; // if not placed
     selectedShip = ship;
     selectedShipElem = document.querySelector(`#board #${selectedShip}Ship`);
     removeSelectedShip();
   }
 
   // randomize orientations
-  for (let ship of shipNames) user.shipInfo.orientation[ship] = (Math.floor(Math.random() * 2) && "h") || "v";
+  for (let ship of shipNames) user.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
 
   // randomize ship cell origins
   for (let i = 0; i < 5; i++) {
