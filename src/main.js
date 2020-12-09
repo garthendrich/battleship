@@ -133,6 +133,21 @@ class Player {
     );
     this.shipOrigin[this.selectedShip] = [row, column];
   }
+
+  randomizeShips() {
+    // randomize orientations
+    for (let ship of shipNames) this.shipOrientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
+
+    // randomize ship cell origins
+    for (let i = 0; i < 5; i++) {
+      do {
+        this.selectedShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+        this.selectedShip = shipNames[i];
+        this.adjustShipCellOriginToInsideBoard();
+      } while (this.doesSelectedShipOverlapOthers());
+      this.addShip();
+    }
+  }
 }
 
 class User extends Player {
@@ -343,18 +358,7 @@ randomizeButton.addEventListener("click", () => {
     removeSelectedShip();
   }
 
-  // randomize orientations
-  for (let ship of shipNames) user.shipOrientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
-
-  // randomize ship cell origins
-  for (let i = 0; i < 5; i++) {
-    do {
-      user.selectedShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-      user.selectedShip = shipNames[i];
-      user.adjustShipCellOriginToInsideBoard();
-    } while (user.doesSelectedShipOverlapOthers());
-    user.addShip();
-  }
+  user.randomizeShips();
 
   hideAllShipPopups();
 
