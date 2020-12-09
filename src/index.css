@@ -51,7 +51,7 @@ button {
   text-align: center;
 }
 
-.ship-menu__item.placed {
+.ship-menu__item--placed {
   opacity: 0.3;
 }
 
@@ -88,7 +88,7 @@ td {
   transform-origin: top left;
 }
 
-.ship .popup {
+.ship__popup {
   content: "";
   position: absolute;
   bottom: calc(100% + var(--popup-gap));
@@ -103,7 +103,7 @@ td {
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
 }
 
-.ship.vert .popup {
+.ship--vert .ship__popup {
   transform: rotate(-90deg);
   transform-origin: top left;
   left: calc(0px - var(--popup-gap) - var(--popup-height));
@@ -111,7 +111,7 @@ td {
   bottom: auto;
 }
 
-.ship .popup div {
+.ship__button {
   height: var(--popup-height);
   width: var(--popup-height);
   display: flex;
@@ -120,31 +120,31 @@ td {
   cursor: pointer;
 }
 
-.ship .popup div:hover {
+.ship__button:hover {
   background: #ddd;
 }
 
-.ship .popup svg {
+.ship__button--rotate svg {
   fill: #007f49;
 }
 
-.ship .popup .remove svg {
+.ship__button--remove svg {
   fill: #b15042;
 }
 
-#cShip {
+.ship#c {
   width: calc(var(--cell-size) * 5);
 }
 
-#bShip {
+.ship#b {
   width: calc(var(--cell-size) * 4);
 }
 
-#dShip,
-#sShip {
+.ship#d,
+.ship#s {
   width: calc(var(--cell-size) * 3);
 }
 
-#pShip {
+.ship#p {
   width: calc(var(--cell-size) * 2);
 }
