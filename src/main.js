@@ -25,29 +25,27 @@ class Player {
     this.shotsTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
-    this.shipInfo = {
-      origin: {
-        // [row, column]
-        c: null,
-        b: null,
-        d: null,
-        s: null,
-        p: null,
-      },
-      orientation: {
-        c: "h",
-        b: "h",
-        d: "h",
-        s: "h",
-        p: "h",
-      },
-      length: {
-        c: 5,
-        b: 4,
-        d: 3,
-        s: 3,
-        p: 2,
-      },
+    this.shipOrigin = {
+      // [row, column]
+      c: null,
+      b: null,
+      d: null,
+      s: null,
+      p: null,
+    };
+    this.shipOrientation = {
+      c: "h",
+      b: "h",
+      d: "h",
+      s: "h",
+      p: "h",
+    };
+    this.shipLength = {
+      c: 5,
+      b: 4,
+      d: 3,
+      s: 3,
+      p: 2,
     };
 
     this.selectedShip;
@@ -55,11 +53,11 @@ class Player {
   }
 
   runBySelectedShipOrientation(h, v) {
-    return this.shipInfo.orientation[this.selectedShip] == "h" ? h() : v();
+    return this.shipOrientation[this.selectedShip] == "h" ? h() : v();
   }
 
   getSelectedShipLength() {
-    return this.shipInfo.length[this.selectedShip];
+    return this.shipLength[this.selectedShip];
   }
 
   // adjust ship cell origin to avoid ship outside board
@@ -133,7 +131,7 @@ class Player {
         for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipsTable[row + i][column] = 1;
       }
     );
-    this.shipInfo.origin[this.selectedShip] = [row, column];
+    this.shipOrigin[this.selectedShip] = [row, column];
   }
 }
 
@@ -178,7 +176,7 @@ document.body.addEventListener("mousedown", (e) => {
     canMoveShip = true;
     user.selectedShip = selectedShipElem.id;
     shipPointOnMousedown = getCurrentShipPointUnderCursor(e);
-    selectedShipPrevOrigin = user.shipInfo.origin[user.selectedShip];
+    selectedShipPrevOrigin = user.shipOrigin[user.selectedShip];
   }
 });
 
@@ -210,7 +208,7 @@ function removeSelectedShip() {
   removeSelectedShipHandlers();
   selectedShipElem.remove();
 
-  let [row, column] = user.shipInfo.origin[user.selectedShip];
+  let [row, column] = user.shipOrigin[user.selectedShip];
   user.runBySelectedShipOrientation(
     () => {
       for (let i = 0; i < user.getSelectedShipLength(); i++) user.shipsTable[row][column + i] = 0;
@@ -220,7 +218,7 @@ function removeSelectedShip() {
     }
   );
 
-  user.shipInfo.origin[user.selectedShip] = null;
+  user.shipOrigin[user.selectedShip] = null;
 }
 
 // to prevent memory leaks
@@ -258,14 +256,14 @@ function rotateSelectedShip() {
   const middleOfShip = Math.round(user.getSelectedShipLength() / 2);
   user.runBySelectedShipOrientation(
     () => {
-      user.shipInfo.orientation[user.selectedShip] = "v";
+      user.shipOrientation[user.selectedShip] = "v";
       selectedShipElem.classList.remove("ship--hori");
       selectedShipElem.classList.add("ship--vert");
 
       user.selectedShipOrigin[1] += middleOfShip - 1;
     },
     () => {
-      user.shipInfo.orientation[user.selectedShip] = "h";
+      user.shipOrientation[user.selectedShip] = "h";
       selectedShipElem.classList.remove("ship--vert");
       selectedShipElem.classList.add("ship--hori");
 
@@ -309,7 +307,7 @@ function createShipPopup() {
 function rotateButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
   user.selectedShip = selectedShipElem.id;
-  user.selectedShipOrigin = user.shipInfo.origin[user.selectedShip];
+  user.selectedShipOrigin = user.shipOrigin[user.selectedShip];
 
   removeSelectedShip();
   rotateSelectedShip();
@@ -327,7 +325,7 @@ function removeButtonHandler(e) {
   user.selectedShip = selectedShipElem.id;
   removeSelectedShip();
 
-  user.shipInfo.orientation[user.selectedShip] = "h";
+  user.shipOrientation[user.selectedShip] = "h";
 
   const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
   menuShipElem.classList.remove("ship-menu__item--placed");
@@ -339,14 +337,14 @@ const randomizeButton = document.querySelector(".ship-menu__button--random");
 randomizeButton.addEventListener("click", () => {
   // remove all placed ships
   for (let ship of shipNames) {
-    if (!user.shipInfo.origin[ship]) continue; // if not placed
+    if (!user.shipOrigin[ship]) continue; // if not placed
     user.selectedShip = ship;
     selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
     removeSelectedShip();
   }
 
   // randomize orientations
-  for (let ship of shipNames) user.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
+  for (let ship of shipNames) user.shipOrientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
 
   // randomize ship cell origins
   for (let i = 0; i < 5; i++) {
