@@ -6,7 +6,7 @@ menuShipElems.forEach((elem) =>
   })
 );
 
-var selectedShipElem, canMoveShip, shipPointOnMousedown, selectedShipPrevOrigin;
+var selectedShipElem, canMoveShip, shipPointOnMousedown, prevShipOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest(".board")) {
@@ -23,7 +23,7 @@ document.body.addEventListener("mousedown", (e) => {
     canMoveShip = true;
     user.selectedShip = selectedShipElem.id;
     shipPointOnMousedown = getCurrentShipPointUnderCursor(e);
-    selectedShipPrevOrigin = user.shipOrigin[user.selectedShip];
+    prevShipOrigin = user.shipOrigin[user.selectedShip];
   }
 });
 
@@ -50,28 +50,28 @@ document.body.addEventListener("mouseup", (e) => {
     else if (e.target.nodeName == "TD") {
       const rowUnderCursor = e.target.closest("tr").rowIndex;
       const columnUnderCursor = e.target.cellIndex;
-      user.selectedShipOrigin = [rowUnderCursor, columnUnderCursor];
-      user.adjustShipCellOriginToInsideBoard(shipPointOnMousedown);
+      user.newShipOrigin = [rowUnderCursor, columnUnderCursor];
+      user.adjustShipOriginToInsideBoard(shipPointOnMousedown);
 
       if (!user.doesSelectedShipOverlapOthers()) addShip();
-      else if (selectedShipPrevOrigin) addShip(selectedShipPrevOrigin);
+      else if (prevShipOrigin) addShip(prevShipOrigin);
     } // else if mouseup not on cell
-    else if (selectedShipPrevOrigin) addShip(selectedShipPrevOrigin);
+    else if (prevShipOrigin) addShip(prevShipOrigin);
   }
 
-  user.selectedShip = selectedShipPrevOrigin = shipPointOnMousedown = null; // reset
+  user.selectedShip = prevShipOrigin = shipPointOnMousedown = null; // reset
 });
 
 function rotateButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
   user.selectedShip = selectedShipElem.id;
-  user.selectedShipOrigin = user.shipOrigin[user.selectedShip];
+  user.newShipOrigin = user.shipOrigin[user.selectedShip];
 
   removeSelectedShip();
   rotateSelectedShip();
 
-  user.adjustShipCellOriginToInsideBoard();
-  user.adjustShipCellOriginToAvailableSpace();
+  user.adjustShipOriginToInsideBoard();
+  user.adjustShipOriginToAvailableSpace();
 
   addShip();
 
