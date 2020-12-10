@@ -1,3 +1,5 @@
+"use strict";
+
 // mousedown on ship menu item
 const menuShipElems = document.querySelectorAll(".ship-menu__item");
 menuShipElems.forEach((elem) =>

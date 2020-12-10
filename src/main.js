@@ -7,9 +7,10 @@
 
 /*
  TODO
- * move user-functions to User
  * remove-all-ships button
  * ai algorithm
  */
+
+"use strict";
 
 const user = new User();

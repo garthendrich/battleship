@@ -1,3 +1,5 @@
+"use strict";
+
 function hideAllShipPopups() {
   const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
   if (shipPopupElems.length) shipPopupElems.forEach((popup) => (popup.style.display = "none"));
