@@ -7,10 +7,8 @@
 
 /*
  TODO
- * remover of all ships
- * class User (subclass)
- * class AI (subclass)
- * html two boards
+ * remove-all-ships button
+ * ai algorithm
  */
 
-const user = new User();
+const user = new Player();
