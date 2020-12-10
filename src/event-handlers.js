@@ -53,10 +53,10 @@ document.body.addEventListener("mouseup", (e) => {
       user.selectedShipOrigin = [rowUnderCursor, columnUnderCursor];
       user.adjustShipCellOriginToInsideBoard(shipPointOnMousedown);
 
-      if (!user.doesSelectedShipOverlapOthers()) user.addShip();
-      else if (selectedShipPrevOrigin) user.addShip(selectedShipPrevOrigin);
+      if (!user.doesSelectedShipOverlapOthers()) addShip();
+      else if (selectedShipPrevOrigin) addShip(selectedShipPrevOrigin);
     } // else if mouseup not on cell
-    else if (selectedShipPrevOrigin) user.addShip(selectedShipPrevOrigin);
+    else if (selectedShipPrevOrigin) addShip(selectedShipPrevOrigin);
   }
 
   user.selectedShip = selectedShipPrevOrigin = shipPointOnMousedown = null; // reset
@@ -73,7 +73,7 @@ function rotateButtonHandler(e) {
   user.adjustShipCellOriginToInsideBoard();
   user.adjustShipCellOriginToAvailableSpace();
 
-  user.addShip();
+  addShip();
 
   user.selectedShip = null; //reset
 }
@@ -91,6 +91,7 @@ function removeButtonHandler(e) {
   user.selectedShip = null; //reset
 }
 
+const shipNames = "cbdsp";
 const randomizeButton = document.querySelector(".ship-menu__button--random");
 randomizeButton.addEventListener("click", () => {
   // remove all placed ships

@@ -1,7 +1,5 @@
 "use strict";
 
-const shipNames = "cbdsp";
-
 class Player {
   constructor() {
     this.shipsTable = Array(10)
@@ -107,7 +105,7 @@ class Player {
     );
   }
 
-  addShip([row, column]) {
+  addShipInDataTable([row, column]) {
     this.runBySelectedShipOrientation(
       () => {
         for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipsTable[row][column + i] = 1;
@@ -130,21 +128,7 @@ class Player {
         this.selectedShip = shipNames[i];
         this.adjustShipCellOriginToInsideBoard();
       } while (this.doesSelectedShipOverlapOthers());
-      this.addShip();
+      addShip();
     }
-  }
-}
-
-class User extends Player {
-  addShip(selectedShipOrigin) {
-    const [row, column] = selectedShipOrigin ? selectedShipOrigin : this.selectedShipOrigin;
-    super.addShip([row, column]);
-
-    console.table(this.shipsTable);
-
-    document.querySelector(`.board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
-
-    const menuShipElem = document.querySelector(`.ship-menu__item#${this.selectedShip}`);
-    menuShipElem.classList.add("ship-menu__item--placed");
   }
 }
