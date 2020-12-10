@@ -105,7 +105,7 @@ class Player {
     );
   }
 
-  addShipToDataTable([row, column]) {
+  addSelectedShip([row, column]) {
     this.runBySelectedShipOrientation(
       () => {
         for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = 1;
@@ -128,7 +128,7 @@ class Player {
         this.selectedShip = shipNames[i];
         this.adjustShipOriginToInsideBoard();
       } while (this.doesSelectedShipOverlapOthers());
-      addShip();
+      this.addSelectedShip();
     }
   }
 }

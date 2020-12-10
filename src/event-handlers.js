@@ -53,10 +53,10 @@ document.body.addEventListener("mouseup", (e) => {
       user.newShipOrigin = [rowUnderCursor, columnUnderCursor];
       user.adjustShipOriginToInsideBoard(shipPointOnMousedown);
 
-      if (!user.doesSelectedShipOverlapOthers()) addShip();
-      else if (prevShipOrigin) addShip(prevShipOrigin);
+      if (!user.doesSelectedShipOverlapOthers()) user.addSelectedShip();
+      else if (prevShipOrigin) user.addSelectedShip(prevShipOrigin);
     } // else if mouseup not on cell
-    else if (prevShipOrigin) addShip(prevShipOrigin);
+    else if (prevShipOrigin) user.addSelectedShip(prevShipOrigin);
   }
 
   user.selectedShip = prevShipOrigin = shipPointOnMousedown = null; // reset
@@ -73,7 +73,7 @@ function rotateButtonHandler(e) {
   user.adjustShipOriginToInsideBoard();
   user.adjustShipOriginToAvailableSpace();
 
-  addShip();
+  user.addSelectedShip();
 
   user.selectedShip = null; //reset
 }
