@@ -7,9 +7,9 @@
 
 /*
  TODO
+ * move user-functions to User
  * remove-all-ships button
  * ai algorithm
- ! fix randomizeShip(): only addShipToDataTable() for AI object
  */
 
-const user = new Player();
+const user = new User();

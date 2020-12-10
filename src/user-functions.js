@@ -52,18 +52,6 @@ function rotateSelectedShip() {
   );
 }
 
-function addShip(newShipOrigin = user.newShipOrigin) {
-  user.addShipToDataTable(newShipOrigin);
-
-  const [row, column] = newShipOrigin;
-  document.querySelector(`.board tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(createShip());
-
-  const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
-  menuShipElem.classList.add("ship-menu__item--placed");
-
-  console.table(user.shipDataTable);
-}
-
 function createShip() {
   const newShipObj = document.createElement("div");
   user.runBySelectedShipOrientation(
