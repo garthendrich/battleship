@@ -85,3 +85,32 @@ function createShipPopup() {
   popupObj.append(rotateButton, removeButton);
   return popupObj;
 }
+
+function rotateButtonHandler(e) {
+  selectedShipElem = e.target.closest(".ship");
+  user.selectedShip = selectedShipElem.id;
+  user.newShipOrigin = user.shipOrigin[user.selectedShip];
+
+  removeSelectedShip();
+  rotateSelectedShip();
+
+  user.adjustShipOriginToInsideBoard();
+  user.adjustShipOriginToAvailableSpace();
+
+  user.addSelectedShip();
+
+  user.selectedShip = null; //reset
+}
+
+function removeButtonHandler(e) {
+  selectedShipElem = e.target.closest(".ship");
+  user.selectedShip = selectedShipElem.id;
+  removeSelectedShip();
+
+  user.shipOrientation[user.selectedShip] = "h";
+
+  const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
+  menuShipElem.classList.remove("ship-menu__item--placed");
+
+  user.selectedShip = null; //reset
+}
