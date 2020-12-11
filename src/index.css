@@ -41,6 +41,10 @@ button {
   width: 100%;
 }
 
+.ship-menu__buttons {
+  display: flex;
+}
+
 .ship-menu__item,
 .ship-menu__button {
   list-style-type: none;

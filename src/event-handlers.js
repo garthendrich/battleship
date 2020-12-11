@@ -64,16 +64,9 @@ document.body.addEventListener("mouseup", (e) => {
   user.selectedShip = prevShipOrigin = shipPointOnMousedown = null; // reset
 });
 
-const shipNames = "cbdsp";
-const randomizeButton = document.querySelector(".ship-menu__button--random");
-randomizeButton.addEventListener("click", () => {
-  // remove all placed ships
-  for (let ship of shipNames) {
-    if (!user.shipOrigin[ship]) continue; // if not placed
-    user.selectedShip = ship;
-    selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
-    removeSelectedShip();
-  }
+const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
+randomizeBoardButton.addEventListener("click", () => {
+  removePlacedShips();
 
   user.randomizeShips();
 
@@ -81,3 +74,6 @@ randomizeButton.addEventListener("click", () => {
 
   user.selectedShip = null; // reset
 });
+
+const resetBoardButton = document.querySelector(".ship-menu__button--reset");
+resetBoardButton.addEventListener("click", removePlacedShips);

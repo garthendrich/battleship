@@ -7,7 +7,7 @@
 
 /*
  TODO
- * remove-all-ships button
+ * restart board button
  * ai algorithm
  */
 
