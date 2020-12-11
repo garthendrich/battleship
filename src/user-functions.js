@@ -1,3 +1,5 @@
+"use strict";
+
 function hideAllShipPopups() {
   const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
   if (shipPopupElems.length) shipPopupElems.forEach((popup) => (popup.style.display = "none"));
@@ -11,28 +13,25 @@ function getCurrentShipPointUnderCursor(e) {
 }
 
 function removeSelectedShip() {
-  removeSelectedShipHandlers();
+  // remove handlers to prevent memory leaks
+  const rotateButton = document.querySelector(`.ship#${user.selectedShip} .ship__button--rotate`);
+  const removeButton = document.querySelector(`.ship#${user.selectedShip} .ship__button--remove`);
+  rotateButton.removeEventListener("click", rotateButtonHandler);
+  removeButton.removeEventListener("click", removeButtonHandler);
+
   selectedShipElem.remove();
 
   let [row, column] = user.shipOrigin[user.selectedShip];
   user.runBySelectedShipOrientation(
     () => {
-      for (let i = 0; i < user.getSelectedShipLength(); i++) user.shipsTable[row][column + i] = 0;
+      for (let i = 0; i < user.getSelectedShipLength(); i++) user.shipDataTable[row][column + i] = 0;
     },
     () => {
-      for (let i = 0; i < user.getSelectedShipLength(); i++) user.shipsTable[row + i][column] = 0;
+      for (let i = 0; i < user.getSelectedShipLength(); i++) user.shipDataTable[row + i][column] = 0;
     }
   );
 
   user.shipOrigin[user.selectedShip] = null;
-}
-
-// to prevent memory leaks
-function removeSelectedShipHandlers() {
-  const rotateButton = document.querySelector(`.ship#${user.selectedShip} .ship__button--rotate`);
-  const removeButton = document.querySelector(`.ship#${user.selectedShip} .ship__button--remove`);
-  rotateButton.removeEventListener("click", rotateButtonHandler);
-  removeButton.removeEventListener("click", removeButtonHandler);
 }
 
 function rotateSelectedShip() {
@@ -43,14 +42,14 @@ function rotateSelectedShip() {
       selectedShipElem.classList.remove("ship--hori");
       selectedShipElem.classList.add("ship--vert");
 
-      user.selectedShipOrigin[1] += middleOfShip - 1;
+      user.newShipOrigin[1] += middleOfShip - 1;
     },
     () => {
       user.shipOrientation[user.selectedShip] = "h";
       selectedShipElem.classList.remove("ship--vert");
       selectedShipElem.classList.add("ship--hori");
 
-      user.selectedShipOrigin[0] += middleOfShip - 1;
+      user.newShipOrigin[0] += middleOfShip - 1;
     }
   );
 }
@@ -85,4 +84,33 @@ function createShipPopup() {
   popupObj.className = "ship__popup";
   popupObj.append(rotateButton, removeButton);
   return popupObj;
+}
+
+function rotateButtonHandler(e) {
+  selectedShipElem = e.target.closest(".ship");
+  user.selectedShip = selectedShipElem.id;
+  user.newShipOrigin = user.shipOrigin[user.selectedShip];
+
+  removeSelectedShip();
+  rotateSelectedShip();
+
+  user.adjustShipOriginToInsideBoard();
+  user.adjustShipOriginToAvailableSpace();
+
+  user.addSelectedShip();
+
+  user.selectedShip = null; //reset
+}
+
+function removeButtonHandler(e) {
+  selectedShipElem = e.target.closest(".ship");
+  user.selectedShip = selectedShipElem.id;
+  removeSelectedShip();
+
+  user.shipOrientation[user.selectedShip] = "h";
+
+  const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
+  menuShipElem.classList.remove("ship-menu__item--placed");
+
+  user.selectedShip = null; //reset
 }
