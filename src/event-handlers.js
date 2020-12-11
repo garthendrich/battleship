@@ -11,7 +11,7 @@ menuShipElems.forEach((elem) =>
 let selectedShipElem, canMoveShip, shipPointOnMousedown, prevShipOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
-  if (!e.target.closest(".board")) {
+  if (!e.target.closest(".board--user")) {
     hideAllShipPopups();
     return;
   }

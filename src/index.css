@@ -1,5 +1,5 @@
 :root {
-  --cell-size: 8vh;
+  --cell-size: 5vh;
   --popup-height: 50px;
   --popup-gap: 10px;
 
@@ -70,6 +70,7 @@ button {
   height: calc(var(--cell-size) * 10);
   width: calc(var(--cell-size) * 10);
   border-collapse: collapse;
+  margin: 0 15px;
 }
 
 td {
