@@ -7,7 +7,6 @@
 
 /*
  TODO
- * restart board button
  * ai algorithm
  */
 
