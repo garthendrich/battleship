@@ -4,7 +4,7 @@
 const menuShipElems = document.querySelectorAll(".ship-menu__item");
 menuShipElems.forEach((elem) =>
   elem.addEventListener("mousedown", (e) => {
-    if (!e.target.classList.contains(".ship-menu__item--placed")) user.selectedShip = elem.id;
+    if (!e.target.classList.contains("ship-menu__item--placed")) user.selectedShip = elem.id;
   })
 );
 
