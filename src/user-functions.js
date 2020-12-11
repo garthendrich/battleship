@@ -34,6 +34,18 @@ function removeSelectedShip() {
   user.shipOrigin[user.selectedShip] = null;
 }
 
+const shipNames = "cbdsp";
+function removePlacedShips() {
+  for (let ship of shipNames) {
+    if (!user.shipOrigin[ship]) continue; // if not placed
+    user.selectedShip = ship;
+    selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
+    removeSelectedShip();
+  }
+
+  user.selectedShip = null; // reset
+}
+
 function rotateSelectedShip() {
   const middleOfShip = Math.round(user.getSelectedShipLength() / 2);
   user.runBySelectedShipOrientation(
