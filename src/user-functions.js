@@ -34,6 +34,27 @@ function removeSelectedShip() {
   user.shipOrigin[user.selectedShip] = null;
 }
 
+function resetSelectedShip() {
+  removeSelectedShip();
+
+  user.shipOrientation[user.selectedShip] = "h";
+
+  const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
+  menuShipElem.classList.remove("ship-menu__item--placed");
+}
+
+const shipNames = "cbdsp";
+function removePlacedShips() {
+  for (let ship of shipNames) {
+    if (!user.shipOrigin[ship]) continue; // if not placed
+    user.selectedShip = ship;
+    selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
+    resetSelectedShip();
+  }
+
+  user.selectedShip = null; // reset
+}
+
 function rotateSelectedShip() {
   const middleOfShip = Math.round(user.getSelectedShipLength() / 2);
   user.runBySelectedShipOrientation(
@@ -105,12 +126,7 @@ function rotateButtonHandler(e) {
 function removeButtonHandler(e) {
   selectedShipElem = e.target.closest(".ship");
   user.selectedShip = selectedShipElem.id;
-  removeSelectedShip();
-
-  user.shipOrientation[user.selectedShip] = "h";
-
-  const menuShipElem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
-  menuShipElem.classList.remove("ship-menu__item--placed");
+  resetSelectedShip();
 
   user.selectedShip = null; //reset
 }

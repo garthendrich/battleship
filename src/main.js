@@ -7,7 +7,6 @@
 
 /*
  TODO
- * remove-all-ships button
  * ai algorithm
  */
 
