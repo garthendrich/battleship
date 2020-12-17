@@ -42,7 +42,7 @@ class User extends Player {
     removeButton.addEventListener("click", this.removeButtonHandler);
 
     const popupObj = document.createElement("div");
-    popupObj.className = "ship__popup ship__popup--hidden";
+    popupObj.className = "ship__popup";
     popupObj.append(rotateButton, removeButton);
     return popupObj;
   }
