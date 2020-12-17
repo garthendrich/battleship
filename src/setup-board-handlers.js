@@ -8,7 +8,6 @@ menuShipElems.forEach((elem) =>
   })
 );
 
-let selectedShipElem, canMoveShip, shipPointOnMousedown, prevShipOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest(".board--user")) {
@@ -20,21 +19,21 @@ document.body.addEventListener("mousedown", (e) => {
   if (user.selectedShip) return;
 
   // if mousedown on ship, collect ship info
-  selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
-  if (selectedShipElem) {
-    canMoveShip = true;
-    user.selectedShip = selectedShipElem.id;
-    shipPointOnMousedown = user.getCurrentShipPointUnderCursor(e);
-    prevShipOrigin = user.shipOrigin[user.selectedShip];
+  user.selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
+  if (user.selectedShipElem) {
+    user.canMoveShip = true;
+    user.selectedShip = user.selectedShipElem.id;
+    user.shipPointOnMousedown = user.getCurrentShipPointUnderCursor(e);
+    user.prevShipOrigin = user.shipOrigin[user.selectedShip];
   }
 });
 
 document.body.addEventListener("mousemove", (e) => {
   // if mousedown on ship
-  if (canMoveShip) {
+  if (user.canMoveShip) {
     // if ship will be moved -- if cursor outside selected ship || cursor outside cell where it started mousedown
-    if (!(e.target.id == user.selectedShip) || shipPointOnMousedown != user.getCurrentShipPointUnderCursor(e)) {
-      canMoveShip = false; // reset; pass only once
+    if (!(e.target.id == user.selectedShip) || user.shipPointOnMousedown != user.getCurrentShipPointUnderCursor(e)) {
+      user.canMoveShip = false; // reset; pass only once
       user.removeSelectedShip();
       user.hideAllShipPopups();
     }
@@ -42,7 +41,7 @@ document.body.addEventListener("mousemove", (e) => {
 });
 
 document.body.addEventListener("mouseup", (e) => {
-  canMoveShip = false; // reset
+  user.canMoveShip = false; // reset
   user.hideAllShipPopups();
 
   if (user.selectedShip) {
@@ -56,16 +55,16 @@ document.body.addEventListener("mouseup", (e) => {
       const rowUnderCursor = e.target.closest("tr").rowIndex;
       const columnUnderCursor = e.target.cellIndex;
       user.newShipOrigin = [rowUnderCursor, columnUnderCursor];
-      user.adjustShipOriginToInsideBoard(shipPointOnMousedown);
+      user.adjustShipOriginToInsideBoard(user.shipPointOnMousedown);
 
       if (!user.doesSelectedShipOverlapOthers()) user.addShip();
-      else if (prevShipOrigin) user.addShip(prevShipOrigin);
+      else if (user.prevShipOrigin) user.addShip(user.prevShipOrigin);
     }
-    // else if mouseup not on cell and has prevShipOrigin
-    else if (prevShipOrigin) user.addShip(prevShipOrigin);
+    // else if mouseup not on cell and has user.prevShipOrigin
+    else if (user.prevShipOrigin) user.addShip(user.prevShipOrigin);
   }
 
-  user.selectedShip = prevShipOrigin = shipPointOnMousedown = null; // reset
+  user.selectedShip = user.prevShipOrigin = user.shipPointOnMousedown = null; // reset
 });
 
 const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
@@ -85,7 +84,7 @@ function removePlacedShips() {
   for (let ship of shipNames) {
     if (!user.shipOrigin[ship]) continue; // if not placed
     user.selectedShip = ship;
-    selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
+    user.selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
     user.resetSelectedShip();
   }
 
