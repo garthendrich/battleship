@@ -8,6 +8,7 @@
 "use strict";
 
 const user = new User();
+const ai = new Ai();
 
 const startGameButton = document.querySelector(".start-game");
 startGameButton.addEventListener("click", () => {
@@ -23,6 +24,6 @@ startGameButton.addEventListener("click", () => {
 });
 
 function startGameFight() {
-  const ai = new Ai();
   ai.randomizeShips();
+  displayAiShipTable();
 }
