@@ -6,8 +6,8 @@ class User extends Player {
     this.removeSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5 11H19V13H5z"/></svg>';
   }
 
-  addSelectedShip(newShipOrigin = this.newShipOrigin) {
-    super.addSelectedShip(newShipOrigin);
+  addShip(newShipOrigin = this.newShipOrigin) {
+    super.addShip(newShipOrigin);
 
     const [row, column] = newShipOrigin;
     document.querySelector(`.board--user tr:nth-child(${row + 1}) td:nth-child(${column + 1})`).append(this.createShip());
@@ -121,7 +121,7 @@ class User extends Player {
     user.adjustShipOriginToInsideBoard();
     user.adjustShipOriginToAvailableSpace();
 
-    user.addSelectedShip();
+    user.addShip();
 
     user.selectedShip = null; //reset
   }
