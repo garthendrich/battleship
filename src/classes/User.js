@@ -95,22 +95,27 @@ class User extends Player {
   }
 
   rotateSelectedShip() {
-    const middleOfShip = Math.round(this.getSelectedShipLength() / 2);
     this.runBySelectedShipOrientation(
       () => {
         this.shipOrientation[this.selectedShip] = "v";
         this.selectedShipElem.classList.remove("ship--hori");
         this.selectedShipElem.classList.add("ship--vert");
 
-        this.newShipOrigin[1] += middleOfShip - 1;
+        this.newShipOrigin[0] -= this.getHalfOfSelectedShip();
+        this.newShipOrigin[1] += this.getHalfOfSelectedShip();
       },
       () => {
         this.shipOrientation[this.selectedShip] = "h";
         this.selectedShipElem.classList.remove("ship--vert");
         this.selectedShipElem.classList.add("ship--hori");
 
-        this.newShipOrigin[0] += middleOfShip - 1;
+        this.newShipOrigin[0] += this.getHalfOfSelectedShip();
+        this.newShipOrigin[1] -= this.getHalfOfSelectedShip();
       }
     );
+  }
+
+  getHalfOfSelectedShip() {
+    return Math.floor(this.getSelectedShipLength() / 2);
   }
 }

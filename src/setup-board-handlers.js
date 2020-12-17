@@ -54,13 +54,18 @@ document.body.addEventListener("mouseup", (e) => {
     else if (e.target.closest(".board--user") && e.target.nodeName == "TD") {
       const rowUnderCursor = e.target.closest("tr").rowIndex;
       const columnUnderCursor = e.target.cellIndex;
-      user.newShipOrigin = [rowUnderCursor, columnUnderCursor];
-      user.adjustShipOriginToInsideBoard(user.shipPointOnMousedown);
+
+      user.newShipOrigin = user.runBySelectedShipOrientation(
+        () => [rowUnderCursor, columnUnderCursor - user.getHalfOfSelectedShip()],
+        () => [rowUnderCursor - user.getHalfOfSelectedShip(), columnUnderCursor]
+      );
+
+      user.adjustShipOriginToInsideBoard();
 
       if (!user.doesSelectedShipOverlapOthers()) user.addShip();
       else if (user.prevShipOrigin) user.addShip(user.prevShipOrigin);
     }
-    // else if mouseup not on cell and has user.prevShipOrigin
+    // else if mouseup not on cell and has prevShipOrigin
     else if (user.prevShipOrigin) user.addShip(user.prevShipOrigin);
   }
 
