@@ -1,0 +1,1 @@
+class Ai extends Player {}
