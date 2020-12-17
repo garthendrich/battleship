@@ -71,7 +71,7 @@ class Player {
     this.newShipOrigin = [row, column];
   }
 
-  // to prevent overlapping with other ships
+  // for rotate, to prevent overlapping with other ships
   adjustShipOriginToAvailableSpace() {
     let shipForwardDir, shipSidewayDir;
     this.runBySelectedShipOrientation(
@@ -95,9 +95,9 @@ class Player {
   doesSelectedShipOverlapOthers() {
     const [row, column] = this.newShipOrigin;
     return this.runBySelectedShipOrientation(
-      () => this.shipDataTable[row].slice(column, column + this.getSelectedShipLength()).includes(1),
+      () => !this.shipDataTable[row].slice(column, column + this.getSelectedShipLength()).every((cell) => cell == 0),
       () => {
-        for (let i = row; i < row + this.getSelectedShipLength(); i++) if (this.shipDataTable[i][column] == 1) return true;
+        for (let i = row; i < row + this.getSelectedShipLength(); i++) if (this.shipDataTable[i][column]) return true;
         return false;
       }
     );
@@ -107,10 +107,10 @@ class Player {
     let [row, column] = newShipOrigin;
     this.runBySelectedShipOrientation(
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = 1;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = this.selectedShip;
       },
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row + i][column] = 1;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row + i][column] = this.selectedShip;
       }
     );
     this.shipOrigin[this.selectedShip] = [row, column];
