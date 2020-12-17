@@ -15,6 +15,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+body {
+  min-width: 1200px;
+}
+
 svg {
   height: 80%;
   width: 80%;
@@ -25,7 +29,9 @@ button {
 }
 
 .ship-menu {
-  position: absolute;
+  background: white;
+  z-index: 2;
+  position: fixed;
   left: 0;
   top: 0;
   height: 100%;
