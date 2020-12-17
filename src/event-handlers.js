@@ -46,7 +46,7 @@ document.body.addEventListener("mouseup", (e) => {
   user.hideAllShipPopups();
 
   if (user.selectedShip) {
-    // if mouseup on same ship
+    // if mouseup on same ship, show popup
     if (e.target.classList.contains("ship") && e.target.id == user.selectedShip) e.target.firstChild.style.display = null;
     // else if mouseup on cell
     else if (e.target.nodeName == "TD") {
@@ -57,7 +57,8 @@ document.body.addEventListener("mouseup", (e) => {
 
       if (!user.doesSelectedShipOverlapOthers()) user.addShip();
       else if (prevShipOrigin) user.addShip(prevShipOrigin);
-    } // else if mouseup not on cell
+    }
+    // else if mouseup not on cell and has prevShipOrigin
     else if (prevShipOrigin) user.addShip(prevShipOrigin);
   }
 
