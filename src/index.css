@@ -26,6 +26,14 @@ svg {
 
 button {
   background: none;
+  border: 1px solid black;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #eeeeee;
 }
 
 .ship-menu {
