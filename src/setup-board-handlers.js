@@ -90,3 +90,27 @@ function removePlacedShips() {
 
   user.selectedShip = null; // reset
 }
+
+rotateButtonHandler(e) {
+  user.selectedShipElem = e.target.closest(".ship");
+  user.selectedShip = user.selectedShipElem.id;
+  user.newShipOrigin = user.shipOrigin[user.selectedShip];
+
+  user.removeSelectedShip();
+  user.rotateSelectedShip();
+
+  user.adjustShipOriginToInsideBoard();
+  user.adjustShipOriginToAvailableSpace();
+
+  user.addShip();
+
+  user.selectedShip = null; //reset
+}
+
+removeButtonHandler(e) {
+  user.selectedShipElem = e.target.closest(".ship");
+  user.selectedShip = user.selectedShipElem.id;
+  user.resetSelectedShip();
+
+  user.selectedShip = null; //reset
+}

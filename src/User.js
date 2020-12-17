@@ -42,37 +42,13 @@ class User extends Player {
     removeButton.className = "ship__button ship__button--remove";
     rotateButton.append(parsedRotateSVG);
     removeButton.append(parsedRemoveSVG);
-    rotateButton.addEventListener("click", this.rotateButtonHandler);
-    removeButton.addEventListener("click", this.removeButtonHandler);
+    rotateButton.addEventListener("click", rotateButtonHandler);
+    removeButton.addEventListener("click", removeButtonHandler);
 
     const popupObj = document.createElement("div");
     popupObj.className = "ship__popup";
     popupObj.append(rotateButton, removeButton);
     return popupObj;
-  }
-
-  rotateButtonHandler(e) {
-    user.selectedShipElem = e.target.closest(".ship");
-    user.selectedShip = user.selectedShipElem.id;
-    user.newShipOrigin = user.shipOrigin[user.selectedShip];
-
-    user.removeSelectedShip();
-    user.rotateSelectedShip();
-
-    user.adjustShipOriginToInsideBoard();
-    user.adjustShipOriginToAvailableSpace();
-
-    user.addShip();
-
-    user.selectedShip = null; //reset
-  }
-
-  removeButtonHandler(e) {
-    user.selectedShipElem = e.target.closest(".ship");
-    user.selectedShip = user.selectedShipElem.id;
-    user.resetSelectedShip();
-
-    user.selectedShip = null; //reset
   }
 
   hideAllShipPopups() {
@@ -91,8 +67,8 @@ class User extends Player {
     // remove handlers to prevent memory leaks
     const rotateButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--rotate`);
     const removeButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--remove`);
-    rotateButton.removeEventListener("click", this.rotateButtonHandler);
-    removeButton.removeEventListener("click", this.removeButtonHandler);
+    rotateButton.removeEventListener("click", rotateButtonHandler);
+    removeButton.removeEventListener("click", removeButtonHandler);
 
     this.selectedShipElem.remove();
 
