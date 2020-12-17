@@ -52,7 +52,7 @@ document.body.addEventListener("mouseup", (e) => {
       selectedShipPopup.classList.remove("ship__popup--hidden");
     }
     // else if mouseup on cell
-    else if (e.target.nodeName == "TD") {
+    else if (e.target.closest(".board--user") && e.target.nodeName == "TD") {
       const rowUnderCursor = e.target.closest("tr").rowIndex;
       const columnUnderCursor = e.target.cellIndex;
       user.newShipOrigin = [rowUnderCursor, columnUnderCursor];
