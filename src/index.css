@@ -73,7 +73,7 @@ button:hover {
   opacity: 0.3;
 }
 
-.finish-board {
+.start-game {
   position: fixed;
   bottom: 20px;
   right: 20px;
