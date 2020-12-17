@@ -91,7 +91,7 @@ function removePlacedShips() {
   user.selectedShip = null; // reset
 }
 
-rotateButtonHandler(e) {
+function rotateButtonHandler(e) {
   user.selectedShipElem = e.target.closest(".ship");
   user.selectedShip = user.selectedShipElem.id;
   user.newShipOrigin = user.shipOrigin[user.selectedShip];
@@ -107,7 +107,7 @@ rotateButtonHandler(e) {
   user.selectedShip = null; //reset
 }
 
-removeButtonHandler(e) {
+function removeButtonHandler(e) {
   user.selectedShipElem = e.target.closest(".ship");
   user.selectedShip = user.selectedShipElem.id;
   user.resetSelectedShip();
