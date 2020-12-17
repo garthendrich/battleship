@@ -126,6 +126,12 @@ td {
   border-radius: 5px;
   background: white;
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
+  transition: 0.1s;
+  transform-origin: bottom center;
+}
+
+.ship__popup--hidden {
+  transform: scale(0);
 }
 
 .ship--vert .ship__popup {

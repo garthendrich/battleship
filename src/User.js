@@ -29,9 +29,51 @@ class User extends Player {
     return newShipObj;
   }
 
+  createShipPopup() {
+    const parsedRotateSVG = new DOMParser().parseFromString(this.rotateSVG, "image/svg+xml").firstChild;
+    const parsedRemoveSVG = new DOMParser().parseFromString(this.removeSVG, "image/svg+xml").firstChild;
+    const rotateButton = document.createElement("div");
+    const removeButton = document.createElement("div");
+    rotateButton.className = "ship__button ship__button--rotate";
+    removeButton.className = "ship__button ship__button--remove";
+    rotateButton.append(parsedRotateSVG);
+    removeButton.append(parsedRemoveSVG);
+    rotateButton.addEventListener("click", this.rotateButtonHandler);
+    removeButton.addEventListener("click", this.removeButtonHandler);
+
+    const popupObj = document.createElement("div");
+    popupObj.className = "ship__popup ship__popup--hidden";
+    popupObj.append(rotateButton, removeButton);
+    return popupObj;
+  }
+
+  rotateButtonHandler(e) {
+    selectedShipElem = e.target.closest(".ship");
+    user.selectedShip = selectedShipElem.id;
+    user.newShipOrigin = user.shipOrigin[user.selectedShip];
+
+    user.removeSelectedShip();
+    user.rotateSelectedShip();
+
+    user.adjustShipOriginToInsideBoard();
+    user.adjustShipOriginToAvailableSpace();
+
+    user.addShip();
+
+    user.selectedShip = null; //reset
+  }
+
+  removeButtonHandler(e) {
+    selectedShipElem = e.target.closest(".ship");
+    user.selectedShip = selectedShipElem.id;
+    user.resetSelectedShip();
+
+    user.selectedShip = null; //reset
+  }
+
   hideAllShipPopups() {
     const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
-    if (shipPopupElems.length) shipPopupElems.forEach((popup) => (popup.style.display = "none"));
+    if (shipPopupElems.length) shipPopupElems.forEach((popup) => popup.classList.add("ship__popup--hidden"));
   }
 
   getCurrentShipPointUnderCursor(e) {
@@ -90,47 +132,5 @@ class User extends Player {
         this.newShipOrigin[0] += middleOfShip - 1;
       }
     );
-  }
-
-  createShipPopup() {
-    const parsedRotateSVG = new DOMParser().parseFromString(this.rotateSVG, "image/svg+xml").firstChild;
-    const parsedRemoveSVG = new DOMParser().parseFromString(this.removeSVG, "image/svg+xml").firstChild;
-    const rotateButton = document.createElement("div");
-    const removeButton = document.createElement("div");
-    rotateButton.className = "ship__button ship__button--rotate";
-    removeButton.className = "ship__button ship__button--remove";
-    rotateButton.append(parsedRotateSVG);
-    removeButton.append(parsedRemoveSVG);
-    rotateButton.addEventListener("click", this.rotateButtonHandler);
-    removeButton.addEventListener("click", this.removeButtonHandler);
-
-    const popupObj = document.createElement("div");
-    popupObj.className = "ship__popup";
-    popupObj.append(rotateButton, removeButton);
-    return popupObj;
-  }
-
-  rotateButtonHandler(e) {
-    selectedShipElem = e.target.closest(".ship");
-    user.selectedShip = selectedShipElem.id;
-    user.newShipOrigin = user.shipOrigin[user.selectedShip];
-
-    user.removeSelectedShip();
-    user.rotateSelectedShip();
-
-    user.adjustShipOriginToInsideBoard();
-    user.adjustShipOriginToAvailableSpace();
-
-    user.addShip();
-
-    user.selectedShip = null; //reset
-  }
-
-  removeButtonHandler(e) {
-    selectedShipElem = e.target.closest(".ship");
-    user.selectedShip = selectedShipElem.id;
-    user.resetSelectedShip();
-
-    user.selectedShip = null; //reset
   }
 }
