@@ -1,8 +1,12 @@
 /*
- TODO
+ TODO:
  * home page
  * ai algorithm
  * game proper
+
+ ** THINGS THAT MAY BE CONSIDERED:
+ * current randomizer may be inefficient because of the posibility that occupied cells could be checked again
+ * better adjust ship on rotate
  */
 
 "use strict";
