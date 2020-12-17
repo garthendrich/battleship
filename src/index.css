@@ -104,13 +104,53 @@ td {
   left: 0;
   background: #4a6fa5;
   border: 3px #404756 solid;
-  height: var(--cell-size);
   z-index: 1;
 }
 
+/* horizontal ships */
+
+.ship--hori {
+  height: var(--cell-size);
+}
+
+.ship--hori#c {
+  width: calc(var(--cell-size) * 5);
+}
+
+.ship--hori#b {
+  width: calc(var(--cell-size) * 4);
+}
+
+.ship--hori#d,
+.ship--hori#s {
+  width: calc(var(--cell-size) * 3);
+}
+
+.ship--hori#p {
+  width: calc(var(--cell-size) * 2);
+}
+
+/* vertical ships */
+
 .ship--vert {
-  transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
-  transform-origin: top left;
+  width: var(--cell-size);
+}
+
+.ship--vert#c {
+  height: calc(var(--cell-size) * 5);
+}
+
+.ship--vert#b {
+  height: calc(var(--cell-size) * 4);
+}
+
+.ship--vert#d,
+.ship--vert#s {
+  height: calc(var(--cell-size) * 3);
+}
+
+.ship--vert#p {
+  height: calc(var(--cell-size) * 2);
 }
 
 .ship__popup {
@@ -134,14 +174,6 @@ td {
   transform: scale(0);
 }
 
-.ship--vert .ship__popup {
-  transform: rotate(-90deg);
-  transform-origin: top left;
-  left: calc(0px - var(--popup-gap) - var(--popup-height));
-  top: calc(50% + var(--popup-width) / 2);
-  bottom: auto;
-}
-
 .ship__button {
   height: var(--popup-height);
   width: var(--popup-height);
@@ -161,21 +193,4 @@ td {
 
 .ship__button--remove svg {
   fill: #b15042;
-}
-
-.ship#c {
-  width: calc(var(--cell-size) * 5);
-}
-
-.ship#b {
-  width: calc(var(--cell-size) * 4);
-}
-
-.ship#d,
-.ship#s {
-  width: calc(var(--cell-size) * 3);
-}
-
-.ship#p {
-  width: calc(var(--cell-size) * 2);
 }
