@@ -12,7 +12,7 @@ let selectedShipElem, canMoveShip, shipPointOnMousedown, prevShipOrigin;
 document.body.addEventListener("mousedown", (e) => {
   // if mousedown outside board
   if (!e.target.closest(".board--user")) {
-    hideAllShipPopups();
+    user.hideAllShipPopups();
     return;
   }
 
@@ -24,7 +24,7 @@ document.body.addEventListener("mousedown", (e) => {
   if (selectedShipElem) {
     canMoveShip = true;
     user.selectedShip = selectedShipElem.id;
-    shipPointOnMousedown = getCurrentShipPointUnderCursor(e);
+    shipPointOnMousedown = user.getCurrentShipPointUnderCursor(e);
     prevShipOrigin = user.shipOrigin[user.selectedShip];
   }
 });
@@ -33,17 +33,17 @@ document.body.addEventListener("mousemove", (e) => {
   // if mousedown on ship
   if (canMoveShip) {
     // if ship will be moved -- if cursor outside selected ship || cursor outside cell where it started mousedown
-    if (!(e.target.id == user.selectedShip) || shipPointOnMousedown != getCurrentShipPointUnderCursor(e)) {
+    if (!(e.target.id == user.selectedShip) || shipPointOnMousedown != user.getCurrentShipPointUnderCursor(e)) {
       canMoveShip = false; // reset; pass only once
-      removeSelectedShip();
-      hideAllShipPopups();
+      user.removeSelectedShip();
+      user.hideAllShipPopups();
     }
   }
 });
 
 document.body.addEventListener("mouseup", (e) => {
   canMoveShip = false; // reset
-  hideAllShipPopups();
+  user.hideAllShipPopups();
 
   if (user.selectedShip) {
     // if mouseup on same ship
@@ -67,13 +67,23 @@ document.body.addEventListener("mouseup", (e) => {
 const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
 randomizeBoardButton.addEventListener("click", () => {
   removePlacedShips();
-
   user.randomizeShips();
-
-  hideAllShipPopups();
+  user.hideAllShipPopups();
 
   user.selectedShip = null; // reset
 });
 
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 resetBoardButton.addEventListener("click", removePlacedShips);
+
+const shipNames = "cbdsp";
+function removePlacedShips() {
+  for (let ship of shipNames) {
+    if (!user.shipOrigin[ship]) continue; // if not placed
+    user.selectedShip = ship;
+    selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
+    user.resetSelectedShip();
+  }
+
+  user.selectedShip = null; // reset
+}
