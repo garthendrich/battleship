@@ -103,7 +103,8 @@ class Player {
     );
   }
 
-  addShip([row, column]) {
+  addShip(newShipOrigin = this.newShipOrigin) {
+    let [row, column] = newShipOrigin;
     this.runBySelectedShipOrientation(
       () => {
         for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = 1;
