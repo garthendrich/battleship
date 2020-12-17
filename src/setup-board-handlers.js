@@ -47,7 +47,10 @@ document.body.addEventListener("mouseup", (e) => {
 
   if (user.selectedShip) {
     // if mouseup on same ship, show popup
-    if (e.target.classList.contains("ship") && e.target.id == user.selectedShip) e.target.firstChild.style.display = null;
+    if (e.target.classList.contains("ship") && e.target.id == user.selectedShip) {
+      const selectedShipPopup = e.target.firstChild;
+      selectedShipPopup.classList.remove("ship__popup--hidden");
+    }
     // else if mouseup on cell
     else if (e.target.nodeName == "TD") {
       const rowUnderCursor = e.target.closest("tr").rowIndex;
