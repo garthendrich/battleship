@@ -42,29 +42,24 @@ class Player {
   }
 
   // to avoid ship going outside board
-  adjustShipOriginToInsideBoard(shipPoint) {
-    const middleOfShip = Math.round(this.getSelectedShipLength() / 2);
-    if (!shipPoint) shipPoint = middleOfShip;
-
+  adjustShipOriginToInsideBoard() {
     let [row, column] = this.newShipOrigin;
     this.runBySelectedShipOrientation(
       () => {
-        // adjust column
-        const firstShipColumn = column - (shipPoint - 1);
-        const lastShipColumn = column - shipPoint + this.getSelectedShipLength();
+        const shipFirstColumn = column;
+        const shipLastColumn = column + this.getSelectedShipLength() - 1;
 
-        if (lastShipColumn > 9) column = 9 - (this.getSelectedShipLength() - 1);
-        else if (firstShipColumn < 0) column = 0;
-        else column = firstShipColumn;
+        if (shipFirstColumn < 0) column = 0;
+        else if (shipLastColumn > 9) column = 10 - this.getSelectedShipLength();
+        else column = shipFirstColumn;
       },
       () => {
-        // adjust row
-        const firstShipRow = row - (shipPoint - 1);
-        const lastShipRow = row - shipPoint + this.getSelectedShipLength();
+        const shipFirstRow = row;
+        const shipLastRow = row + this.getSelectedShipLength() - 1;
 
-        if (lastShipRow > 9) row = 9 - (this.getSelectedShipLength() - 1);
-        else if (firstShipRow < 0) row = 0;
-        else row = firstShipRow;
+        if (shipFirstRow < 0) row = 0;
+        else if (shipLastRow > 9) row = 10 - this.getSelectedShipLength();
+        else row = shipFirstRow;
       }
     );
 
