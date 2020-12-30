@@ -45,14 +45,14 @@ function bodyMouseDownHandler(e) {
     user.canMoveShip = true;
     user.selectedShip = user.selectedShipElem.id;
     user.shipPointOnMousedown = user.getCurrentShipPointUnderCursor(e);
-    user.prevShipOrigin = user.shipOrigin[user.selectedShip];
+    user.prevShipOrigin = user.shipInfo.origin[user.selectedShip];
   }
 }
 
 function bodyMouseMoveHandler(e) {
   // if mousedown on ship
   if (user.canMoveShip) {
-    // if ship will be moved -- if cursor outside selected ship || cursor outside cell where it started mousedown
+    // if ship will be moved: if cursor outside selected ship || cursor outside cell where it started mousedown
     if (!(e.target.id == user.selectedShip) || user.shipPointOnMousedown != user.getCurrentShipPointUnderCursor(e)) {
       user.canMoveShip = false; // reset; pass only once
       user.removeSelectedShip();
@@ -104,7 +104,7 @@ function randomizeBoardButtonHandler() {
 const shipNames = "cbdsp";
 function removePlacedShips() {
   for (let ship of shipNames) {
-    if (!user.shipOrigin[ship]) continue; // if not placed
+    if (!user.shipInfo.origin[ship]) continue; // if not placed
     user.selectedShip = ship;
     user.selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
     user.resetSelectedShip();
@@ -116,7 +116,7 @@ function removePlacedShips() {
 function rotateButtonHandler(e) {
   user.selectedShipElem = e.target.closest(".ship");
   user.selectedShip = user.selectedShipElem.id;
-  user.newShipOrigin = user.shipOrigin[user.selectedShip];
+  user.newShipOrigin = user.shipInfo.origin[user.selectedShip];
 
   user.removeSelectedShip();
   user.rotateSelectedShip();

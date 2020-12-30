@@ -19,7 +19,7 @@ class User extends Player {
     const menuShipElem = document.querySelector(`.ship-menu__item#${this.selectedShip}`);
     menuShipElem.classList.add("ship-menu__item--placed");
 
-    console.table(this.shipDataTable);
+    console.table(this.shipPlacementTable);
   }
 
   createShip() {
@@ -72,23 +72,23 @@ class User extends Player {
 
     this.selectedShipElem.remove();
 
-    let [row, column] = this.shipOrigin[this.selectedShip];
+    let [row, column] = this.shipInfo.origin[this.selectedShip];
     this.runBySelectedShipOrientation(
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = 0;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipPlacementTable[row][column + i] = 0;
       },
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row + i][column] = 0;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipPlacementTable[row + i][column] = 0;
       }
     );
 
-    this.shipOrigin[this.selectedShip] = null;
+    this.shipInfo.origin[this.selectedShip] = null;
   }
 
   resetSelectedShip() {
     this.removeSelectedShip();
 
-    this.shipOrientation[this.selectedShip] = "h";
+    this.shipInfo.orientation[this.selectedShip] = "h";
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this.selectedShip}`);
     menuShipElem.classList.remove("ship-menu__item--placed");
@@ -97,7 +97,7 @@ class User extends Player {
   rotateSelectedShip() {
     this.runBySelectedShipOrientation(
       () => {
-        this.shipOrientation[this.selectedShip] = "v";
+        this.shipInfo.orientation[this.selectedShip] = "v";
         this.selectedShipElem.classList.remove("ship--hori");
         this.selectedShipElem.classList.add("ship--vert");
 
@@ -105,7 +105,7 @@ class User extends Player {
         this.newShipOrigin[1] += this.getHalfOfSelectedShip();
       },
       () => {
-        this.shipOrientation[this.selectedShip] = "h";
+        this.shipInfo.orientation[this.selectedShip] = "h";
         this.selectedShipElem.classList.remove("ship--vert");
         this.selectedShipElem.classList.add("ship--hori");
 
