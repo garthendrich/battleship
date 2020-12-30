@@ -15,6 +15,8 @@
 const user = new User();
 const ai = new Ai();
 
+attachGameSetupHandlers();
+
 const startGameButton = document.querySelector(".start-game");
 startGameButton.addEventListener("click", () => {
   const shipOriginValues = Object.values(user.shipOrigin);
@@ -24,6 +26,7 @@ startGameButton.addEventListener("click", () => {
     document.querySelector(".ship-menu").classList.add("ship-menu--hidden");
     startGameButton.classList.add("start-game--hidden");
 
+    detachGameSetupHandlers();
     startGameFight();
   }
 });

@@ -1,14 +1,35 @@
 "use strict";
 
-// mousedown on ship menu item
-const menuShipElems = document.querySelectorAll(".ship-menu__item");
-menuShipElems.forEach((elem) =>
-  elem.addEventListener("mousedown", (e) => {
-    if (!e.target.classList.contains("ship-menu__item--placed")) user.selectedShip = elem.id;
-  })
-);
+const shipMenuButtons = document.querySelectorAll(".ship-menu__item");
+const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
+const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 
-document.body.addEventListener("mousedown", (e) => {
+function attachGameSetupHandlers() {
+  shipMenuButtons.forEach((button) => button.addEventListener("mousedown", shipMenuElHandler));
+  document.body.addEventListener("mousedown", bodyMouseDownHandler);
+  document.body.addEventListener("mousemove", bodyMouseMoveHandler);
+  document.body.addEventListener("mouseup", bodyMouseUpHandler);
+  randomizeBoardButton.addEventListener("click", randomizeBoardButtonHandler);
+  resetBoardButton.addEventListener("click", removePlacedShips);
+}
+
+function detachGameSetupHandlers() {
+  shipMenuButtons.forEach((button) => button.removeEventListener("mousedown", shipMenuElHandler));
+  document.body.removeEventListener("mousedown", bodyMouseDownHandler);
+  document.body.removeEventListener("mousemove", bodyMouseMoveHandler);
+  document.body.removeEventListener("mouseup", bodyMouseUpHandler);
+  randomizeBoardButton.removeEventListener("click", randomizeBoardButtonHandler);
+  resetBoardButton.removeEventListener("click", removePlacedShips);
+}
+
+// ------------------------------------------------------------------------------------------
+
+// mousedown on ship menu item
+function shipMenuElHandler(e) {
+  if (!e.target.classList.contains("ship-menu__item--placed")) user.selectedShip = e.target.id;
+}
+
+function bodyMouseDownHandler(e) {
   // if mousedown outside board
   if (!e.target.closest(".board--user")) {
     user.hideAllShipPopups();
@@ -26,9 +47,9 @@ document.body.addEventListener("mousedown", (e) => {
     user.shipPointOnMousedown = user.getCurrentShipPointUnderCursor(e);
     user.prevShipOrigin = user.shipOrigin[user.selectedShip];
   }
-});
+}
 
-document.body.addEventListener("mousemove", (e) => {
+function bodyMouseMoveHandler(e) {
   // if mousedown on ship
   if (user.canMoveShip) {
     // if ship will be moved -- if cursor outside selected ship || cursor outside cell where it started mousedown
@@ -38,9 +59,9 @@ document.body.addEventListener("mousemove", (e) => {
       user.hideAllShipPopups();
     }
   }
-});
+}
 
-document.body.addEventListener("mouseup", (e) => {
+function bodyMouseUpHandler(e) {
   user.canMoveShip = false; // reset
   user.hideAllShipPopups();
 
@@ -70,19 +91,15 @@ document.body.addEventListener("mouseup", (e) => {
   }
 
   user.selectedShip = user.prevShipOrigin = user.shipPointOnMousedown = null; // reset
-});
+}
 
-const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
-randomizeBoardButton.addEventListener("click", () => {
+function randomizeBoardButtonHandler() {
   removePlacedShips();
   user.randomizeShips();
   user.hideAllShipPopups();
 
   user.selectedShip = null; // reset
-});
-
-const resetBoardButton = document.querySelector(".ship-menu__button--reset");
-resetBoardButton.addEventListener("click", removePlacedShips);
+}
 
 const shipNames = "cbdsp";
 function removePlacedShips() {
