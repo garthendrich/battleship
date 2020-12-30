@@ -42,42 +42,36 @@ class Player {
   }
 
   // to avoid ship going outside board
-  adjustShipOriginToInsideBoard(shipPoint) {
-    const middleOfShip = Math.round(this.getSelectedShipLength() / 2);
-    if (!shipPoint) shipPoint = middleOfShip;
-
+  adjustShipOriginToInsideBoard() {
     let [row, column] = this.newShipOrigin;
     this.runBySelectedShipOrientation(
       () => {
-        // adjust column
-        const firstShipColumn = column - (shipPoint - 1);
-        const lastShipColumn = column - shipPoint + this.getSelectedShipLength();
+        const shipFirstColumn = column;
+        const shipLastColumn = column + this.getSelectedShipLength() - 1;
 
-        if (lastShipColumn > 9) column = 9 - (this.getSelectedShipLength() - 1);
-        else if (firstShipColumn < 0) column = 0;
-        else column = firstShipColumn;
+        if (shipFirstColumn < 0) column = 0;
+        else if (shipLastColumn > 9) column = 10 - this.getSelectedShipLength();
+        else column = shipFirstColumn;
       },
       () => {
-        // adjust row
-        const firstShipRow = row - (shipPoint - 1);
-        const lastShipRow = row - shipPoint + this.getSelectedShipLength();
+        const shipFirstRow = row;
+        const shipLastRow = row + this.getSelectedShipLength() - 1;
 
-        if (lastShipRow > 9) row = 9 - (this.getSelectedShipLength() - 1);
-        else if (firstShipRow < 0) row = 0;
-        else row = firstShipRow;
+        if (shipFirstRow < 0) row = 0;
+        else if (shipLastRow > 9) row = 10 - this.getSelectedShipLength();
+        else row = shipFirstRow;
       }
     );
 
     this.newShipOrigin = [row, column];
   }
 
-  // to prevent overlapping with other ships
+  // for rotate, to prevent overlapping with other ships
   adjustShipOriginToAvailableSpace() {
-    let shipForwardDir, shipSidewayDir;
-    this.runBySelectedShipOrientation(
+    const [shipForwardDir, shipSidewayDir] = this.runBySelectedShipOrientation(
       // 0: row, 1: column
-      () => ([shipForwardDir, shipSidewayDir] = [1, 0]),
-      () => ([shipForwardDir, shipSidewayDir] = [0, 1])
+      () => [1, 0],
+      () => [0, 1]
     );
 
     let firstIndex = this.newShipOrigin[shipForwardDir];
@@ -95,21 +89,22 @@ class Player {
   doesSelectedShipOverlapOthers() {
     const [row, column] = this.newShipOrigin;
     return this.runBySelectedShipOrientation(
-      () => this.shipDataTable[row].slice(column, column + this.getSelectedShipLength()).includes(1),
+      () => !this.shipDataTable[row].slice(column, column + this.getSelectedShipLength()).every((cell) => cell == 0),
       () => {
-        for (let i = row; i < row + this.getSelectedShipLength(); i++) if (this.shipDataTable[i][column] == 1) return true;
+        for (let i = row; i < row + this.getSelectedShipLength(); i++) if (this.shipDataTable[i][column]) return true;
         return false;
       }
     );
   }
 
-  addSelectedShip([row, column]) {
+  addShip(newShipOrigin = this.newShipOrigin) {
+    let [row, column] = newShipOrigin;
     this.runBySelectedShipOrientation(
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = 1;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = this.selectedShip;
       },
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row + i][column] = 1;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row + i][column] = this.selectedShip;
       }
     );
     this.shipOrigin[this.selectedShip] = [row, column];
@@ -126,7 +121,7 @@ class Player {
         this.selectedShip = shipNames[i];
         this.adjustShipOriginToInsideBoard();
       } while (this.doesSelectedShipOverlapOthers());
-      this.addSelectedShip();
+      this.addShip();
     }
   }
 }
