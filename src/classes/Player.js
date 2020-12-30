@@ -68,11 +68,10 @@ class Player {
 
   // for rotate, to prevent overlapping with other ships
   adjustShipOriginToAvailableSpace() {
-    let shipForwardDir, shipSidewayDir;
-    this.runBySelectedShipOrientation(
+    const [shipForwardDir, shipSidewayDir] = this.runBySelectedShipOrientation(
       // 0: row, 1: column
-      () => ([shipForwardDir, shipSidewayDir] = [1, 0]),
-      () => ([shipForwardDir, shipSidewayDir] = [0, 1])
+      () => [1, 0],
+      () => [0, 1]
     );
 
     let firstIndex = this.newShipOrigin[shipForwardDir];

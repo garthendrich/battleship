@@ -1,6 +1,7 @@
 /*
  TODO:
  * home page
+ * user turns
  * ai algorithm
  * game proper
 
