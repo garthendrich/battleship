@@ -2,9 +2,9 @@ class Ai extends Player {
   constructor(board) {
     super(board);
 
-    this.densityTable;
-    this.densityMultiplier = 1.2;
-    this.showDensityDisplay = true;
+    this.probabilityTable;
+    this.probabilityMultiplier = 1.2;
+    this.showProbabilityDisplay = true;
   }
 
   // * game fight ----------------------------------------------------------------
@@ -25,11 +25,11 @@ class Ai extends Player {
 
   shoot(userInstance) {
     super.shoot(userInstance, this.getRandomShootCoords());
-    this.updateDensityTable();
+    this.updateProbabilityTable();
   }
 
-  updateDensityTable() {
-    this.densityTable = Array(10)
+  updateProbabilityTable() {
+    this.probabilityTable = Array(10)
       .fill()
       .map(() => Array(10).fill(1));
 
@@ -37,14 +37,14 @@ class Ai extends Player {
       const shipLength = this.shipInfo.length[ship];
       if (shipLength === 0) continue;
 
-      this.addDensityForShip(shipLength, "h");
-      this.addDensityForShip(shipLength, "v");
+      this.addProbabilityForShip(shipLength, "h");
+      this.addProbabilityForShip(shipLength, "v");
     }
 
-    if (this.showDensityDisplay) displayProbDensity();
+    if (this.showProbabilityDisplay) displayProbability();
   }
 
-  addDensityForShip(shipLength, orientation) {
+  addProbabilityForShip(shipLength, orientation) {
     let maxRow = 9;
     let maxColumn = 9;
     if (orientation === "h") maxColumn -= shipLength - 1;
@@ -54,15 +54,15 @@ class Ai extends Player {
       for (let column = 0; column <= maxColumn; column++) {
         if (this.doesShipOverlapShots(shipLength, orientation, [row, column])) continue;
         for (let segment = 0; segment < shipLength; segment++) {
-          if (orientation === "h") this.increaseDensity(row, column + segment);
-          else if (orientation === "v") this.increaseDensity(row + segment, column);
+          if (orientation === "h") this.increaseCellProbability(row, column + segment);
+          else if (orientation === "v") this.increaseCellProbability(row + segment, column);
         }
       }
     }
   }
 
-  increaseDensity(row, column) {
-    this.densityTable[row][column] *= this.densityMultiplier;
+  increaseCellProbability(row, column) {
+    this.probabilityTable[row][column] *= this.probabilityMultiplier;
   }
 
   doesShipOverlapShots(shipLength, orientation, [row, column]) {
@@ -72,12 +72,12 @@ class Ai extends Player {
   }
 
   getRandomShootCoords() {
-    const densityTotal = this.densityTable.flat().reduce((total, curr) => total + curr);
-    let random = Math.ceil(Math.random() * densityTotal);
+    const probabilityTotal = this.probabilityTable.flat().reduce((total, curr) => total + curr);
+    let random = Math.ceil(Math.random() * probabilityTotal);
 
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
-        random -= this.densityTable[i][j];
+        random -= this.probabilityTable[i][j];
         if (random <= 0) return [i, j];
       }
     }
