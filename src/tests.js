@@ -14,6 +14,17 @@ function displayProbDensity() {
   }
 }
 
+// inspector functions -------------------------
+
+function setDensityMultiplier(multiplier) {
+  if (multiplier <= 1) {
+    console.log("Multiplier must be greater than 1");
+    return;
+  }
+  ai.densityMultiplier = multiplier;
+  ai.updateDensityTable();
+}
+
 function toggleDensityDisplay() {
   ai.showDensityDisplay = !ai.showDensityDisplay;
 
