@@ -38,6 +38,7 @@ function startGameFight() {
   aiBoard.classList.add("board--attack");
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
+  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1));
 }
 
 function userAttackTurnHandler(e) {
@@ -55,5 +56,5 @@ function userAttackTurnHandler(e) {
 }
 
 function aiAttackTurn() {
-  // ai.setDensity();
+  ai.updateDensityTable();
 }
