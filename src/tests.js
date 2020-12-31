@@ -5,30 +5,30 @@
 // }
 
 const userBoard = document.querySelector(".board--user");
-function displayProbDensity() {
+function displayProbability() {
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
       userBoard.rows[row].cells[column].style.background =
-        ai.densityTable[row][column] == 1 ? "red" : `rgba(0,0,0,${ai.densityTable[row][column] / Math.max(...ai.densityTable.flat())})`;
+        ai.probabilityTable[row][column] == 1 ? "red" : `rgba(0,0,0,${ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())})`;
     }
   }
 }
 
 // inspector functions -------------------------
 
-function setDensityMultiplier(multiplier) {
+function setProbabilityMultiplier(multiplier) {
   if (multiplier <= 1) {
     console.log("Multiplier must be greater than 1");
     return;
   }
-  ai.densityMultiplier = multiplier;
-  ai.updateDensityTable();
+  ai.probabilityMultiplier = multiplier;
+  ai.updateProbabilityTable();
 }
 
-function toggleDensityDisplay() {
-  ai.showDensityDisplay = !ai.showDensityDisplay;
+function toggleProbabilityDisplay() {
+  ai.showProbabilityDisplay = !ai.showProbabilityDisplay;
 
-  if (ai.showDensityDisplay) displayProbDensity();
+  if (ai.showProbabilityDisplay) displayProbability();
   else {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {

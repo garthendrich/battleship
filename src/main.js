@@ -33,7 +33,7 @@ const aiBoard = document.querySelector(".board--ai");
 
 function startGameFight() {
   ai.randomizeShips();
-  ai.updateDensityTable();
+  ai.updateProbabilityTable();
   aiBoard.classList.add("board--attack");
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
