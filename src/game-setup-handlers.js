@@ -26,7 +26,10 @@ function detachGameSetupHandlers() {
 
 // mousedown on ship menu item
 function shipMenuElHandler(e) {
-  if (!e.target.classList.contains("ship-menu__item--placed")) user.selectedShip = e.target.id;
+  if (!e.target.classList.contains("ship-menu__item--placed")) {
+    user.selectedShip = e.target.id;
+    user.shipSegmentIndexOnMousedown = user.getSelectedShipMiddleSegmentIndex();
+  }
 }
 
 function bodyMouseDownHandler(e) {
@@ -44,8 +47,9 @@ function bodyMouseDownHandler(e) {
   if (user.selectedShipElem) {
     user.canMoveShip = true;
     user.selectedShip = user.selectedShipElem.id;
-    user.shipPointOnMousedown = user.getCurrentShipPointUnderCursor(e);
+    user.shipSegmentIndexOnMousedown = user.getCurrentShipSegmentIndexUnderCursor(e);
     user.prevShipOrigin = user.shipInfo.origin[user.selectedShip];
+    console.log(user.shipSegmentIndexOnMousedown);
   }
 }
 
@@ -53,7 +57,7 @@ function bodyMouseMoveHandler(e) {
   // if mousedown on ship
   if (user.canMoveShip) {
     // if ship will be moved: if cursor outside selected ship || cursor outside cell where it started mousedown
-    if (!(e.target.id == user.selectedShip) || user.shipPointOnMousedown != user.getCurrentShipPointUnderCursor(e)) {
+    if (!(e.target.id == user.selectedShip) || user.shipSegmentIndexOnMousedown != user.getCurrentShipSegmentIndexUnderCursor(e)) {
       user.canMoveShip = false; // reset; pass only once
       user.removeSelectedShip();
       user.hideAllShipPopups();
@@ -77,20 +81,20 @@ function bodyMouseUpHandler(e) {
       const columnUnderCursor = e.target.cellIndex;
 
       user.newShipOrigin = user.runBySelectedShipOrientation(
-        () => [rowUnderCursor, columnUnderCursor - user.getHalfOfSelectedShip()],
-        () => [rowUnderCursor - user.getHalfOfSelectedShip(), columnUnderCursor]
+        () => [rowUnderCursor, columnUnderCursor - user.shipSegmentIndexOnMousedown],
+        () => [rowUnderCursor - user.shipSegmentIndexOnMousedown, columnUnderCursor]
       );
 
       user.adjustShipOriginToInsideBoard();
 
-      if (!user.doesSelectedShipOverlapOthers()) user.addShip();
-      else if (user.prevShipOrigin) user.addShip(user.prevShipOrigin);
+      if (!user.doesSelectedShipOverlapOthers()) user.addSelectedShip(user.newShipOrigin);
+      else if (user.prevShipOrigin) user.addSelectedShip(user.prevShipOrigin);
     }
     // else if mouseup not on cell and has prevShipOrigin
-    else if (user.prevShipOrigin) user.addShip(user.prevShipOrigin);
+    else if (user.prevShipOrigin) user.addSelectedShip(user.prevShipOrigin);
   }
 
-  user.selectedShip = user.prevShipOrigin = user.shipPointOnMousedown = null; // reset
+  user.selectedShip = user.prevShipOrigin = user.shipSegmentIndexOnMousedown = null; // reset
 }
 
 function randomizeBoardButtonHandler() {
@@ -124,7 +128,7 @@ function rotateButtonHandler(e) {
   user.adjustShipOriginToInsideBoard();
   user.adjustShipOriginToAvailableSpace();
 
-  user.addShip();
+  user.addSelectedShip(user.newShipOrigin);
 
   user.selectedShip = null; //reset
 }
