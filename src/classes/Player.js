@@ -39,6 +39,8 @@ class Player {
     this.shipSegments = 17;
   }
 
+  // * game setup ----------------------------------------------------------------
+
   runBySelectedShipOrientation(h, v) {
     return this.shipInfo.orientation[this.selectedShip] == "h" ? h() : v();
   }
@@ -140,6 +142,8 @@ class Player {
       this.addSelectedShip(this.newShipOrigin);
     }
   }
+
+  // * game fight ----------------------------------------------------------------
 
   shoot(enemyInstance, [row, column]) {
     const shipHit = enemyInstance.shipPlacementTable[row][column];
