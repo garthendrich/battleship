@@ -123,7 +123,7 @@ td {
   z-index: 1;
 }
 
-.ship--wrecked {
+.ship--sunk {
   background: #b24b68;
   border: 3px #564145 solid;
 }
