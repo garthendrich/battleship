@@ -4,6 +4,7 @@ class Ai extends Player {
 
     this.densityTable;
     this.densityMultiplier = 1.2;
+    this.showDensityDisplay = true;
   }
 
   // * game fight ----------------------------------------------------------------
@@ -40,7 +41,7 @@ class Ai extends Player {
       this.addDensityForShip(shipLength, "v");
     }
 
-    displayProbDensity();
+    if (this.showDensityDisplay) displayProbDensity();
   }
 
   addDensityForShip(shipLength, orientation) {
