@@ -3,8 +3,8 @@ class Ai extends Player {
     super(board);
   }
 
-  displayShot([row, column], shipHit) {
-    super.displayShot([row, column], shipHit);
+  displayEnemyShot(shipHit, row, column) {
+    super.displayEnemyShot(shipHit, row, column);
 
     const cell = this.tableEl.rows[row].cells[column];
     cell.classList.add("shot");

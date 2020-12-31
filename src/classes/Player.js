@@ -5,7 +5,7 @@ class Player {
     this.shipPlacementTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
-    this.enemyShotsTable = Array(10)
+    this.shotsTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
 
@@ -33,10 +33,10 @@ class Player {
       },
     };
 
-    this.shipSegments = 17;
-
     this.selectedShip;
     this.newShipOrigin;
+
+    this.shipSegments = 17;
   }
 
   runBySelectedShipOrientation(h, v) {
@@ -141,22 +141,18 @@ class Player {
     }
   }
 
-  cellNotShot(row, column) {
-    return !this.enemyShotsTable[row][column];
-  }
-
-  shoot(row, column) {
-    const shipHit = this.shipPlacementTable[row][column];
+  shoot(enemyInstance, row, column) {
+    const shipHit = enemyInstance.shipPlacementTable[row][column];
     if (shipHit) {
-      this.shipInfo.length[shipHit]--;
-      this.shipSegments--;
+      enemyInstance.shipInfo.length[shipHit]--;
+      enemyInstance.shipSegments--;
     }
 
-    this.enemyShotsTable[row][column] = 1;
-    this.displayShot([row, column], shipHit);
+    this.shotsTable[row][column] = 1;
+    enemyInstance.displayEnemyShot(shipHit, row, column);
   }
 
-  displayShot([row, column], shipHit) {
+  displayEnemyShot(shipHit, row, column) {
     const cell = this.tableEl.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
