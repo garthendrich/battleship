@@ -1,9 +1,7 @@
 /*
  TODO:
  * home page
- * user turns
  * ai algorithm
- * game proper
 
  ** THINGS THAT MAY BE CONSIDERED:
  * current randomizer may be inefficient because of the posibility that occupied cells could be checked again
@@ -35,7 +33,9 @@ const aiBoard = document.querySelector(".board--ai");
 
 function startGameFight() {
   ai.randomizeShips();
-  displayAiShipTable();
+  console.table(user.shipPlacementTable);
+  console.table(ai.shipPlacementTable);
+  aiBoard.classList.add("board--attack");
   aiBoard.addEventListener("click", attackAiBoardHandler);
 }
 

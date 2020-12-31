@@ -49,7 +49,6 @@ function bodyMouseDownHandler(e) {
     user.selectedShip = user.selectedShipElem.id;
     user.shipSegmentIndexOnMousedown = user.getCurrentShipSegmentIndexUnderCursor(e);
     user.prevShipOrigin = user.shipInfo.origin[user.selectedShip];
-    console.log(user.shipSegmentIndexOnMousedown);
   }
 }
 

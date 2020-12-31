@@ -17,17 +17,10 @@ class User extends Player {
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this.selectedShip}`);
     menuShipElem.classList.add("ship-menu__item--placed");
-
-    console.table(this.shipPlacementTable);
   }
 
   createShip() {
-    const newShipObj = document.createElement("div");
-    this.runBySelectedShipOrientation(
-      () => newShipObj.classList.add("ship", "ship--hori"),
-      () => newShipObj.classList.add("ship", "ship--vert")
-    );
-    newShipObj.id = this.selectedShip;
+    const newShipObj = super.createShip();
     newShipObj.append(this.createShipPopup());
     return newShipObj;
   }
