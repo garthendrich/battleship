@@ -17,6 +17,7 @@
 
 body {
   min-width: 1200px;
+  background: #3ccfbf;
 }
 
 svg {
@@ -25,7 +26,7 @@ svg {
 }
 
 button {
-  background: none;
+  background: #fff;
   border: 1px solid black;
   border-radius: 5px;
   padding: 10px;
@@ -33,7 +34,7 @@ button {
 }
 
 button:hover {
-  background: #eeeeee;
+  background: #ddd;
 }
 
 .ship-menu {
@@ -104,7 +105,7 @@ button:hover {
 }
 
 td {
-  border: 1px solid black;
+  border: 1px solid white;
   position: relative;
 }
 

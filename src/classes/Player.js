@@ -1,5 +1,7 @@
 class Player {
-  constructor() {
+  constructor(board) {
+    this.tableEl = document.querySelector(board);
+
     this.shipPlacementTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
@@ -30,6 +32,8 @@ class Player {
         p: 2,
       },
     };
+
+    this.shipSegments = 17;
 
     this.selectedShip;
     this.newShipOrigin;
@@ -125,5 +129,28 @@ class Player {
       } while (this.doesSelectedShipOverlapOthers());
       this.addShip();
     }
+  }
+
+  cellNotShot(row, column) {
+    return !this.enemyShotsTable[row][column];
+  }
+
+  shoot(row, column) {
+    const shipHit = this.shipPlacementTable[row][column];
+    if (shipHit) {
+      this.enemyShotsTable[row][column] = 1;
+      this.shipInfo.length[shipHit]--;
+      this.shipSegments--;
+    }
+
+    this.displayShot([row, column], shipHit);
+    console.log(this.shipSegments);
+    console.log(this.shipInfo.length);
+  }
+
+  displayShot([row, column], hit) {
+    const cell = this.tableEl.rows[row].cells[column];
+    if (hit) cell.style.background = "#B24B68";
+    else cell.style.background = "white";
   }
 }
