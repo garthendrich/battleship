@@ -3,6 +3,7 @@ class Ai extends Player {
     super(board);
 
     this.densityTable;
+    this.densityMultiplier = 1.2;
   }
 
   displayEnemyShot(shipHit, row, column) {
@@ -19,36 +20,63 @@ class Ai extends Player {
     }
   }
 
+  shoot(userInstance) {
+    super.shoot(userInstance, this.getRandomShootCoords());
+    this.updateDensityTable();
+  }
+
   updateDensityTable() {
     this.densityTable = Array(10)
       .fill()
-      .map(() => Array(10).fill(0));
+      .map(() => Array(10).fill(1));
 
     for (let ship of shipNames) {
       const shipLength = this.shipInfo.length[ship];
       if (shipLength === 0) continue;
 
-      for (let row = 0; row < 10; row++) {
-        for (let column = 0; column <= 10 - this.shipInfo.length[ship]; column++) {
-          if (this.doesShipOverlapShots(shipLength, "h", [row, column])) continue;
-          for (let segment = 0; segment < this.shipInfo.length[ship]; segment++) this.densityTable[row][column + segment]++;
-        }
-      }
-
-      for (let row = 0; row <= 10 - this.shipInfo.length[ship]; row++) {
-        for (let column = 0; column < 10; column++) {
-          if (this.doesShipOverlapShots(shipLength, "v", [row, column])) continue;
-          for (let segment = 0; segment < this.shipInfo.length[ship]; segment++) this.densityTable[row + segment][column]++;
-        }
-      }
+      this.addDensityForShip(shipLength, "h");
+      this.addDensityForShip(shipLength, "v");
     }
 
     displayProbDensity();
   }
 
+  addDensityForShip(shipLength, orientation) {
+    let maxRow = 9;
+    let maxColumn = 9;
+    if (orientation === "h") maxColumn -= shipLength - 1;
+    else if (orientation === "v") maxRow -= shipLength - 1;
+
+    for (let row = 0; row <= maxRow; row++) {
+      for (let column = 0; column <= maxColumn; column++) {
+        if (this.doesShipOverlapShots(shipLength, orientation, [row, column])) continue;
+        for (let segment = 0; segment < shipLength; segment++) {
+          if (orientation === "h") this.increaseDensity(row, column + segment);
+          else if (orientation === "v") this.increaseDensity(row + segment, column);
+        }
+      }
+    }
+  }
+
+  increaseDensity(row, column) {
+    this.densityTable[row][column] *= this.densityMultiplier;
+  }
+
   doesShipOverlapShots(shipLength, orientation, [row, column]) {
-    if (orientation == "h") return !this.shotsTable[row].slice(column, column + shipLength).every((cell) => cell == 0);
+    if (orientation == "h") return this.shotsTable[row].slice(column, column + shipLength).some((cell) => cell == 1);
     else for (let i = row; i < row + shipLength; i++) if (this.shotsTable[i][column]) return true;
     return false;
+  }
+
+  getRandomShootCoords() {
+    const densityTotal = this.densityTable.flat().reduce((total, curr) => total + curr);
+    let random = Math.ceil(Math.random() * densityTotal);
+
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        random -= this.densityTable[i][j];
+        if (random <= 0) return [i, j];
+      }
+    }
   }
 }

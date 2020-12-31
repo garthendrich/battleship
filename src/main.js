@@ -33,8 +33,7 @@ const aiBoard = document.querySelector(".board--ai");
 
 function startGameFight() {
   ai.randomizeShips();
-  console.table(user.shipPlacementTable);
-  console.table(ai.shipPlacementTable);
+  ai.updateDensityTable();
   aiBoard.classList.add("board--attack");
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
@@ -48,13 +47,9 @@ function userAttackTurnHandler(e) {
   const row = e.target.closest("tr")?.rowIndex;
   const column = e.target.cellIndex;
   if (typeof row !== "undefined" && typeof column !== "undefined" && user.canShootEnemyCell(row, column)) {
-    user.shoot(ai, row, column);
+    user.shoot(ai, [row, column]);
 
-    aiAttackTurn();
+    ai.shoot(user);
   }
   user.isTurn = true;
-}
-
-function aiAttackTurn() {
-  ai.updateDensityTable();
 }
