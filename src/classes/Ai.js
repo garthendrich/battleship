@@ -1,1 +1,5 @@
-class Ai extends Player {}
+class Ai extends Player {
+  constructor(board) {
+    super(board);
+  }
+}
