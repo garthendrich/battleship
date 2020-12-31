@@ -121,7 +121,7 @@ class Player {
       () => newShipObj.classList.add("ship", "ship--hori"),
       () => newShipObj.classList.add("ship", "ship--vert")
     );
-    if (params.wrecked) newShipObj.classList.add("ship--wrecked");
+    if (params.sunk) newShipObj.classList.add("ship--sunk");
     newShipObj.id = this.selectedShip;
     return newShipObj;
   }

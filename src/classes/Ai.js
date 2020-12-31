@@ -16,7 +16,7 @@ class Ai extends Player {
       const shipOrigin = this.shipInfo.origin[shipHit];
       const shipOriginCell = this.tableEl.rows[shipOrigin[0]].cells[shipOrigin[1]];
       this.selectedShip = shipHit;
-      shipOriginCell.append(this.createShip({ wrecked: true }));
+      shipOriginCell.append(this.createShip({ sunk: true }));
     }
   }
 
