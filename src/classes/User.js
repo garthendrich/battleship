@@ -6,14 +6,13 @@ class User extends Player {
     this.removeSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5 11H19V13H5z"/></svg>';
     this.selectedShipElem;
     this.canMoveShip;
-    this.shipPointOnMousedown;
+    this.shipSegmentIndexOnMousedown;
     this.prevShipOrigin;
   }
 
-  addShip(newShipOrigin = this.newShipOrigin) {
-    super.addShip(newShipOrigin);
+  addSelectedShip([row, column]) {
+    super.addSelectedShip([row, column]);
 
-    const [row, column] = newShipOrigin;
     document.querySelector(`.board--user`).rows[row].cells[column].append(this.createShip());
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this.selectedShip}`);
@@ -56,10 +55,10 @@ class User extends Player {
     if (shipPopupElems.length) shipPopupElems.forEach((popup) => popup.classList.add("ship__popup--hidden"));
   }
 
-  getCurrentShipPointUnderCursor(e) {
+  getCurrentShipSegmentIndexUnderCursor(e) {
     return this.runBySelectedShipOrientation(
-      () => Math.ceil((e.clientX - this.selectedShipElem.getBoundingClientRect().left) / this.selectedShipElem.getBoundingClientRect().height),
-      () => Math.ceil((e.clientY - this.selectedShipElem.getBoundingClientRect().top) / this.selectedShipElem.getBoundingClientRect().width)
+      () => Math.ceil((e.clientX - this.selectedShipElem.getBoundingClientRect().left) / this.selectedShipElem.getBoundingClientRect().height) - 1,
+      () => Math.ceil((e.clientY - this.selectedShipElem.getBoundingClientRect().top) / this.selectedShipElem.getBoundingClientRect().width) - 1
     );
   }
 
@@ -101,21 +100,21 @@ class User extends Player {
         this.selectedShipElem.classList.remove("ship--hori");
         this.selectedShipElem.classList.add("ship--vert");
 
-        this.newShipOrigin[0] -= this.getHalfOfSelectedShip();
-        this.newShipOrigin[1] += this.getHalfOfSelectedShip();
+        this.newShipOrigin[0] -= this.getSelectedShipMiddleSegmentIndex();
+        this.newShipOrigin[1] += this.getSelectedShipMiddleSegmentIndex();
       },
       () => {
         this.shipInfo.orientation[this.selectedShip] = "h";
         this.selectedShipElem.classList.remove("ship--vert");
         this.selectedShipElem.classList.add("ship--hori");
 
-        this.newShipOrigin[0] += this.getHalfOfSelectedShip();
-        this.newShipOrigin[1] -= this.getHalfOfSelectedShip();
+        this.newShipOrigin[0] += this.getSelectedShipMiddleSegmentIndex();
+        this.newShipOrigin[1] -= this.getSelectedShipMiddleSegmentIndex();
       }
     );
   }
 
-  getHalfOfSelectedShip() {
-    return Math.floor(this.getSelectedShipLength() / 2);
+  getSelectedShipMiddleSegmentIndex() {
+    return Math.ceil(this.getSelectedShipLength() / 2) - 1;
   }
 }

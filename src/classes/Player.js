@@ -103,8 +103,7 @@ class Player {
     );
   }
 
-  addShip(newShipOrigin = this.newShipOrigin) {
-    let [row, column] = newShipOrigin;
+  addSelectedShip([row, column]) {
     this.runBySelectedShipOrientation(
       () => {
         for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipPlacementTable[row][column + i] = this.selectedShip;
@@ -123,11 +122,11 @@ class Player {
     // randomize ship cell origins
     for (let i = 0; i < 5; i++) {
       do {
-        this.newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this.selectedShip = shipNames[i];
+        this.newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this.adjustShipOriginToInsideBoard();
       } while (this.doesSelectedShipOverlapOthers());
-      this.addShip();
+      this.addSelectedShip(this.newShipOrigin);
     }
   }
 
