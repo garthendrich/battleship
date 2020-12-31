@@ -98,15 +98,20 @@ button:hover {
 }
 
 .board {
-  height: calc(var(--cell-size) * 10);
-  width: calc(var(--cell-size) * 10);
   border-collapse: collapse;
   margin: 0 15px;
+  border: 1px solid white;
 }
 
 td {
-  border: 1px solid white;
+  height: var(--cell-size);
+  width: var(--cell-size);
   position: relative;
+}
+
+.board--attack td:not(.shot):hover {
+  background: #94ea89;
+  cursor: pointer;
 }
 
 .ship {
@@ -116,6 +121,11 @@ td {
   background: #4a6fa5;
   border: 3px #404756 solid;
   z-index: 1;
+}
+
+.ship--wrecked {
+  background: #b24b68;
+  border: 3px #564145 solid;
 }
 
 /* horizontal ships */

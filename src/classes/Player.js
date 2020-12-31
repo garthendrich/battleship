@@ -115,6 +115,17 @@ class Player {
     this.shipInfo.origin[this.selectedShip] = [row, column];
   }
 
+  createShip(params = {}) {
+    const newShipObj = document.createElement("div");
+    this.runBySelectedShipOrientation(
+      () => newShipObj.classList.add("ship", "ship--hori"),
+      () => newShipObj.classList.add("ship", "ship--vert")
+    );
+    if (params.wrecked) newShipObj.classList.add("ship--wrecked");
+    newShipObj.id = this.selectedShip;
+    return newShipObj;
+  }
+
   randomizeShips() {
     // randomize orientations
     for (let ship of shipNames) this.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
@@ -137,19 +148,17 @@ class Player {
   shoot(row, column) {
     const shipHit = this.shipPlacementTable[row][column];
     if (shipHit) {
-      this.enemyShotsTable[row][column] = 1;
       this.shipInfo.length[shipHit]--;
       this.shipSegments--;
     }
 
+    this.enemyShotsTable[row][column] = 1;
     this.displayShot([row, column], shipHit);
-    console.log(this.shipSegments);
-    console.log(this.shipInfo.length);
   }
 
-  displayShot([row, column], hit) {
+  displayShot([row, column], shipHit) {
     const cell = this.tableEl.rows[row].cells[column];
-    if (hit) cell.style.background = "#B24B68";
+    if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
   }
 }
