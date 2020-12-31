@@ -8,5 +8,6 @@ const userBoard = document.querySelector(".board--user");
 function displayProbDensity() {
   for (let row = 0; row < 10; row++)
     for (let column = 0; column < 10; column++)
-      userBoard.rows[row].cells[column].style.background = `rgba(0,0,0,${ai.densityTable[row][column] / 40})`;
+      userBoard.rows[row].cells[column].style.background =
+        ai.densityTable[row][column] == 1 ? "red" : `rgba(0,0,0,${ai.densityTable[row][column] / Math.max(...ai.densityTable.flat())})`;
 }

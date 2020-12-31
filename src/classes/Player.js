@@ -141,7 +141,7 @@ class Player {
     }
   }
 
-  shoot(enemyInstance, row, column) {
+  shoot(enemyInstance, [row, column]) {
     const shipHit = enemyInstance.shipPlacementTable[row][column];
     if (shipHit) {
       enemyInstance.shipInfo.length[shipHit]--;
