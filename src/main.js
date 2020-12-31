@@ -1,9 +1,7 @@
 /*
  TODO:
  * home page
- * user turns
  * ai algorithm
- * game proper
 
  ** THINGS THAT MAY BE CONSIDERED:
  * current randomizer may be inefficient because of the posibility that occupied cells could be checked again
@@ -12,14 +10,14 @@
 
 "use strict";
 
-const user = new User();
-const ai = new Ai();
+const user = new User(".board--user");
+const ai = new Ai(".board--ai");
 
 attachGameSetupHandlers();
 
 const startGameButton = document.querySelector(".start-game");
 startGameButton.addEventListener("click", () => {
-  const shipOriginValues = Object.values(user.shipOrigin);
+  const shipOriginValues = Object.values(user.shipInfo.origin);
   const areAllShipsPlaced = !shipOriginValues.includes(null);
 
   if (areAllShipsPlaced) {
@@ -31,7 +29,19 @@ startGameButton.addEventListener("click", () => {
   }
 });
 
+const aiBoard = document.querySelector(".board--ai");
+
 function startGameFight() {
   ai.randomizeShips();
-  displayAiShipTable();
+  console.table(user.shipPlacementTable);
+  console.table(ai.shipPlacementTable);
+  aiBoard.classList.add("board--attack");
+  aiBoard.addEventListener("click", attackAiBoardHandler);
+}
+
+function attackAiBoardHandler(e) {
+  const row = e.target.closest("tr")?.rowIndex;
+  const column = e.target.cellIndex;
+
+  if (typeof row !== "undefined" && typeof column !== "undefined" && ai.cellNotShot(row, column)) ai.shoot(row, column);
 }

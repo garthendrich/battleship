@@ -1,44 +1,50 @@
 class Player {
-  constructor() {
-    this.shipDataTable = Array(10)
+  constructor(board) {
+    this.tableEl = document.querySelector(board);
+
+    this.shipPlacementTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
-    this.shotDataTable = Array(10)
+    this.enemyShotsTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
-    this.shipOrigin = {
-      // [row, column]
-      c: null,
-      b: null,
-      d: null,
-      s: null,
-      p: null,
+
+    this.shipInfo = {
+      origin: {
+        c: null,
+        b: null,
+        d: null,
+        s: null,
+        p: null,
+      },
+      orientation: {
+        c: "h",
+        b: "h",
+        d: "h",
+        s: "h",
+        p: "h",
+      },
+      length: {
+        c: 5,
+        b: 4,
+        d: 3,
+        s: 3,
+        p: 2,
+      },
     };
-    this.shipOrientation = {
-      c: "h",
-      b: "h",
-      d: "h",
-      s: "h",
-      p: "h",
-    };
-    this.shipLength = {
-      c: 5,
-      b: 4,
-      d: 3,
-      s: 3,
-      p: 2,
-    };
+
+    this.shipSegments = 17;
 
     this.selectedShip;
     this.newShipOrigin;
   }
 
   runBySelectedShipOrientation(h, v) {
-    return this.shipOrientation[this.selectedShip] == "h" ? h() : v();
+    return this.shipInfo.orientation[this.selectedShip] == "h" ? h() : v();
   }
 
   getSelectedShipLength() {
-    return this.shipLength[this.selectedShip];
+    return this.shipInfo.length[this.selectedShip];
   }
 
   // to avoid ship going outside board
@@ -89,39 +95,70 @@ class Player {
   doesSelectedShipOverlapOthers() {
     const [row, column] = this.newShipOrigin;
     return this.runBySelectedShipOrientation(
-      () => !this.shipDataTable[row].slice(column, column + this.getSelectedShipLength()).every((cell) => cell == 0),
+      () => !this.shipPlacementTable[row].slice(column, column + this.getSelectedShipLength()).every((cell) => cell == 0),
       () => {
-        for (let i = row; i < row + this.getSelectedShipLength(); i++) if (this.shipDataTable[i][column]) return true;
+        for (let i = row; i < row + this.getSelectedShipLength(); i++) if (this.shipPlacementTable[i][column]) return true;
         return false;
       }
     );
   }
 
-  addShip(newShipOrigin = this.newShipOrigin) {
-    let [row, column] = newShipOrigin;
+  addSelectedShip([row, column]) {
     this.runBySelectedShipOrientation(
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row][column + i] = this.selectedShip;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipPlacementTable[row][column + i] = this.selectedShip;
       },
       () => {
-        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipDataTable[row + i][column] = this.selectedShip;
+        for (let i = 0; i < this.getSelectedShipLength(); i++) this.shipPlacementTable[row + i][column] = this.selectedShip;
       }
     );
-    this.shipOrigin[this.selectedShip] = [row, column];
+    this.shipInfo.origin[this.selectedShip] = [row, column];
+  }
+
+  createShip(params = {}) {
+    const newShipObj = document.createElement("div");
+    this.runBySelectedShipOrientation(
+      () => newShipObj.classList.add("ship", "ship--hori"),
+      () => newShipObj.classList.add("ship", "ship--vert")
+    );
+    if (params.wrecked) newShipObj.classList.add("ship--wrecked");
+    newShipObj.id = this.selectedShip;
+    return newShipObj;
   }
 
   randomizeShips() {
     // randomize orientations
-    for (let ship of shipNames) this.shipOrientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
+    for (let ship of shipNames) this.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
 
     // randomize ship cell origins
     for (let i = 0; i < 5; i++) {
       do {
-        this.newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this.selectedShip = shipNames[i];
+        this.newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this.adjustShipOriginToInsideBoard();
       } while (this.doesSelectedShipOverlapOthers());
-      this.addShip();
+      this.addSelectedShip(this.newShipOrigin);
     }
+  }
+
+  cellNotShot(row, column) {
+    return !this.enemyShotsTable[row][column];
+  }
+
+  shoot(row, column) {
+    const shipHit = this.shipPlacementTable[row][column];
+    if (shipHit) {
+      this.shipInfo.length[shipHit]--;
+      this.shipSegments--;
+    }
+
+    this.enemyShotsTable[row][column] = 1;
+    this.displayShot([row, column], shipHit);
+  }
+
+  displayShot([row, column], shipHit) {
+    const cell = this.tableEl.rows[row].cells[column];
+    if (shipHit) cell.style.background = "#B24B68";
+    else cell.style.background = "white";
   }
 }
