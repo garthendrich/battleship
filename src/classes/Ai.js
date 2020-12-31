@@ -6,6 +6,8 @@ class Ai extends Player {
     this.densityMultiplier = 1.2;
   }
 
+  // * game fight ----------------------------------------------------------------
+
   displayEnemyShot(shipHit, row, column) {
     super.displayEnemyShot(shipHit, row, column);
 

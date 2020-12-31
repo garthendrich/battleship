@@ -12,6 +12,8 @@ class User extends Player {
     this.isTurn = false;
   }
 
+  // * game setup ----------------------------------------------------------------
+
   addSelectedShip([row, column]) {
     super.addSelectedShip([row, column]);
 
@@ -113,7 +115,7 @@ class User extends Player {
     return Math.ceil(this.getSelectedShipLength() / 2) - 1;
   }
 
-  // game fight ----------------------------------------------------------------
+  // * game fight ----------------------------------------------------------------
 
   canShootEnemyCell(row, column) {
     return !this.shotsTable[row][column];
