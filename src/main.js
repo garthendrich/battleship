@@ -36,12 +36,24 @@ function startGameFight() {
   console.table(user.shipPlacementTable);
   console.table(ai.shipPlacementTable);
   aiBoard.classList.add("board--attack");
-  aiBoard.addEventListener("click", attackAiBoardHandler);
+  aiBoard.addEventListener("click", userAttackTurnHandler);
+  user.isTurn = true;
 }
 
-function attackAiBoardHandler(e) {
+function userAttackTurnHandler(e) {
+  if (!user.isTurn) return;
+  user.isTurn = false;
+
   const row = e.target.closest("tr")?.rowIndex;
   const column = e.target.cellIndex;
+  if (typeof row !== "undefined" && typeof column !== "undefined" && user.canShootEnemyCell(row, column)) {
+    user.shoot(ai, row, column);
 
-  if (typeof row !== "undefined" && typeof column !== "undefined" && ai.cellNotShot(row, column)) ai.shoot(row, column);
+    aiAttackTurn();
+  }
+  user.isTurn = true;
+}
+
+function aiAttackTurn() {
+  // ai.setDensity();
 }
