@@ -9,7 +9,9 @@ function displayProbability() {
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
       userBoard.rows[row].cells[column].style.background =
-        ai.probabilityTable[row][column] == 1 ? "red" : `rgba(0,0,0,${ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())})`;
+        ai.probabilityTable[row][column] == 0
+          ? "none"
+          : `rgba(163, 31, 26,${ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())})`;
     }
   }
 }
