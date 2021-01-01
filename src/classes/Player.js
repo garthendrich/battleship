@@ -31,6 +31,13 @@ class Player {
         s: 3,
         p: 2,
       },
+      status: {
+        c: 5,
+        b: 4,
+        d: 3,
+        s: 3,
+        p: 2,
+      },
     };
 
     this.selectedShip;
@@ -39,11 +46,11 @@ class Player {
     this.shipSegments = 17;
   }
 
-  // * game setup ----------------------------------------------------------------
-
   runBySelectedShipOrientation(h, v) {
     return this.shipInfo.orientation[this.selectedShip] == "h" ? h() : v();
   }
+
+  // * game setup ----------------------------------------------------------------
 
   getSelectedShipLength() {
     return this.shipInfo.length[this.selectedShip];
@@ -148,11 +155,13 @@ class Player {
   shoot(enemyInstance, [row, column]) {
     const shipHit = enemyInstance.shipPlacementTable[row][column];
     if (shipHit) {
-      enemyInstance.shipInfo.length[shipHit]--;
+      enemyInstance.shipInfo.status[shipHit]--;
       enemyInstance.shipSegments--;
+      this.shotsTable[row][column] = "x";
+    } else {
+      this.shotsTable[row][column] = 1;
     }
 
-    this.shotsTable[row][column] = 1;
     enemyInstance.displayEnemyShot(shipHit, row, column);
   }
 
@@ -160,5 +169,9 @@ class Player {
     const cell = this.tableEl.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
+  }
+
+  shipSunk(ship) {
+    return this.shipInfo.status[ship] === 0;
   }
 }

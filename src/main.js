@@ -1,11 +1,16 @@
 /*
  TODO:
- * home page
+ * home screen
  * ai algorithm
+    ! Fix getRandomShootCoords() float issue
+    * tracking probability multiplier increaser
+  * finish game state
+  * inspector settings
+  ! refactor [private fields and methods]
 
  ** THINGS THAT MAY BE CONSIDERED:
- * current randomizer may be inefficient because of the posibility that occupied cells could be checked again
- * better adjust ship on rotate
+ * current randomizer may be inefficient: rechecking occupied cells
+ * better adjust-ship-on-rotate
  */
 
 "use strict";
