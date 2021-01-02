@@ -5,7 +5,7 @@ class Player {
     this.shipPlacementTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
-    this.enemyShotsTable = Array(10)
+    this.shotsTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
 
@@ -31,17 +31,26 @@ class Player {
         s: 3,
         p: 2,
       },
+      status: {
+        c: 5,
+        b: 4,
+        d: 3,
+        s: 3,
+        p: 2,
+      },
     };
-
-    this.shipSegments = 17;
 
     this.selectedShip;
     this.newShipOrigin;
+
+    this.shipSegments = 17;
   }
 
   runBySelectedShipOrientation(h, v) {
     return this.shipInfo.orientation[this.selectedShip] == "h" ? h() : v();
   }
+
+  // * game setup ----------------------------------------------------------------
 
   getSelectedShipLength() {
     return this.shipInfo.length[this.selectedShip];
@@ -121,7 +130,7 @@ class Player {
       () => newShipObj.classList.add("ship", "ship--hori"),
       () => newShipObj.classList.add("ship", "ship--vert")
     );
-    if (params.wrecked) newShipObj.classList.add("ship--wrecked");
+    if (params.sunk) newShipObj.classList.add("ship--sunk");
     newShipObj.id = this.selectedShip;
     return newShipObj;
   }
@@ -141,24 +150,28 @@ class Player {
     }
   }
 
-  cellNotShot(row, column) {
-    return !this.enemyShotsTable[row][column];
-  }
+  // * game fight ----------------------------------------------------------------
 
-  shoot(row, column) {
-    const shipHit = this.shipPlacementTable[row][column];
+  shoot(enemyInstance, [row, column]) {
+    const shipHit = enemyInstance.shipPlacementTable[row][column];
     if (shipHit) {
-      this.shipInfo.length[shipHit]--;
-      this.shipSegments--;
+      enemyInstance.shipInfo.status[shipHit]--;
+      enemyInstance.shipSegments--;
+      this.shotsTable[row][column] = "x";
+    } else {
+      this.shotsTable[row][column] = 1;
     }
 
-    this.enemyShotsTable[row][column] = 1;
-    this.displayShot([row, column], shipHit);
+    enemyInstance.displayEnemyShot(shipHit, row, column);
   }
 
-  displayShot([row, column], shipHit) {
+  displayEnemyShot(shipHit, row, column) {
     const cell = this.tableEl.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
+  }
+
+  shipSunk(ship) {
+    return this.shipInfo.status[ship] === 0;
   }
 }

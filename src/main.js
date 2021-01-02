@@ -1,11 +1,16 @@
 /*
  TODO:
- * home page
+ * home screen
+ * user setup: highlight cells on ship hover
  * ai algorithm
+    ! refactor
+    * shoot algorithm: odd cells
+  * finish game state
+  * inspector settings
 
  ** THINGS THAT MAY BE CONSIDERED:
- * current randomizer may be inefficient because of the posibility that occupied cells could be checked again
- * better adjust ship on rotate
+ * current randomizer may be inefficient: rechecks occupied cells
+ * better adjust-ship-on-rotate
  */
 
 "use strict";
@@ -33,15 +38,24 @@ const aiBoard = document.querySelector(".board--ai");
 
 function startGameFight() {
   ai.randomizeShips();
-  console.table(user.shipPlacementTable);
-  console.table(ai.shipPlacementTable);
+  ai.updateProbabilityTable(user);
   aiBoard.classList.add("board--attack");
-  aiBoard.addEventListener("click", attackAiBoardHandler);
+  aiBoard.addEventListener("click", userAttackTurnHandler);
+  user.isTurn = true;
+  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1));
 }
 
-function attackAiBoardHandler(e) {
+function userAttackTurnHandler(e) {
+  if (!user.isTurn) return;
+  user.isTurn = false;
+
   const row = e.target.closest("tr")?.rowIndex;
   const column = e.target.cellIndex;
+  if (typeof row !== "undefined" && typeof column !== "undefined" && user.canShootEnemyCell(row, column)) {
+    user.shoot(ai, [row, column]);
 
-  if (typeof row !== "undefined" && typeof column !== "undefined" && ai.cellNotShot(row, column)) ai.shoot(row, column);
+    ai.shoot(user);
+  }
+
+  user.isTurn = true;
 }
