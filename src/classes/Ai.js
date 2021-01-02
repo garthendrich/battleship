@@ -45,9 +45,6 @@ class Ai extends Player {
     if (shipHit) this.trackMode = this.getTrackModeState();
 
     this.updateProbabilityTable(userInstance);
-
-    console.table(this.shotsTable);
-    console.table(this.probabilityTable);
   }
 
   getTrackModeState() {

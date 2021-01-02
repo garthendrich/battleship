@@ -1,11 +1,10 @@
 "use strict";
 
-const shipMenuButtons = document.querySelectorAll(".ship-menu__item");
 const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 
 function attachGameSetupHandlers() {
-  shipMenuButtons.forEach((button) => button.addEventListener("mousedown", shipMenuElHandler));
+  shipMenuItems.forEach((item) => item.addEventListener("mousedown", shipMenuElHandler));
   document.body.addEventListener("mousedown", bodyMouseDownHandler);
   document.body.addEventListener("mousemove", bodyMouseMoveHandler);
   document.body.addEventListener("mouseup", bodyMouseUpHandler);
@@ -14,7 +13,7 @@ function attachGameSetupHandlers() {
 }
 
 function detachGameSetupHandlers() {
-  shipMenuButtons.forEach((button) => button.removeEventListener("mousedown", shipMenuElHandler));
+  shipMenuItems.forEach((item) => item.removeEventListener("mousedown", shipMenuElHandler));
   document.body.removeEventListener("mousedown", bodyMouseDownHandler);
   document.body.removeEventListener("mousemove", bodyMouseMoveHandler);
   document.body.removeEventListener("mouseup", bodyMouseUpHandler);

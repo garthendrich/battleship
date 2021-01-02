@@ -54,6 +54,28 @@ button:hover {
   display: none;
 }
 
+.modal {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  z-index: 3;
+}
+
+.modal--hidden {
+  display: none;
+}
+
+.modal__box {
+  padding: 50px;
+  max-width: 500px;
+}
+
 .ship-menu {
   background: white;
   z-index: 2;
@@ -96,14 +118,14 @@ button:hover {
   opacity: 0.3;
 }
 
-#start-game {
+.finish-setup {
   position: fixed;
   bottom: 20px;
   right: 20px;
   transition: transform 0.5s;
 }
 
-.start-game--hidden {
+.finish-setup--hidden {
   transform: translateY(200%);
 }
 
