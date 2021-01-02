@@ -175,4 +175,8 @@ class Player {
   shipSunk(ship) {
     return this.shipInfo.status[ship] === 0;
   }
+
+  hasShips() {
+    return Object.values(this.shipInfo.status).some((status) => status !== 0);
+  }
 }

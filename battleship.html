@@ -34,10 +34,18 @@
         </button>
       </div>
     </div>
-    <button id="start-game">Start Game</button>
+    <button class="finish-setup" id="finish-setup">Finish Setup</button>
     <div class="board-container">
       <table class="board board--user"></table>
       <table class="board board--ai"></table>
+    </div>
+    <div class="modal modal--hidden" id="end-game">
+      <div class="modal__box">
+        <div class="modal__dialogue"></div>
+        <div class="modal__buttons">
+          <button id="again">Play Again</button>
+        </div>
+      </div>
     </div>
 
     <script src="src/classes/Player.js"></script>
