@@ -46,7 +46,6 @@ class Ai extends Player {
 
     this.updateProbabilityTable(userInstance);
 
-    console.log(userInstance.shipInfo.status);
     console.table(this.shotsTable);
     console.table(this.probabilityTable);
   }
@@ -63,7 +62,7 @@ class Ai extends Player {
   updateProbabilityTable(userInstance) {
     this.probabilityTable = Array(10)
       .fill()
-      .map(() => Array(10).fill(0));
+      .map(() => Array(10).fill(1));
 
     for (let ship of shipNames) {
       if (userInstance.shipSunk(ship)) continue;
@@ -104,7 +103,7 @@ class Ai extends Player {
           // }
           this.increaseCellProbability(
             [segmentRow, segmentColumn],
-            this.trackMode && increaseProbTimes > 1 ? this.trackingProbabilityMultiplier ** increaseProbTimes : 1
+            this.trackMode && increaseProbTimes > 1 ? this.trackingProbabilityMultiplier ** increaseProbTimes : this.probabilityMultiplier
           );
         }
       }
@@ -125,11 +124,8 @@ class Ai extends Player {
     return false;
   }
 
-  increaseCellProbability([row, column], times) {
-    for (let i = 0; i < times; i++) {
-      if (this.probabilityTable[row][column] === 0) this.probabilityTable[row][column] = 1;
-      else this.probabilityTable[row][column] = Number((this.probabilityTable[row][column] * this.probabilityMultiplier).toFixed(2));
-    }
+  increaseCellProbability([row, column], multiplier) {
+    this.probabilityTable[row][column] = Number((this.probabilityTable[row][column] * multiplier).toFixed(2));
   }
 
   doesShipOverlapNonhitShots(shipLength, orientation, [row, column]) {
@@ -149,6 +145,7 @@ class Ai extends Player {
     // variables are multiplied by 1000 to fix floating point math errors
 
     const probabilityTotal = this.probabilityTable.flat().reduce((accum, curr) => {
+      if (curr === 1) return accum; // 1 is the initial probability value
       return accum + curr * 1000;
     }, 0); // so value at probabilityTable[0][0] will also be multiplied by 1000
 
@@ -156,6 +153,7 @@ class Ai extends Player {
 
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
+        if (this.probabilityTable[i][j] == 1) continue;
         random -= this.probabilityTable[i][j] * 1000;
         if (random <= 0) return [i, j];
       }
