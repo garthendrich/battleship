@@ -10,7 +10,7 @@ function displayProbability() {
     for (let column = 0; column < 10; column++) {
       if (ai.shotsTable[row][column] == "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
       else if (ai.shotsTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "white";
-      else if (ai.probabilityTable[row][column] == 0) userBoard.rows[row].cells[column].style.background = "none";
+      else if (ai.probabilityTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "none";
       else {
         userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${
           ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())
