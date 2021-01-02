@@ -43,7 +43,11 @@ class Ai extends Player {
 
     if (shipHit) this.trackMode = this.getTrackModeState();
 
-    this.updateProbabilityTable();
+    this.updateProbabilityTable(userInstance);
+
+    console.log(userInstance.shipInfo.status);
+    console.table(this.shotsTable);
+    console.table(this.probabilityTable);
   }
 
   getTrackModeState() {
@@ -55,13 +59,13 @@ class Ai extends Player {
     return false;
   }
 
-  updateProbabilityTable() {
+  updateProbabilityTable(userInstance) {
     this.probabilityTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
 
     for (let ship of shipNames) {
-      if (this.shipSunk(ship)) continue;
+      if (userInstance.shipSunk(ship)) continue;
 
       const shipLength = this.shipInfo.length[ship];
       this.addProbabilityForShip(shipLength, "h");
