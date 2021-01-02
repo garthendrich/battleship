@@ -117,6 +117,8 @@ class Ai extends Player {
     for (let i = 0; i < times; i++) {
       if (this.probabilityTable[row][column] === 0) this.probabilityTable[row][column] = 1;
       else this.probabilityTable[row][column] *= this.probabilityMultiplier;
+
+      this.probabilityTable[row][column] = Number(this.probabilityTable[row][column].toFixed(2));
     }
   }
 
@@ -134,19 +136,18 @@ class Ai extends Player {
   }
 
   getRandomShootCoords() {
-    const probabilityTotal = this.probabilityTable.flat().reduce((total, curr) => total + curr);
+    // variables are multiplied by 1000 to fix floating point math errors
+
+    const probabilityTotal = this.probabilityTable.flat().reduce((accum, curr) => {
+      return accum + curr * 1000;
+    }, 0); // so value at probabilityTable[0][0] will also be multiplied by 1000
+
     let random = Math.ceil(Math.random() * probabilityTotal);
 
-    console.groupCollapsed("get random shoot coords");
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
-        random -= this.probabilityTable[i][j];
-        console.log("random", random);
-        console.log("coords", [i, j]);
-        if (random <= 0) {
-          console.groupEnd("get random shoot coords");
-          return [i, j];
-        }
+        random -= this.probabilityTable[i][j] * 1000;
+        if (random <= 0) return [i, j];
       }
     }
   }

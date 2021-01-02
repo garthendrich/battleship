@@ -2,11 +2,10 @@
  TODO:
  * home screen
  * ai algorithm
-    ! Fix getRandomShootCoords() float issue
     * tracking probability multiplier increaser
   * finish game state
   * inspector settings
-  ! refactor [private fields and methods]
+  ! refactor
 
  ** THINGS THAT MAY BE CONSIDERED:
  * current randomizer may be inefficient: rechecking occupied cells

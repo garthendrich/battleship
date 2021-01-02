@@ -19,8 +19,12 @@ function displayProbability() {
 // inspector functions -------------------------
 
 function setProbabilityMultiplier(multiplier) {
-  if (multiplier <= 1) {
-    console.log("Multiplier must be greater than 1");
+  if (multiplier < 1.01) {
+    console.log("Multiplier must be greater than or equal to 1.01");
+    return;
+  }
+  if (multiplier > 3) {
+    console.log("Multiplier must be less than or equal to 3");
     return;
   }
   ai.probabilityMultiplier = multiplier;
