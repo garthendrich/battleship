@@ -1,14 +1,15 @@
 /*
  TODO:
  * home screen
+ * user setup: highlight cells on ship hover
  * ai algorithm
-    * tracking probability multiplier increaser
+    ! refactor
+    * shoot algorithm: odd cells
   * finish game state
   * inspector settings
-  ! refactor
 
  ** THINGS THAT MAY BE CONSIDERED:
- * current randomizer may be inefficient: rechecking occupied cells
+ * current randomizer may be inefficient: rechecks occupied cells
  * better adjust-ship-on-rotate
  */
 
@@ -55,5 +56,6 @@ function userAttackTurnHandler(e) {
 
     ai.shoot(user);
   }
+
   user.isTurn = true;
 }

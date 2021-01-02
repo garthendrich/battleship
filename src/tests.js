@@ -12,9 +12,8 @@ function displayProbability() {
       else if (ai.shotsTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "white";
       else if (ai.probabilityTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "none";
       else {
-        userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${
-          ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())
-        })`;
+        const opacity = ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat());
+        userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${opacity})`;
       }
     }
   }

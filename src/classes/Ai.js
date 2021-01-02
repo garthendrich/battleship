@@ -6,7 +6,7 @@ class Ai extends Player {
     this.trackMode = false;
 
     this.probabilityMultiplier = 1.2;
-    this.trackingProbabilityMultiplier = 1.5;
+    this.trackingProbabilityMultiplier = 1.8;
     this.showProbabilityDisplay = true;
   }
 
