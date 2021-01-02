@@ -1,6 +1,7 @@
 class Player {
-  constructor(board) {
-    this.tableEl = document.querySelector(board);
+  constructor(boardName) {
+    this.tableEl = document.querySelector(boardName);
+    this.tableEl.innerHTML = `<tr>${"<td></td>".repeat(10)}</tr>`.repeat(10);
 
     this.shipPlacementTable = Array(10)
       .fill()

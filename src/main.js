@@ -15,12 +15,21 @@
 
 "use strict";
 
-const user = new User(".board--user");
-const ai = new Ai(".board--ai");
+let user, ai;
+let canPlay = true;
+const playButton = document.querySelector("#play");
+const homeScreen = document.querySelector(".homescreen");
+playButton.addEventListener("click", () => {
+  if (!canPlay) return;
+  canPlay = false;
 
-attachGameSetupHandlers();
+  user = new User(".board--user");
+  ai = new Ai(".board--ai");
+  attachGameSetupHandlers();
+  homeScreen.classList.add("homescreen--hidden");
+});
 
-const startGameButton = document.querySelector(".start-game");
+const startGameButton = document.querySelector("#start-game");
 startGameButton.addEventListener("click", () => {
   const shipOriginValues = Object.values(user.shipInfo.origin);
   const areAllShipsPlaced = !shipOriginValues.includes(null);
