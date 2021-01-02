@@ -6,6 +6,7 @@ class Ai extends Player {
     this.trackMode = false;
 
     this.probabilityMultiplier = 1.2;
+    this.trackingProbabilityMultiplier = 1.5;
     this.showProbabilityDisplay = true;
   }
 
@@ -97,7 +98,14 @@ class Ai extends Player {
           else if (orientation === "v") segmentRow += segment;
 
           if (this.trackMode && (this.shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
-          this.increaseCellProbability([segmentRow, segmentColumn], increaseProbTimes);
+          // if (this.trackMode) {
+          //   displayPresumedShipAndProbIncrease(shipLength, orientation, [row, column], [segmentRow, segmentColumn]);
+          //   debugger;
+          // }
+          this.increaseCellProbability(
+            [segmentRow, segmentColumn],
+            this.trackMode && increaseProbTimes > 1 ? this.trackingProbabilityMultiplier ** increaseProbTimes : 1
+          );
         }
       }
     }
@@ -120,9 +128,7 @@ class Ai extends Player {
   increaseCellProbability([row, column], times) {
     for (let i = 0; i < times; i++) {
       if (this.probabilityTable[row][column] === 0) this.probabilityTable[row][column] = 1;
-      else this.probabilityTable[row][column] *= this.probabilityMultiplier;
-
-      this.probabilityTable[row][column] = Number(this.probabilityTable[row][column].toFixed(2));
+      else this.probabilityTable[row][column] = Number((this.probabilityTable[row][column] * this.probabilityMultiplier).toFixed(2));
     }
   }
 
