@@ -8,12 +8,24 @@ const userBoard = document.querySelector(".board--user");
 function displayProbability() {
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
-      userBoard.rows[row].cells[column].style.background =
-        ai.probabilityTable[row][column] == 0
-          ? "none"
-          : `rgba(163, 31, 26,${ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())})`;
+      if (ai.shotsTable[row][column] == "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
+      else if (ai.shotsTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "white";
+      else if (ai.probabilityTable[row][column] == 0) userBoard.rows[row].cells[column].style.background = "none";
+      else {
+        userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${
+          ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat())
+        })`;
+      }
     }
   }
+}
+
+function displayPresumedShipAndProbIncrease(shipLength, orientation, [row, column], [segmentRow, segmentColumn]) {
+  for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = "none";
+
+  if (orientation === "h") for (let i = column; i < column + shipLength; i++) userBoard.rows[row].cells[i].style.background = "yellow";
+  else for (let i = row; i < row + shipLength; i++) userBoard.rows[i].cells[column].style.background = "yellow";
+  userBoard.rows[segmentRow].cells[segmentColumn].style.background = "orange";
 }
 
 // inspector functions -------------------------
