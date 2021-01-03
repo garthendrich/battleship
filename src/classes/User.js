@@ -113,12 +113,12 @@ class User extends Player {
 
   removePlacedShips() {
     for (let ship of this.shipNames) {
-      const shipNotPlaced = !user.shipInfo.origin[ship];
-      if (shipNotPlaced) return;
+      const shipPlaced = this.shipInfo.origin[ship];
+      if (!shipPlaced) continue;
 
-      user.selectedShip = ship;
-      user.selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
-      user.resetSelectedShip();
+      this.selectedShip = ship;
+      this.selectedShipElem = document.querySelector(`.ship#${this.selectedShip}`);
+      this.resetSelectedShip();
     }
   }
 
@@ -127,7 +127,7 @@ class User extends Player {
   }
 
   allShipsPlaced() {
-    return !Object.values(user.shipInfo.origin).includes(null);
+    return !Object.values(this.shipInfo.origin).includes(null);
   }
 
   // * game fight ----------------------------------------------------------------
