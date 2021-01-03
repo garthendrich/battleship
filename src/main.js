@@ -19,7 +19,7 @@
 
 "use strict";
 
-let user, ai, gameSetup;
+let user, ai;
 let canStartNewGame = true;
 
 const homeScreen = document.querySelector(".homescreen");
@@ -48,7 +48,7 @@ function startGameSetupHandler() {
   user = new User(".board--user");
   ai = new Ai(".board--ai");
 
-  gameSetup = new GameSetup();
+  user.attachGameSetupHandlers();
   displayScreenForGameSetup();
 }
 
@@ -63,7 +63,7 @@ function displayScreenForGameSetup() {
 finishGameSetupButton.addEventListener("click", () => {
   if (!user.allShipsPlaced()) return;
 
-  gameSetup.detachGameSetupHandlers();
+  user.detachGameSetupHandlers();
   startGameFight();
   displayScreenForGameFight();
 });

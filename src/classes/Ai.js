@@ -9,10 +9,8 @@ class Ai extends Player {
     this.trackingProbabilityMultiplier = 1.8;
     this.showProbabilityDisplay = true;
 
-    this.randomizeShips();
+    this._randomizeShips();
   }
-
-  // * game fight ----------------------------------------------------------------
 
   displayEnemyShot(shipHit, row, column) {
     super.displayEnemyShot(shipHit, row, column);
@@ -21,9 +19,9 @@ class Ai extends Player {
     cell.classList.add("shot");
 
     if (this.shipSunk(shipHit)) {
-      const shipOrigin = this.shipInfo.origin[shipHit];
+      const shipOrigin = this._shipInfo.origin[shipHit];
       const shipOriginCell = this.tableEl.rows[shipOrigin[0]].cells[shipOrigin[1]];
-      this.selectedShip = shipHit;
+      this._selectedShip = shipHit;
       shipOriginCell.append(this.createShip({ sunk: true }));
     }
   }
@@ -66,7 +64,7 @@ class Ai extends Player {
     for (let ship of this.shipNames) {
       if (userInstance.shipSunk(ship)) continue;
 
-      const shipLength = this.shipInfo.length[ship];
+      const shipLength = this._shipInfo.length[ship];
       this.addProbabilityForShip(shipLength, "h");
       this.addProbabilityForShip(shipLength, "v");
     }
