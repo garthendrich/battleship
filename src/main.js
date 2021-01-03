@@ -14,7 +14,7 @@
 "use strict";
 
 let user, ai;
-let canPlay = true;
+let canStartNewGame = true;
 
 const homeScreen = document.querySelector(".homescreen");
 const playButton = document.querySelector(".play-button");
@@ -34,21 +34,20 @@ playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
 
 function startGameSetupHandler() {
-  if (!canPlay) return;
-  canPlay = false;
+  if (!canStartNewGame) return;
+  canStartNewGame = false;
 
   user = new User(".board--user");
   ai = new Ai(".board--ai");
 
   attachGameSetupHandlers();
-
-  homeScreen.classList.add("homescreen--hidden");
-  endGameModal.classList.add("modal--hidden");
-  aiBoard.classList.remove("board--attack");
-  resetShipMenuDisplay();
+  displayScreenForGameSetup();
 }
 
-function resetShipMenuDisplay() {
+function displayScreenForGameSetup() {
+  aiBoard.classList.remove("board--attack");
+  homeScreen.classList.add("homescreen--hidden");
+  endGameModal.classList.add("modal--hidden");
   shipMenu.classList.remove("ship-menu--hidden");
   shipMenuItems.forEach((item) => item.classList.remove("ship-menu__item--placed"));
 }
@@ -103,5 +102,5 @@ function checkWinner() {
   }
 
   aiBoard.removeEventListener("click", userAttackTurnHandler);
-  canPlay = true;
+  canStartNewGame = true;
 }
