@@ -32,7 +32,7 @@ class GameSetup {
   }
 
   _bodyMouseDownHandler(e) {
-    const clickedOutsideUserBoard = !e.target.closest(".board--user");
+    const clickedOutsideUserBoard = !getElementAncestor(e.target, ".board--user");
     if (clickedOutsideUserBoard) return;
 
     this._fixDraggedShipOutsideBody();
@@ -73,13 +73,13 @@ class GameSetup {
 
     if (user.selectedShip) {
       const mouseUpOnSameShip = elementHasClassName(e.target, "ship") && e.target.id == user.selectedShip;
-      const mouseUpOnUserBoardCell = e.target.closest(".board--user") && e.target.nodeName == "TD";
+      const mouseUpOnUserBoardCell = getElementAncestor(e.target, ".board--user") && e.target.nodeName == "TD";
 
       if (mouseUpOnSameShip) {
         const selectedShipPopup = e.target.firstChild;
         showElement(selectedShipPopup, "ship__popup");
       } else if (mouseUpOnUserBoardCell) {
-        const cellRowUnderCursor = e.target.closest("tr").rowIndex;
+        const cellRowUnderCursor = getElementAncestor(e.target, "tr").rowIndex;
         const cellColumnUnderCursor = e.target.cellIndex;
 
         user.newShipOrigin = user.runBySelectedShipOrientation(
@@ -124,7 +124,7 @@ class GameSetup {
 }
 
 function shipRotateButtonHandler(e) {
-  user.selectedShipElem = e.target.closest(".ship");
+  user.selectedShipElem = getElementAncestor(e.target, ".ship");
   user.selectedShip = user.selectedShipElem.id;
   user.newShipOrigin = user.shipInfo.origin[user.selectedShip];
 
@@ -140,7 +140,7 @@ function shipRotateButtonHandler(e) {
 }
 
 function shipRemoveButtonHandler(e) {
-  user.selectedShipElem = e.target.closest(".ship");
+  user.selectedShipElem = getElementAncestor(e.target, ".ship");
   user.selectedShip = user.selectedShipElem.id;
   user.resetSelectedShip();
 

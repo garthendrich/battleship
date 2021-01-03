@@ -85,7 +85,7 @@ function userAttackTurnHandler(e) {
   if (!user.isTurn) return;
   user.isTurn = false;
 
-  const clickedCellRow = e.target.closest("tr")?.rowIndex;
+  const clickedCellRow = getElementAncestor(e.target, "tr")?.rowIndex;
   const clickedCellcolumn = e.target.cellIndex;
 
   const clickedCellExists = typeof clickedCellRow !== "undefined" && typeof clickedCellcolumn !== "undefined";
