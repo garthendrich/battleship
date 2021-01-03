@@ -83,7 +83,7 @@ function userAttackTurnHandler(e) {
   const clickedCellExists = typeof clickedCellRow !== "undefined" && typeof clickedCellcolumn !== "undefined";
   if (clickedCellExists && user.canShootEnemyCell([clickedCellRow, clickedCellcolumn])) {
     user.shoot(ai, [clickedCellRow, clickedCellcolumn]);
-    ai.shoot(user);
+    ai.autoShoot(user);
 
     checkWinner();
   }
@@ -96,7 +96,7 @@ function checkWinner() {
 
   if (!ai.hasShips()) {
     showEndGameModal({ userWon: true });
-  } else if (!user.hasShips()) {
+  } else {
     showEndGameModal({ userWon: false });
   }
 
