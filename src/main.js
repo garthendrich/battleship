@@ -63,7 +63,7 @@ function displayScreenForGameSetup() {
 finishGameSetupButton.addEventListener("click", () => {
   if (!user.allShipsPlaced()) return;
 
-  detachGameSetupHandlers();
+  gameSetup.detachGameSetupHandlers();
   startGameFight();
   displayScreenForGameFight();
 });
