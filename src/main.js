@@ -67,20 +67,22 @@ function displayScreenForGameFight() {
 
 function startGameFight() {
   ai.updateProbabilityTable(user);
-  addElementClassNameModifier(aiBoard, "board", "attack");
+  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
-  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1));
+  addElementClassNameModifier(aiBoard, "board", "attack");
 }
 
 function userAttackTurnHandler(e) {
   if (!user.isTurn) return;
   user.isTurn = false;
 
-  const row = e.target.closest("tr")?.rowIndex;
-  const column = e.target.cellIndex;
-  if (typeof row !== "undefined" && typeof column !== "undefined" && user.canShootEnemyCell(row, column)) {
-    user.shoot(ai, [row, column]);
+  const clickedCellRow = e.target.closest("tr")?.rowIndex;
+  const clickedCellcolumn = e.target.cellIndex;
+
+  const clickedCellExists = typeof clickedCellRow !== "undefined" && typeof clickedCellcolumn !== "undefined";
+  if (clickedCellExists && user.canShootEnemyCell([clickedCellRow, clickedCellcolumn])) {
+    user.shoot(ai, [clickedCellRow, clickedCellcolumn]);
     ai.shoot(user);
 
     checkWinner();

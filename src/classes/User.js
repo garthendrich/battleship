@@ -121,7 +121,7 @@ class User extends Player {
 
   // * game fight ----------------------------------------------------------------
 
-  canShootEnemyCell(row, column) {
-    return !this.shotsTable[row][column];
+  canShootEnemyCell([row, column]) {
+    return this.shotsTable[row][column] === 0;
   }
 }
