@@ -19,7 +19,7 @@
 
 "use strict";
 
-let user, ai;
+let user, ai, gameSetup;
 let canStartNewGame = true;
 
 const homeScreen = document.querySelector(".homescreen");
@@ -30,6 +30,8 @@ const aiBoard = document.querySelector(".board--ai");
 
 const shipMenu = document.querySelector(".ship-menu");
 const shipMenuItems = document.querySelectorAll(".ship-menu__item");
+const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
+const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 const finishGameSetupButton = document.querySelector(".finish-setup-button");
 
 const endGameModal = document.querySelector(".modal--end-game");
@@ -46,7 +48,7 @@ function startGameSetupHandler() {
   user = new User(".board--user");
   ai = new Ai(".board--ai");
 
-  attachGameSetupHandlers();
+  gameSetup = new GameSetup();
   displayScreenForGameSetup();
 }
 
