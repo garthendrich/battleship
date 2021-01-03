@@ -58,14 +58,14 @@ function fixDraggedShipOutsideBody() {
 }
 
 function bodyMouseMoveHandler(e) {
-  // if mousedown on ship
-  if (user.canMoveShip) {
-    // if ship will be moved: if cursor outside selected ship || cursor outside cell where it started mousedown
-    if (!(e.target.id == user.selectedShip) || user.shipSegmentIndexOnMousedown != user.getCurrentShipSegmentIndexUnderCursor(e)) {
-      user.canMoveShip = false; // reset; pass only once
-      user.removeSelectedShip();
-      user.hideAllShipPopups();
-    }
+  if (!user.canMoveShip) return;
+
+  const shipDraggedToAnotherCell =
+    e.target.id !== user.selectedShip || user.shipSegmentIndexOnMousedown != user.getCurrentShipSegmentIndexUnderCursor(e);
+  if (shipDraggedToAnotherCell) {
+    user.canMoveShip = false; // reset; pass only once
+    user.removeSelectedShip();
+    user.hideAllShipPopups();
   }
 }
 
