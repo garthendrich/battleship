@@ -7,6 +7,7 @@
   * inspector settings
   * rename Player selectedShip to draggedShip
   * pass ships to Player methods instead of basing off of selectedShip field
+  * check on Player.selectedShipElem
 
  ** THINGS THAT MAY BE CONSIDERED:
  * create class for ships
