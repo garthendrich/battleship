@@ -5,16 +5,22 @@
     ! refactor
     * shoot algorithm: odd cells
   * inspector settings
+  * rename Player selectedShip to draggedShip
+  * pass ships to Player methods instead of basing off of selectedShip field
+  * check on Player.selectedShipElem
+  * move runBySelectedShipOrientation to global functions
+  * remove shipNames var
 
  ** THINGS THAT MAY BE CONSIDERED:
+ * create class for ships
  * current randomizer may be inefficient: rechecks occupied cells
  * better adjust-ship-on-rotate
  */
 
 "use strict";
 
-let user, ai;
-let canPlay = true;
+let user, ai, gameSetup;
+let canStartNewGame = true;
 
 const homeScreen = document.querySelector(".homescreen");
 const playButton = document.querySelector(".play-button");
@@ -24,6 +30,8 @@ const aiBoard = document.querySelector(".board--ai");
 
 const shipMenu = document.querySelector(".ship-menu");
 const shipMenuItems = document.querySelectorAll(".ship-menu__item");
+const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
+const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 const finishGameSetupButton = document.querySelector(".finish-setup-button");
 
 const endGameModal = document.querySelector(".modal--end-game");
@@ -34,58 +42,56 @@ playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
 
 function startGameSetupHandler() {
-  if (!canPlay) return;
-  canPlay = false;
+  if (!canStartNewGame) return;
+  canStartNewGame = false;
 
   user = new User(".board--user");
   ai = new Ai(".board--ai");
 
-  attachGameSetupHandlers();
-
-  homeScreen.classList.add("homescreen--hidden");
-  endGameModal.classList.add("modal--hidden");
-  aiBoard.classList.remove("board--attack");
-  resetShipMenuDisplay();
+  gameSetup = new GameSetup();
+  displayScreenForGameSetup();
 }
 
-function resetShipMenuDisplay() {
-  shipMenu.classList.remove("ship-menu--hidden");
-  shipMenuItems.forEach((item) => item.classList.remove("ship-menu__item--placed"));
-}
-
-function showEndGameModal({ userWon }) {
-  endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
-  endGameModal.classList.remove("modal--hidden");
+function displayScreenForGameSetup() {
+  removeElementClassNameModifier(aiBoard, "board", "attack");
+  hideElement(homeScreen, "homescreen");
+  hideElement(endGameModal, "modal");
+  showElement(shipMenu, "ship-menu");
+  shipMenuItems.forEach((item) => removeElementClassNameModifier(item, "ship-menu__item", "placed"));
 }
 
 finishGameSetupButton.addEventListener("click", () => {
-  if (user.allShipsPlaced()) {
-    shipMenu.classList.add("ship-menu--hidden");
-    finishGameSetupButton.classList.add("finish-setup-button--hidden");
+  if (!user.allShipsPlaced()) return;
 
-    detachGameSetupHandlers();
-    startGameFight();
-  }
+  detachGameSetupHandlers();
+  startGameFight();
+  displayScreenForGameFight();
 });
 
+function displayScreenForGameFight() {
+  hideElement(shipMenu, "ship-menu");
+  hideElement(finishGameSetupButton, "finish-setup-button");
+}
+
 function startGameFight() {
-  ai.randomizeShips();
   ai.updateProbabilityTable(user);
-  aiBoard.classList.add("board--attack");
+  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
-  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1));
+  addElementClassNameModifier(aiBoard, "board", "attack");
 }
 
 function userAttackTurnHandler(e) {
   if (!user.isTurn) return;
   user.isTurn = false;
 
-  const row = e.target.closest("tr")?.rowIndex;
-  const column = e.target.cellIndex;
-  if (typeof row !== "undefined" && typeof column !== "undefined" && user.canShootEnemyCell(row, column)) {
-    user.shoot(ai, [row, column]);
-    ai.shoot(user);
+  const clickedCellRow = getElementAncestor(e.target, "tr")?.rowIndex;
+  const clickedCellcolumn = e.target.cellIndex;
+
+  const clickedCellExists = typeof clickedCellRow !== "undefined" && typeof clickedCellcolumn !== "undefined";
+  if (clickedCellExists && user.canShootEnemyCell([clickedCellRow, clickedCellcolumn])) {
+    user.shoot(ai, [clickedCellRow, clickedCellcolumn]);
+    ai.autoShoot(user);
 
     checkWinner();
   }
@@ -98,10 +104,15 @@ function checkWinner() {
 
   if (!ai.hasShips()) {
     showEndGameModal({ userWon: true });
-  } else if (!user.hasShips()) {
+  } else {
     showEndGameModal({ userWon: false });
   }
 
   aiBoard.removeEventListener("click", userAttackTurnHandler);
-  canPlay = true;
+  canStartNewGame = true;
+}
+
+function showEndGameModal({ userWon }) {
+  endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
+  showElement(endGameModal, "modal");
 }

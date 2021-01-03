@@ -41,6 +41,8 @@ class Player {
       },
     };
 
+    this.shipNames = "cbdsp";
+
     this.selectedShip;
     this.newShipOrigin;
 
@@ -92,7 +94,7 @@ class Player {
 
     let firstIndex = this.newShipOrigin[shipForwardDir];
     let highestIndex = 10 - this.getSelectedShipLength();
-    while (this.doesSelectedShipOverlapOthers()) {
+    while (this.selectedShipOverlapOtherShips()) {
       this.newShipOrigin[shipForwardDir]++;
       this.newShipOrigin[shipForwardDir] %= highestIndex + 1; // if ship extends outside board, reset back to 0
 
@@ -102,7 +104,7 @@ class Player {
     }
   }
 
-  doesSelectedShipOverlapOthers() {
+  selectedShipOverlapOtherShips() {
     const [row, column] = this.newShipOrigin;
     return this.runBySelectedShipOrientation(
       () => !this.shipPlacementTable[row].slice(column, column + this.getSelectedShipLength()).every((cell) => cell == 0),
@@ -138,15 +140,15 @@ class Player {
 
   randomizeShips() {
     // randomize orientations
-    for (let ship of shipNames) this.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
+    for (let ship of this.shipNames) this.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
 
     // randomize ship cell origins
     for (let i = 0; i < 5; i++) {
       do {
-        this.selectedShip = shipNames[i];
+        this.selectedShip = this.shipNames[i];
         this.newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this.adjustShipOriginToInsideBoard();
-      } while (this.doesSelectedShipOverlapOthers());
+      } while (this.selectedShipOverlapOtherShips());
       this.addSelectedShip(this.newShipOrigin);
     }
   }

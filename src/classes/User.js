@@ -7,7 +7,7 @@ class User extends Player {
     this.selectedShipElem;
     this.canMoveShip;
     this.shipSegmentIndexOnMousedown;
-    this.prevShipOrigin;
+    this.prevSelectedShipOrigin;
 
     this.isTurn = false;
   }
@@ -38,8 +38,8 @@ class User extends Player {
     removeButton.className = "ship__button ship__button--remove";
     rotateButton.append(parsedRotateSVG);
     removeButton.append(parsedRemoveSVG);
-    rotateButton.addEventListener("click", rotateButtonHandler);
-    removeButton.addEventListener("click", removeButtonHandler);
+    rotateButton.addEventListener("click", shipRotateButtonHandler);
+    removeButton.addEventListener("click", shipRemoveButtonHandler);
 
     const popupObj = document.createElement("div");
     popupObj.className = "ship__popup";
@@ -63,8 +63,8 @@ class User extends Player {
     // remove handlers to prevent memory leaks
     const rotateButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--rotate`);
     const removeButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--remove`);
-    rotateButton.removeEventListener("click", rotateButtonHandler);
-    removeButton.removeEventListener("click", removeButtonHandler);
+    rotateButton.removeEventListener("click", shipRotateButtonHandler);
+    removeButton.removeEventListener("click", shipRemoveButtonHandler);
 
     this.selectedShipElem.remove();
 
@@ -111,17 +111,28 @@ class User extends Player {
     );
   }
 
+  removePlacedShips() {
+    for (let ship of this.shipNames) {
+      const shipPlaced = this.shipInfo.origin[ship];
+      if (!shipPlaced) continue;
+
+      this.selectedShip = ship;
+      this.selectedShipElem = document.querySelector(`.ship#${this.selectedShip}`);
+      this.resetSelectedShip();
+    }
+  }
+
   getSelectedShipMiddleSegmentIndex() {
     return Math.ceil(this.getSelectedShipLength() / 2) - 1;
   }
 
   allShipsPlaced() {
-    return !Object.values(user.shipInfo.origin).includes(null);
+    return !Object.values(this.shipInfo.origin).includes(null);
   }
 
   // * game fight ----------------------------------------------------------------
 
-  canShootEnemyCell(row, column) {
-    return !this.shotsTable[row][column];
+  canShootEnemyCell([row, column]) {
+    return this.shotsTable[row][column] === 0;
   }
 }

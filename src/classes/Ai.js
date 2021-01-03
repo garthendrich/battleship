@@ -8,6 +8,8 @@ class Ai extends Player {
     this.probabilityMultiplier = 1.2;
     this.trackingProbabilityMultiplier = 1.8;
     this.showProbabilityDisplay = true;
+
+    this.randomizeShips();
   }
 
   // * game fight ----------------------------------------------------------------
@@ -26,7 +28,7 @@ class Ai extends Player {
     }
   }
 
-  shoot(userInstance) {
+  autoShoot(userInstance) {
     const [row, column] = this.getRandomShootCoords();
     super.shoot(userInstance, [row, column]);
 
@@ -61,7 +63,7 @@ class Ai extends Player {
       .fill()
       .map(() => Array(10).fill(1));
 
-    for (let ship of shipNames) {
+    for (let ship of this.shipNames) {
       if (userInstance.shipSunk(ship)) continue;
 
       const shipLength = this.shipInfo.length[ship];
