@@ -28,7 +28,7 @@ class Ai extends Player {
     }
   }
 
-  shoot(userInstance) {
+  autoShoot(userInstance) {
     const [row, column] = this.getRandomShootCoords();
     super.shoot(userInstance, [row, column]);
 
