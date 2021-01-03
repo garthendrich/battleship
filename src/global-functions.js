@@ -5,3 +5,11 @@ function showElement(element, className) {
 function hideElement(element, className) {
   element.classList.add(className + "--hidden");
 }
+
+function addElementClassNameModifier(element, className, classNameModifier) {
+  element.classList.add(`${className}--${classNameModifier}`);
+}
+
+function removeElementClassNameModifier(element, className, classNameModifier) {
+  element.classList.remove(`${className}--${classNameModifier}`);
+}
