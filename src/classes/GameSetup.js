@@ -146,5 +146,5 @@ function shipRemoveButtonHandler(e) {
 
   user.selectedShip = null; //reset
 
-  _updateFinishSetupButtonVisibility();
+  gameSetup._updateFinishSetupButtonVisibility();
 }
