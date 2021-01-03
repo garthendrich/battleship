@@ -92,7 +92,15 @@ function bodyMouseUpHandler(e) {
     else if (user.prevShipOrigin) user.addSelectedShip(user.prevShipOrigin);
   }
 
+  updateFinishSetupButtonVisibility();
+
   user.selectedShip = user.prevShipOrigin = user.shipSegmentIndexOnMousedown = null; // reset
+}
+
+function updateFinishSetupButtonVisibility() {
+  if (user.allShipsPlaced()) finishGameSetupButton.classList.remove("finish-setup-button--hidden");
+  else finishGameSetupButton.classList.add("finish-setup-button--hidden");
+  console.log(user.allShipsPlaced());
 }
 
 function randomizeBoardButtonHandler() {
@@ -101,6 +109,8 @@ function randomizeBoardButtonHandler() {
   user.hideAllShipPopups();
 
   user.selectedShip = null; // reset
+
+  updateFinishSetupButtonVisibility();
 }
 
 const shipNames = "cbdsp";
@@ -113,6 +123,8 @@ function removePlacedShips() {
   }
 
   user.selectedShip = null; // reset
+
+  updateFinishSetupButtonVisibility();
 }
 
 function rotateButtonHandler(e) {
@@ -137,4 +149,6 @@ function removeButtonHandler(e) {
   user.resetSelectedShip();
 
   user.selectedShip = null; //reset
+
+  updateFinishSetupButtonVisibility();
 }
