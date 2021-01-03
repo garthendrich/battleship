@@ -41,6 +41,8 @@ class Player {
       },
     };
 
+    this.shipNames = "cbdsp";
+
     this.selectedShip;
     this.newShipOrigin;
 
@@ -138,12 +140,12 @@ class Player {
 
   randomizeShips() {
     // randomize orientations
-    for (let ship of shipNames) this.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
+    for (let ship of this.shipNames) this.shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
 
     // randomize ship cell origins
     for (let i = 0; i < 5; i++) {
       do {
-        this.selectedShip = shipNames[i];
+        this.selectedShip = this.shipNames[i];
         this.newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this.adjustShipOriginToInsideBoard();
       } while (this.selectedShipOverlapOtherShips());

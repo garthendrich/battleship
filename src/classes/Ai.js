@@ -63,7 +63,7 @@ class Ai extends Player {
       .fill()
       .map(() => Array(10).fill(1));
 
-    for (let ship of shipNames) {
+    for (let ship of this.shipNames) {
       if (userInstance.shipSunk(ship)) continue;
 
       const shipLength = this.shipInfo.length[ship];

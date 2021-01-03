@@ -9,6 +9,7 @@
   * pass ships to Player methods instead of basing off of selectedShip field
   * check on Player.selectedShipElem
   * move runBySelectedShipOrientation to global functions
+  * remove shipNames var
 
  ** THINGS THAT MAY BE CONSIDERED:
  * create class for ships
