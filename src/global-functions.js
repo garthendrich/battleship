@@ -13,3 +13,11 @@ function addElementClassNameModifier(element, className, classNameModifier) {
 function removeElementClassNameModifier(element, className, classNameModifier) {
   element.classList.remove(`${className}--${classNameModifier}`);
 }
+
+function elementHasClassName(element, className) {
+  element.classList.contains(className);
+}
+
+function elementHasClassNameModifier(element, className, classNameModifier) {
+  element.classList.contains(`${className}--${classNameModifier}`);
+}
