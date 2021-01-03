@@ -10,6 +10,9 @@ class User extends Player {
     this.prevSelectedShipOrigin;
 
     this.isTurn = false;
+
+    this.shipRotateButtonHandler = this.shipRotateButtonHandler.bind(this);
+    this.shipRemoveButtonHandler = this.shipRemoveButtonHandler.bind(this);
   }
 
   // * game setup ----------------------------------------------------------------
@@ -38,13 +41,39 @@ class User extends Player {
     removeButton.className = "ship__button ship__button--remove";
     rotateButton.append(parsedRotateSVG);
     removeButton.append(parsedRemoveSVG);
-    rotateButton.addEventListener("click", shipRotateButtonHandler);
-    removeButton.addEventListener("click", shipRemoveButtonHandler);
+    rotateButton.addEventListener("click", this.shipRotateButtonHandler);
+    removeButton.addEventListener("click", this.shipRemoveButtonHandler);
 
     const popupObj = document.createElement("div");
     popupObj.className = "ship__popup";
     popupObj.append(rotateButton, removeButton);
     return popupObj;
+  }
+
+  shipRotateButtonHandler(e) {
+    user.selectedShipElem = getElementAncestor(e.target, ".ship");
+    user.selectedShip = user.selectedShipElem.id;
+    user.newShipOrigin = user.shipInfo.origin[user.selectedShip];
+
+    user.removeSelectedShip();
+    user.rotateSelectedShip();
+
+    user.adjustShipOriginToInsideBoard();
+    user.adjustShipOriginToAvailableSpace();
+
+    user.addSelectedShip(user.newShipOrigin);
+
+    user.selectedShip = null; //reset
+  }
+
+  shipRemoveButtonHandler(e) {
+    user.selectedShipElem = getElementAncestor(e.target, ".ship");
+    user.selectedShip = user.selectedShipElem.id;
+    user.resetSelectedShip();
+
+    user.selectedShip = null; //reset
+
+    gameSetup._updateFinishSetupButtonVisibility();
   }
 
   hideAllShipPopups() {
@@ -63,8 +92,8 @@ class User extends Player {
     // remove handlers to prevent memory leaks
     const rotateButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--rotate`);
     const removeButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--remove`);
-    rotateButton.removeEventListener("click", shipRotateButtonHandler);
-    removeButton.removeEventListener("click", shipRemoveButtonHandler);
+    rotateButton.removeEventListener("click", this.shipRotateButtonHandler);
+    removeButton.removeEventListener("click", this.shipRemoveButtonHandler);
 
     this.selectedShipElem.remove();
 
