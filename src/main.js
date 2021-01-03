@@ -46,21 +46,21 @@ function startGameSetupHandler() {
 
 function displayScreenForGameSetup() {
   aiBoard.classList.remove("board--attack");
-  homeScreen.classList.add("homescreen--hidden");
-  endGameModal.classList.add("modal--hidden");
-  shipMenu.classList.remove("ship-menu--hidden");
+  hideElement(homeScreen, "homescreen");
+  hideElement(endGameModal, "modal");
+  showElement(shipMenu, "ship-menu");
   shipMenuItems.forEach((item) => item.classList.remove("ship-menu__item--placed"));
 }
 
 function showEndGameModal({ userWon }) {
   endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
-  endGameModal.classList.remove("modal--hidden");
+  showElement(endGameModal, "modal");
 }
 
 finishGameSetupButton.addEventListener("click", () => {
   if (user.allShipsPlaced()) {
-    shipMenu.classList.add("ship-menu--hidden");
-    finishGameSetupButton.classList.add("finish-setup-button--hidden");
+    hideElement(shipMenu, "ship-menu");
+    hideElement(finishGameSetupButton, "finish-setup-button");
 
     detachGameSetupHandlers();
     startGameFight();
