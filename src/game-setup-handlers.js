@@ -39,13 +39,12 @@ function bodyMouseDownHandler(e) {
 
   fixDraggedShipOutsideBody();
 
-  // if mousedown on ship, collect ship info
   user.selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
   if (user.selectedShipElem) {
     user.canMoveShip = true;
     user.selectedShip = user.selectedShipElem.id;
     user.shipSegmentIndexOnMousedown = user.getCurrentShipSegmentIndexUnderCursor(e);
-    user.prevShipOrigin = user.shipInfo.origin[user.selectedShip];
+    user.prevSelectedShipOrigin = user.shipInfo.origin[user.selectedShip];
   }
 }
 
@@ -93,15 +92,15 @@ function bodyMouseUpHandler(e) {
       user.adjustShipOriginToInsideBoard();
 
       if (!user.doesSelectedShipOverlapOthers()) user.addSelectedShip(user.newShipOrigin);
-      else if (user.prevShipOrigin) user.addSelectedShip(user.prevShipOrigin);
+      else if (user.prevSelectedShipOrigin) user.addSelectedShip(user.prevSelectedShipOrigin);
     }
-    // else if mouseup not on cell and has prevShipOrigin
-    else if (user.prevShipOrigin) user.addSelectedShip(user.prevShipOrigin);
+    // else if mouseup not on cell and has prevSelectedShipOrigin
+    else if (user.prevSelectedShipOrigin) user.addSelectedShip(user.prevSelectedShipOrigin);
   }
 
   updateFinishSetupButtonVisibility();
 
-  user.selectedShip = user.prevShipOrigin = user.shipSegmentIndexOnMousedown = null; // reset
+  user.selectedShip = user.prevSelectedShipOrigin = user.shipSegmentIndexOnMousedown = null; // reset
 }
 
 function updateFinishSetupButtonVisibility() {

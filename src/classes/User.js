@@ -7,7 +7,7 @@ class User extends Player {
     this.selectedShipElem;
     this.canMoveShip;
     this.shipSegmentIndexOnMousedown;
-    this.prevShipOrigin;
+    this.prevSelectedShipOrigin;
 
     this.isTurn = false;
   }
