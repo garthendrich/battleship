@@ -1,6 +1,7 @@
 class Player {
-  constructor(board) {
-    this.tableEl = document.querySelector(board);
+  constructor(boardName) {
+    this.tableEl = document.querySelector(boardName);
+    this.tableEl.innerHTML = `<tr>${"<td></td>".repeat(10)}</tr>`.repeat(10);
 
     this.shipPlacementTable = Array(10)
       .fill()
@@ -173,5 +174,9 @@ class Player {
 
   shipSunk(ship) {
     return this.shipInfo.status[ship] === 0;
+  }
+
+  hasShips() {
+    return Object.values(this.shipInfo.status).some((status) => status !== 0);
   }
 }

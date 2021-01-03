@@ -4,8 +4,8 @@
 //       if (ai.shipPlacementTable[row][column]) document.querySelector(".board--ai").rows[row].cells[column].style.background = "#4a6fa5";
 // }
 
-const userBoard = document.querySelector(".board--user");
 function displayProbability() {
+  const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
       if (ai.shotsTable[row][column] == "x") userBoard.rows[row].cells[column].style.background = "#B24B68";

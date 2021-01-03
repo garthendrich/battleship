@@ -1,11 +1,9 @@
 /*
  TODO:
- * home screen
  * user setup: highlight cells on ship hover
  * ai algorithm
     ! refactor
     * shoot algorithm: odd cells
-  * finish game state
   * inspector settings
 
  ** THINGS THAT MAY BE CONSIDERED:
@@ -15,26 +13,60 @@
 
 "use strict";
 
-const user = new User(".board--user");
-const ai = new Ai(".board--ai");
+let user, ai;
+let canPlay = true;
 
-attachGameSetupHandlers();
+const homeScreen = document.querySelector(".homescreen");
+const playButton = document.querySelector(".play-button");
 
-const startGameButton = document.querySelector(".start-game");
-startGameButton.addEventListener("click", () => {
-  const shipOriginValues = Object.values(user.shipInfo.origin);
-  const areAllShipsPlaced = !shipOriginValues.includes(null);
+const userBoard = document.querySelector(".board--user");
+const aiBoard = document.querySelector(".board--ai");
 
-  if (areAllShipsPlaced) {
-    document.querySelector(".ship-menu").classList.add("ship-menu--hidden");
-    startGameButton.classList.add("start-game--hidden");
+const shipMenu = document.querySelector(".ship-menu");
+const shipMenuItems = document.querySelectorAll(".ship-menu__item");
+const finishGameSetupButton = document.querySelector(".finish-setup-button");
+
+const endGameModal = document.querySelector(".modal--end-game");
+const endGameModalDialogue = endGameModal.querySelector(".modal__dialogue");
+const playAgainButton = document.querySelector(".play-again-button");
+
+playButton.addEventListener("click", startGameSetupHandler);
+playAgainButton.addEventListener("click", startGameSetupHandler);
+
+function startGameSetupHandler() {
+  if (!canPlay) return;
+  canPlay = false;
+
+  user = new User(".board--user");
+  ai = new Ai(".board--ai");
+
+  attachGameSetupHandlers();
+
+  homeScreen.classList.add("homescreen--hidden");
+  endGameModal.classList.add("modal--hidden");
+  aiBoard.classList.remove("board--attack");
+  resetShipMenuDisplay();
+}
+
+function resetShipMenuDisplay() {
+  shipMenu.classList.remove("ship-menu--hidden");
+  shipMenuItems.forEach((item) => item.classList.remove("ship-menu__item--placed"));
+}
+
+function showEndGameModal({ userWon }) {
+  endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
+  endGameModal.classList.remove("modal--hidden");
+}
+
+finishGameSetupButton.addEventListener("click", () => {
+  if (user.allShipsPlaced()) {
+    shipMenu.classList.add("ship-menu--hidden");
+    finishGameSetupButton.classList.add("finish-setup-button--hidden");
 
     detachGameSetupHandlers();
     startGameFight();
   }
 });
-
-const aiBoard = document.querySelector(".board--ai");
 
 function startGameFight() {
   ai.randomizeShips();
@@ -53,9 +85,23 @@ function userAttackTurnHandler(e) {
   const column = e.target.cellIndex;
   if (typeof row !== "undefined" && typeof column !== "undefined" && user.canShootEnemyCell(row, column)) {
     user.shoot(ai, [row, column]);
-
     ai.shoot(user);
+
+    checkWinner();
   }
 
   user.isTurn = true;
+}
+
+function checkWinner() {
+  if (ai.hasShips() && user.hasShips()) return;
+
+  if (!ai.hasShips()) {
+    showEndGameModal({ userWon: true });
+  } else if (!user.hasShips()) {
+    showEndGameModal({ userWon: false });
+  }
+
+  aiBoard.removeEventListener("click", userAttackTurnHandler);
+  canPlay = true;
 }
