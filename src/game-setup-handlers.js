@@ -100,7 +100,6 @@ function bodyMouseUpHandler(e) {
 function updateFinishSetupButtonVisibility() {
   if (user.allShipsPlaced()) finishGameSetupButton.classList.remove("finish-setup-button--hidden");
   else finishGameSetupButton.classList.add("finish-setup-button--hidden");
-  console.log(user.allShipsPlaced());
 }
 
 function randomizeBoardButtonHandler() {

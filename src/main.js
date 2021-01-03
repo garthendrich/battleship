@@ -52,20 +52,18 @@ function displayScreenForGameSetup() {
   shipMenuItems.forEach((item) => item.classList.remove("ship-menu__item--placed"));
 }
 
-function showEndGameModal({ userWon }) {
-  endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
-  showElement(endGameModal, "modal");
-}
-
 finishGameSetupButton.addEventListener("click", () => {
-  if (user.allShipsPlaced()) {
-    hideElement(shipMenu, "ship-menu");
-    hideElement(finishGameSetupButton, "finish-setup-button");
+  if (!user.allShipsPlaced()) return;
 
-    detachGameSetupHandlers();
-    startGameFight();
-  }
+  detachGameSetupHandlers();
+  startGameFight();
+  displayScreenForGameFight();
 });
+
+function displayScreenForGameFight() {
+  hideElement(shipMenu, "ship-menu");
+  hideElement(finishGameSetupButton, "finish-setup-button");
+}
 
 function startGameFight() {
   ai.randomizeShips();
@@ -103,4 +101,9 @@ function checkWinner() {
 
   aiBoard.removeEventListener("click", userAttackTurnHandler);
   canStartNewGame = true;
+}
+
+function showEndGameModal({ userWon }) {
+  endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
+  showElement(endGameModal, "modal");
 }
