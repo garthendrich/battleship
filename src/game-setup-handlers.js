@@ -24,21 +24,20 @@ function detachGameSetupHandlers() {
 // ------------------------------------------------------------------------------------------
 
 function getShipInfoFromShipMenuItem(e) {
-  if (e.target.classList.contains("ship-menu__item--placed")) return;
+  fixDraggedShipOutsideBody();
+
+  const clickedShipAlreadyPlaced = e.target.classList.contains("ship-menu__item--placed");
+  if (clickedShipAlreadyPlaced) return;
 
   user.selectedShip = e.target.id;
   user.shipSegmentIndexOnMousedown = user.getSelectedShipMiddleSegmentIndex();
 }
 
 function bodyMouseDownHandler(e) {
-  // if mousedown outside board
-  if (!e.target.closest(".board--user")) {
-    user.hideAllShipPopups();
-    return;
-  }
+  const clickedOutsideUserBoard = !e.target.closest(".board--user");
+  if (clickedOutsideUserBoard) return;
 
-  // if previous dragging did not mouseup on body, skip collecting new ship info
-  if (user.selectedShip) return;
+  fixDraggedShipOutsideBody();
 
   // if mousedown on ship, collect ship info
   user.selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
@@ -47,6 +46,15 @@ function bodyMouseDownHandler(e) {
     user.selectedShip = user.selectedShipElem.id;
     user.shipSegmentIndexOnMousedown = user.getCurrentShipSegmentIndexUnderCursor(e);
     user.prevShipOrigin = user.shipInfo.origin[user.selectedShip];
+  }
+}
+
+function fixDraggedShipOutsideBody() {
+  const wasPrevSelectedShipDraggedOutsideBody = !!user.selectedShip;
+  if (wasPrevSelectedShipDraggedOutsideBody) {
+    const prevSelectedShipMenuItem = document.querySelector(`.ship-menu__item#${user.selectedShip}`);
+    removeElementClassNameModifier(prevSelectedShipMenuItem, "ship-menu__item", "placed");
+    user.selectedShip = null;
   }
 }
 
