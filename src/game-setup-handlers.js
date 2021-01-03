@@ -4,7 +4,7 @@ const randomizeBoardButton = document.querySelector(".ship-menu__button--random"
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 
 function attachGameSetupHandlers() {
-  shipMenuItems.forEach((item) => item.addEventListener("mousedown", shipMenuElHandler));
+  shipMenuItems.forEach((item) => item.addEventListener("mousedown", getShipInfoFromShipMenuItem));
   document.body.addEventListener("mousedown", bodyMouseDownHandler);
   document.body.addEventListener("mousemove", bodyMouseMoveHandler);
   document.body.addEventListener("mouseup", bodyMouseUpHandler);
@@ -13,7 +13,7 @@ function attachGameSetupHandlers() {
 }
 
 function detachGameSetupHandlers() {
-  shipMenuItems.forEach((item) => item.removeEventListener("mousedown", shipMenuElHandler));
+  shipMenuItems.forEach((item) => item.removeEventListener("mousedown", getShipInfoFromShipMenuItem));
   document.body.removeEventListener("mousedown", bodyMouseDownHandler);
   document.body.removeEventListener("mousemove", bodyMouseMoveHandler);
   document.body.removeEventListener("mouseup", bodyMouseUpHandler);
@@ -23,12 +23,11 @@ function detachGameSetupHandlers() {
 
 // ------------------------------------------------------------------------------------------
 
-// mousedown on ship menu item
-function shipMenuElHandler(e) {
-  if (!e.target.classList.contains("ship-menu__item--placed")) {
-    user.selectedShip = e.target.id;
-    user.shipSegmentIndexOnMousedown = user.getSelectedShipMiddleSegmentIndex();
-  }
+function getShipInfoFromShipMenuItem(e) {
+  if (e.target.classList.contains("ship-menu__item--placed")) return;
+
+  user.selectedShip = e.target.id;
+  user.shipSegmentIndexOnMousedown = user.getSelectedShipMiddleSegmentIndex();
 }
 
 function bodyMouseDownHandler(e) {
