@@ -129,29 +129,3 @@ class GameSetup {
     else hideElement(finishGameSetupButton, "finish-setup-button");
   }
 }
-
-function shipRotateButtonHandler(e) {
-  user.selectedShipElem = getElementAncestor(e.target, ".ship");
-  user.selectedShip = user.selectedShipElem.id;
-  user.newShipOrigin = user.shipInfo.origin[user.selectedShip];
-
-  user.removeSelectedShip();
-  user.rotateSelectedShip();
-
-  user.adjustShipOriginToInsideBoard();
-  user.adjustShipOriginToAvailableSpace();
-
-  user.addSelectedShip(user.newShipOrigin);
-
-  user.selectedShip = null; //reset
-}
-
-function shipRemoveButtonHandler(e) {
-  user.selectedShipElem = getElementAncestor(e.target, ".ship");
-  user.selectedShip = user.selectedShipElem.id;
-  user.resetSelectedShip();
-
-  user.selectedShip = null; //reset
-
-  gameSetup_updateFinishSetupButtonVisibility();
-}
