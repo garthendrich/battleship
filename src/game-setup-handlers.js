@@ -74,28 +74,26 @@ function bodyMouseUpHandler(e) {
   user.hideAllShipPopups();
 
   if (user.selectedShip) {
-    // if mouseup on same ship, show popup
-    if (e.target.classList.contains("ship") && e.target.id == user.selectedShip) {
+    const mouseUpOnSameShip = e.target.classList.contains("ship") && e.target.id == user.selectedShip;
+    const mouseUpOnUserBoardCell = e.target.closest(".board--user") && e.target.nodeName == "TD";
+
+    if (mouseUpOnSameShip) {
       const selectedShipPopup = e.target.firstChild;
-      selectedShipPopup.classList.remove("ship__popup--hidden");
-    }
-    // else if mouseup on cell
-    else if (e.target.closest(".board--user") && e.target.nodeName == "TD") {
-      const rowUnderCursor = e.target.closest("tr").rowIndex;
-      const columnUnderCursor = e.target.cellIndex;
+      showElement(selectedShipPopup, "ship__popup");
+    } else if (mouseUpOnUserBoardCell) {
+      const cellRowUnderCursor = e.target.closest("tr").rowIndex;
+      const cellColumnUnderCursor = e.target.cellIndex;
 
       user.newShipOrigin = user.runBySelectedShipOrientation(
-        () => [rowUnderCursor, columnUnderCursor - user.shipSegmentIndexOnMousedown],
-        () => [rowUnderCursor - user.shipSegmentIndexOnMousedown, columnUnderCursor]
+        () => [cellRowUnderCursor, cellColumnUnderCursor - user.shipSegmentIndexOnMousedown],
+        () => [cellRowUnderCursor - user.shipSegmentIndexOnMousedown, cellColumnUnderCursor]
       );
 
       user.adjustShipOriginToInsideBoard();
 
-      if (!user.doesSelectedShipOverlapOthers()) user.addSelectedShip(user.newShipOrigin);
+      if (!user.selectedShipOverlapOtherShips()) user.addSelectedShip(user.newShipOrigin);
       else if (user.prevSelectedShipOrigin) user.addSelectedShip(user.prevSelectedShipOrigin);
-    }
-    // else if mouseup not on cell and has prevSelectedShipOrigin
-    else if (user.prevSelectedShipOrigin) user.addSelectedShip(user.prevSelectedShipOrigin);
+    } else if (user.prevSelectedShipOrigin) user.addSelectedShip(user.prevSelectedShipOrigin);
   }
 
   updateFinishSetupButtonVisibility();
@@ -104,8 +102,8 @@ function bodyMouseUpHandler(e) {
 }
 
 function updateFinishSetupButtonVisibility() {
-  if (user.allShipsPlaced()) finishGameSetupButton.classList.remove("finish-setup-button--hidden");
-  else finishGameSetupButton.classList.add("finish-setup-button--hidden");
+  if (user.allShipsPlaced()) showElement(finishGameSetupButton, "finish-setup-button");
+  else hideElement(finishGameSetupButton, "finish-setup-button");
 }
 
 function randomizeBoardButtonHandler() {
