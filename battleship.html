@@ -7,7 +7,7 @@
     <title>Battleship</title>
   </head>
   <body>
-    <div class="homescreen"><button id="play">Play</button></div>
+    <div class="homescreen"><button class="play-button">Play</button></div>
     <div class="ship-menu">
       <ul class="ship-menu__list">
         <li class="ship-menu__item" id="c">Carrier</li>
@@ -34,16 +34,16 @@
         </button>
       </div>
     </div>
-    <button class="finish-setup" id="finish-setup">Finish Setup</button>
+    <button class="finish-setup-button finish-setup-button--hidden">Finish Setup</button>
     <div class="board-container">
       <table class="board board--user"></table>
       <table class="board board--ai"></table>
     </div>
-    <div class="modal modal--hidden" id="end-game">
+    <div class="modal modal--end-game modal--hidden">
       <div class="modal__box">
         <div class="modal__dialogue"></div>
         <div class="modal__buttons">
-          <button id="again">Play Again</button>
+          <button class="play-again-button">Play Again</button>
         </div>
       </div>
     </div>

@@ -118,14 +118,14 @@ button:hover {
   opacity: 0.3;
 }
 
-.finish-setup {
+.finish-setup-button {
   position: fixed;
   bottom: 20px;
   right: 20px;
   transition: transform 0.5s;
 }
 
-.finish-setup--hidden {
+.finish-setup-button--hidden {
   transform: translateY(200%);
 }
 
