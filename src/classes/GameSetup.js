@@ -1,24 +1,31 @@
 class GameSetup {
   constructor() {
+    this._getShipInfoFromShipMenuItem = this._getShipInfoFromShipMenuItem.bind(this);
+    this._bodyMouseDownHandler = this._bodyMouseDownHandler.bind(this);
+    this._bodyMouseMoveHandler = this._bodyMouseMoveHandler.bind(this);
+    this._bodyMouseUpHandler = this._bodyMouseUpHandler.bind(this);
+    this._randomizeBoardButtonHandler = this._randomizeBoardButtonHandler.bind(this);
+    this._resetBoardButtonHandler = this._resetBoardButtonHandler.bind(this);
+
     this._attachGameSetupHandlers();
   }
 
   _attachGameSetupHandlers() {
-    shipMenuItems.forEach((item) => item.addEventListener("mousedown", (e) => this._getShipInfoFromShipMenuItem(e)));
-    document.body.addEventListener("mousedown", (e) => this._bodyMouseDownHandler(e));
-    document.body.addEventListener("mousemove", (e) => this._bodyMouseMoveHandler(e));
-    document.body.addEventListener("mouseup", (e) => this._bodyMouseUpHandler(e));
-    randomizeBoardButton.addEventListener("click", () => this._randomizeBoardButtonHandler());
-    resetBoardButton.addEventListener("click", () => this._resetBoardButtonHandler());
+    shipMenuItems.forEach((item) => item.addEventListener("mousedown", this._getShipInfoFromShipMenuItem));
+    document.body.addEventListener("mousedown", this._bodyMouseDownHandler);
+    document.body.addEventListener("mousemove", this._bodyMouseMoveHandler);
+    document.body.addEventListener("mouseup", this._bodyMouseUpHandler);
+    randomizeBoardButton.addEventListener("click", this._randomizeBoardButtonHandler);
+    resetBoardButton.addEventListener("click", this._resetBoardButtonHandler);
   }
 
   detachGameSetupHandlers() {
-    shipMenuItems.forEach((item) => item.removeEventListener("mousedown", (e) => this._getShipInfoFromShipMenuItem(e)));
-    document.body.removeEventListener("mousedown", (e) => this._bodyMouseDownHandler(e));
-    document.body.removeEventListener("mousemove", (e) => this._bodyMouseMoveHandler(e));
-    document.body.removeEventListener("mouseup", (e) => this._bodyMouseUpHandler(e));
-    randomizeBoardButton.removeEventListener("click", () => this._randomizeBoardButtonHandler());
-    resetBoardButton.removeEventListener("click", () => this._resetBoardButtonHandler());
+    shipMenuItems.forEach((item) => item.removeEventListener("mousedown", this._getShipInfoFromShipMenuItem));
+    document.body.removeEventListener("mousedown", this._bodyMouseDownHandler);
+    document.body.removeEventListener("mousemove", this._bodyMouseMoveHandler);
+    document.body.removeEventListener("mouseup", this._bodyMouseUpHandler);
+    randomizeBoardButton.removeEventListener("click", this._randomizeBoardButtonHandler);
+    resetBoardButton.removeEventListener("click", this._resetBoardButtonHandler);
   }
 
   _getShipInfoFromShipMenuItem(e) {
@@ -146,5 +153,5 @@ function shipRemoveButtonHandler(e) {
 
   user.selectedShip = null; //reset
 
-  gameSetup._updateFinishSetupButtonVisibility();
+  gameSetup_updateFinishSetupButtonVisibility();
 }
