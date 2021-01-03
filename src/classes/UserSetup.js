@@ -1,4 +1,4 @@
-class UserSetup extends Player {
+class UserSetup extends PlayerSetup {
   constructor(board) {
     super(board);
 
