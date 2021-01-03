@@ -8,6 +8,8 @@ class Ai extends Player {
     this.probabilityMultiplier = 1.2;
     this.trackingProbabilityMultiplier = 1.8;
     this.showProbabilityDisplay = true;
+
+    this.randomizeShips();
   }
 
   // * game fight ----------------------------------------------------------------
