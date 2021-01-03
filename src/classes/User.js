@@ -111,6 +111,17 @@ class User extends Player {
     );
   }
 
+  removePlacedShips() {
+    for (let ship of this.shipNames) {
+      const shipNotPlaced = !user.shipInfo.origin[ship];
+      if (shipNotPlaced) return;
+
+      user.selectedShip = ship;
+      user.selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
+      user.resetSelectedShip();
+    }
+  }
+
   getSelectedShipMiddleSegmentIndex() {
     return Math.ceil(this.getSelectedShipLength() / 2) - 1;
   }

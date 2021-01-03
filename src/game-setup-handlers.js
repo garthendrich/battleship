@@ -9,7 +9,7 @@ function attachGameSetupHandlers() {
   document.body.addEventListener("mousemove", bodyMouseMoveHandler);
   document.body.addEventListener("mouseup", bodyMouseUpHandler);
   randomizeBoardButton.addEventListener("click", randomizeBoardButtonHandler);
-  resetBoardButton.addEventListener("click", removePlacedShips);
+  resetBoardButton.addEventListener("click", resetBoardButtonHandler);
 }
 
 function detachGameSetupHandlers() {
@@ -18,7 +18,7 @@ function detachGameSetupHandlers() {
   document.body.removeEventListener("mousemove", bodyMouseMoveHandler);
   document.body.removeEventListener("mouseup", bodyMouseUpHandler);
   randomizeBoardButton.removeEventListener("click", randomizeBoardButtonHandler);
-  resetBoardButton.removeEventListener("click", removePlacedShips);
+  resetBoardButton.removeEventListener("click", resetBoardButtonHandler);
 }
 
 // ------------------------------------------------------------------------------------------
@@ -107,27 +107,21 @@ function updateFinishSetupButtonVisibility() {
 }
 
 function randomizeBoardButtonHandler() {
-  removePlacedShips();
+  user.removePlacedShips();
   user.randomizeShips();
   user.hideAllShipPopups();
 
-  user.selectedShip = null; // reset
-
   updateFinishSetupButtonVisibility();
+
+  user.selectedShip = null; // reset
 }
 
-const shipNames = "cbdsp";
-function removePlacedShips() {
-  for (let ship of shipNames) {
-    if (!user.shipInfo.origin[ship]) continue; // if not placed
-    user.selectedShip = ship;
-    user.selectedShipElem = document.querySelector(`.ship#${user.selectedShip}`);
-    user.resetSelectedShip();
-  }
-
-  user.selectedShip = null; // reset
+function resetBoardButtonHandler() {
+  user.removePlacedShips();
 
   updateFinishSetupButtonVisibility();
+
+  user.selectedShip = null; // reset
 }
 
 function rotateButtonHandler(e) {
