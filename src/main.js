@@ -66,7 +66,6 @@ function displayScreenForGameFight() {
 }
 
 function startGameFight() {
-  ai.randomizeShips();
   ai.updateProbabilityTable(user);
   addElementClassNameModifier(aiBoard, "board", "attack");
   aiBoard.addEventListener("click", userAttackTurnHandler);
