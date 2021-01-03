@@ -16,14 +16,19 @@
 let user, ai;
 let canPlay = true;
 
-const playButton = document.querySelector("#play");
-const playAgainButton = document.querySelector("#again");
+const homeScreen = document.querySelector(".homescreen");
+const playButton = document.querySelector(".play-button");
+
+const userBoard = document.querySelector(".board--user");
+const aiBoard = document.querySelector(".board--ai");
+
 const shipMenu = document.querySelector(".ship-menu");
 const shipMenuItems = document.querySelectorAll(".ship-menu__item");
-const homeScreen = document.querySelector(".homescreen");
-const endGameModal = document.querySelector("#end-game");
+const finishGameSetupButton = document.querySelector(".finish-setup-button");
+
+const endGameModal = document.querySelector(".modal--end-game");
 const endGameModalDialogue = endGameModal.querySelector(".modal__dialogue");
-const finishGameSetupButton = document.querySelector("#finish-setup");
+const playAgainButton = document.querySelector(".play-again-button");
 
 playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
@@ -54,19 +59,14 @@ function showEndGameModal({ userWon }) {
 }
 
 finishGameSetupButton.addEventListener("click", () => {
-  const shipOriginValues = Object.values(user.shipInfo.origin);
-  const areAllShipsPlaced = !shipOriginValues.includes(null);
-
-  if (areAllShipsPlaced) {
+  if (user.allShipsPlaced()) {
     shipMenu.classList.add("ship-menu--hidden");
-    finishGameSetupButton.classList.add("finish-setup--hidden");
+    finishGameSetupButton.classList.add("finish-setup-button--hidden");
 
     detachGameSetupHandlers();
     startGameFight();
   }
 });
-
-const aiBoard = document.querySelector(".board--ai");
 
 function startGameFight() {
   ai.randomizeShips();

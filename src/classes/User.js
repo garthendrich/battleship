@@ -115,6 +115,10 @@ class User extends Player {
     return Math.ceil(this.getSelectedShipLength() / 2) - 1;
   }
 
+  allShipsPlaced() {
+    return !Object.values(user.shipInfo.origin).includes(null);
+  }
+
   // * game fight ----------------------------------------------------------------
 
   canShootEnemyCell(row, column) {
