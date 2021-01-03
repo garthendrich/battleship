@@ -21,3 +21,7 @@ function elementHasClassName(element, className) {
 function elementHasClassNameModifier(element, className, classNameModifier) {
   element.classList.contains(`${className}--${classNameModifier}`);
 }
+
+function getElementAncestor(element, ancestorIdentifier) {
+  element.closest(ancestorIdentifier);
+}
