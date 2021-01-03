@@ -15,13 +15,13 @@ function removeElementClassNameModifier(element, className, classNameModifier) {
 }
 
 function elementHasClassName(element, className) {
-  element.classList.contains(className);
+  return element.classList.contains(className);
 }
 
 function elementHasClassNameModifier(element, className, classNameModifier) {
-  element.classList.contains(`${className}--${classNameModifier}`);
+  return element.classList.contains(`${className}--${classNameModifier}`);
 }
 
 function getElementAncestor(element, ancestorIdentifier) {
-  element.closest(ancestorIdentifier);
+  return element.closest(ancestorIdentifier);
 }
