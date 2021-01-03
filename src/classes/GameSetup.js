@@ -24,7 +24,7 @@ class GameSetup {
   _getShipInfoFromShipMenuItem(e) {
     this._fixDraggedShipOutsideBody();
 
-    const clickedShipAlreadyPlaced = e.target.classList.contains("ship-menu__item--placed");
+    const clickedShipAlreadyPlaced = elementHasClassNameModifier(e.target, "ship-menu__item", "placed");
     if (clickedShipAlreadyPlaced) return;
 
     user.selectedShip = e.target.id;
@@ -37,7 +37,7 @@ class GameSetup {
 
     this._fixDraggedShipOutsideBody();
 
-    user.selectedShipElem = e.target.classList.contains("ship") ? e.target : null;
+    user.selectedShipElem = elementHasClassName(e.target, "ship") ? e.target : null;
     if (user.selectedShipElem) {
       user.canMoveShip = true;
       user.selectedShip = user.selectedShipElem.id;
@@ -72,7 +72,7 @@ class GameSetup {
     user.hideAllShipPopups();
 
     if (user.selectedShip) {
-      const mouseUpOnSameShip = e.target.classList.contains("ship") && e.target.id == user.selectedShip;
+      const mouseUpOnSameShip = elementHasClassName(e.target, "ship") && e.target.id == user.selectedShip;
       const mouseUpOnUserBoardCell = e.target.closest(".board--user") && e.target.nodeName == "TD";
 
       if (mouseUpOnSameShip) {
