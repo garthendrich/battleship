@@ -124,7 +124,7 @@ function resetBoardButtonHandler() {
   user.selectedShip = null; // reset
 }
 
-function rotateButtonHandler(e) {
+function shipRotateButtonHandler(e) {
   user.selectedShipElem = e.target.closest(".ship");
   user.selectedShip = user.selectedShipElem.id;
   user.newShipOrigin = user.shipInfo.origin[user.selectedShip];
@@ -140,7 +140,7 @@ function rotateButtonHandler(e) {
   user.selectedShip = null; //reset
 }
 
-function removeButtonHandler(e) {
+function shipRemoveButtonHandler(e) {
   user.selectedShipElem = e.target.closest(".ship");
   user.selectedShip = user.selectedShipElem.id;
   user.resetSelectedShip();

@@ -38,8 +38,8 @@ class User extends Player {
     removeButton.className = "ship__button ship__button--remove";
     rotateButton.append(parsedRotateSVG);
     removeButton.append(parsedRemoveSVG);
-    rotateButton.addEventListener("click", rotateButtonHandler);
-    removeButton.addEventListener("click", removeButtonHandler);
+    rotateButton.addEventListener("click", shipRotateButtonHandler);
+    removeButton.addEventListener("click", shipRemoveButtonHandler);
 
     const popupObj = document.createElement("div");
     popupObj.className = "ship__popup";
@@ -63,8 +63,8 @@ class User extends Player {
     // remove handlers to prevent memory leaks
     const rotateButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--rotate`);
     const removeButton = document.querySelector(`.ship#${this.selectedShip} .ship__button--remove`);
-    rotateButton.removeEventListener("click", rotateButtonHandler);
-    removeButton.removeEventListener("click", removeButtonHandler);
+    rotateButton.removeEventListener("click", shipRotateButtonHandler);
+    removeButton.removeEventListener("click", shipRemoveButtonHandler);
 
     this.selectedShipElem.remove();
 
