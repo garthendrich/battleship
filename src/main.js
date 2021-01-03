@@ -45,11 +45,11 @@ function startGameSetupHandler() {
 }
 
 function displayScreenForGameSetup() {
-  aiBoard.classList.remove("board--attack");
+  removeElementClassNameModifier(aiBoard, "board", "attack");
   hideElement(homeScreen, "homescreen");
   hideElement(endGameModal, "modal");
   showElement(shipMenu, "ship-menu");
-  shipMenuItems.forEach((item) => item.classList.remove("ship-menu__item--placed"));
+  shipMenuItems.forEach((item) => removeElementClassNameModifier(item, "ship-menu__item", "placed"));
 }
 
 finishGameSetupButton.addEventListener("click", () => {
@@ -68,7 +68,7 @@ function displayScreenForGameFight() {
 function startGameFight() {
   ai.randomizeShips();
   ai.updateProbabilityTable(user);
-  aiBoard.classList.add("board--attack");
+  addElementClassNameModifier(aiBoard, "board", "attack");
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
   document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1));
