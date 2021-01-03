@@ -5,8 +5,11 @@
     ! refactor
     * shoot algorithm: odd cells
   * inspector settings
+  * rename Player selectedShip to draggedShip
+  * pass ships to Player methods instead of basing off of selectedShip field
 
  ** THINGS THAT MAY BE CONSIDERED:
+ * create class for ships
  * current randomizer may be inefficient: rechecks occupied cells
  * better adjust-ship-on-rotate
  */
