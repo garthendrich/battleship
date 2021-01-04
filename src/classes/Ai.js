@@ -50,8 +50,8 @@ class Ai extends PlayerSetup {
 
     for (let ship of shipsToSearch) {
       const shipLength = this._shipInfo.length[ship];
-      this._addProbabilityForShipByOrientation(shipLength, "h");
-      this._addProbabilityForShipByOrientation(shipLength, "v");
+      this._addProbabilityForShipByOrientation(ship, "h");
+      this._addProbabilityForShipByOrientation(ship, "v");
     }
 
     if (this.showProbabilityDisplay) displayProbability();
@@ -70,7 +70,9 @@ class Ai extends PlayerSetup {
     );
   }
 
-  _addProbabilityForShipByOrientation(shipLength, orientation) {
+  _addProbabilityForShipByOrientation(ship, orientation) {
+    const shipLength = this._shipInfo.length[ship];
+
     let maxRow = 9;
     let maxColumn = 9;
     this.runFunctionByShipOrientation(
@@ -81,7 +83,7 @@ class Ai extends PlayerSetup {
 
     for (let row = 0; row <= maxRow; row++) {
       for (let column = 0; column <= maxColumn; column++) {
-        if (this.doesShipOverlapNonhitShots(shipLength, orientation, [row, column])) continue;
+        if (this._presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation)) continue;
 
         let increaseProbTimes = 1;
         if (this._trackMode) {
@@ -126,10 +128,16 @@ class Ai extends PlayerSetup {
     this._probabilityTable[row][column] = Number((this._probabilityTable[row][column] * multiplier).toFixed(2));
   }
 
-  doesShipOverlapNonhitShots(shipLength, orientation, [row, column]) {
-    if (orientation == "h") return this._shotsTable[row].slice(column, column + shipLength).some((cell) => cell === 1);
-    else if (orientation == "v") for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === 1) return true;
-    return false;
+  _presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation) {
+    const shipLength = this._shipInfo.length[ship];
+    return runFunctionByShipOrientation(
+      orientation,
+      () => this._shotsTable[row].slice(column, column + shipLength).some((cell) => cell === 1),
+      () => {
+        for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === 1) return true;
+        return false;
+      }
+    );
   }
 
   getOverlappingHitShots(shipLength, orientation, [row, column]) {
