@@ -53,9 +53,9 @@ function startGameSetupHandler() {
 
 function displayScreenForGameSetup() {
   removeElementState(aiBoard, "attack");
-  hideElement(homeScreen, "homescreen");
-  hideElement(endGameModal, "modal");
-  showElement(shipMenu, "ship-menu");
+  hideElement(homeScreen);
+  hideElement(endGameModal);
+  showElement(shipMenu);
   shipMenuItems.forEach((item) => removeElementState(item, "placed"));
 }
 
@@ -68,8 +68,8 @@ finishGameSetupButton.addEventListener("click", () => {
 });
 
 function displayScreenForGameFight() {
-  hideElement(shipMenu, "ship-menu");
-  hideElement(finishGameSetupButton, "finish-setup-button");
+  hideElement(shipMenu);
+  hideElement(finishGameSetupButton);
 }
 
 function startGameFight() {
@@ -113,5 +113,5 @@ function checkWinner() {
 
 function showEndGameModal({ userWon }) {
   endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
-  showElement(endGameModal, "modal");
+  showElement(endGameModal);
 }

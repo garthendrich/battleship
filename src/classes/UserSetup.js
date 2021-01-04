@@ -81,7 +81,7 @@ class UserSetup extends PlayerSetup {
 
       if (didNotMoveShip) {
         const grabbedShipPopup = e.target.firstChild;
-        showElement(grabbedShipPopup, "ship__popup");
+        showElement(grabbedShipPopup);
       } else if (mouseUpOnUserBoardCell) {
         const cellRowUnderCursor = getElementAncestor(e.target, "tr").rowIndex;
         const cellColumnUnderCursor = e.target.cellIndex;
@@ -259,11 +259,11 @@ class UserSetup extends PlayerSetup {
 
   _hideAllShipPopups() {
     const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
-    if (shipPopupElems.length) shipPopupElems.forEach((popup) => hideElement(popup, "ship__popup"));
+    if (shipPopupElems.length) shipPopupElems.forEach((popup) => hideElement(popup));
   }
 
   _updateFinishSetupButtonVisibility() {
-    if (this.allShipsPlaced()) showElement(finishGameSetupButton, "finish-setup-button");
-    else hideElement(finishGameSetupButton, "finish-setup-button");
+    if (this.allShipsPlaced()) showElement(finishGameSetupButton);
+    else hideElement(finishGameSetupButton);
   }
 }
