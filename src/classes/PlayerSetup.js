@@ -22,8 +22,8 @@ class PlayerSetup extends Player {
   _adjustGrabbedShipNewOriginToPlaceShipInsideBoard() {
     const [originRow, originColumn] = this._grabbedShipNewOrigin;
 
-    this.runFuncBasedOnShipOrientation(
-      this._grabbedShip,
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
       () => {
         const shipLastCellColumn = originColumn + this._getShipLength(this._grabbedShip) - 1;
         const isShipInsideBoard = originColumn >= 0 && shipLastCellColumn <= 9;
@@ -48,8 +48,8 @@ class PlayerSetup extends Player {
   // for ship rotating
   _adjustGrabbedShipNewOriginToPlaceShipUntoUnoccupiedCells() {
     let shipForwardDir, shipSidewayDir;
-    this.runFuncBasedOnShipOrientation(
-      this._grabbedShip,
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
       // 0: row, 1: column
       () => ([shipForwardDir, shipSidewayDir] = [1, 0]),
       () => ([shipForwardDir, shipSidewayDir] = [0, 1])
@@ -71,8 +71,8 @@ class PlayerSetup extends Player {
 
   _grabbedShipOverlapOtherShips() {
     const [row, column] = this._grabbedShipNewOrigin;
-    return this.runFuncBasedOnShipOrientation(
-      this._grabbedShip,
+    return this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
       () => this._shipPlacementTable[row].slice(column, column + this._getShipLength(this._grabbedShip)).some((cell) => cell !== 0),
       () => {
         for (let i = row; i < row + this._getShipLength(this._grabbedShip); i++) if (this._shipPlacementTable[i][column] !== 0) return true;
@@ -82,8 +82,8 @@ class PlayerSetup extends Player {
   }
 
   _addGrabbedShipToOrigin([row, column]) {
-    this.runFuncBasedOnShipOrientation(
-      this._grabbedShip,
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
       () => {
         for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this._shipPlacementTable[row][column + i] = this._grabbedShip;
       },
@@ -94,15 +94,15 @@ class PlayerSetup extends Player {
     this._shipInfo.origin[this._grabbedShip] = [row, column];
   }
 
-  _createShip(params = {}) {
+  _createShip(shipName, params = {}) {
     const newShipObj = document.createElement("div");
-    this.runFuncBasedOnShipOrientation(
-      params.shipName,
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[shipName],
       () => (newShipObj.className = "ship ship--hori"),
       () => (newShipObj.className = "ship ship--vert")
     );
     if (params.sunk) addElementState(newShipObj, "sunk");
-    newShipObj.id = params.shipName;
+    newShipObj.id = shipName;
     return newShipObj;
   }
 }
