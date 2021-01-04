@@ -7,7 +7,7 @@ class Ai extends PlayerSetup {
 
     this.baseProbabilityMultiplier = 1.2;
     this.trackModeMultiplierIncreaser = 1.2;
-    this.showProbabilityDisplay = true;
+    this.willDisplayProbability = true;
 
     this._randomizeShips();
   }
@@ -51,7 +51,7 @@ class Ai extends PlayerSetup {
       this._addProbabilityForShipByOrientation(ship, "v");
     }
 
-    if (this.showProbabilityDisplay) displayProbability();
+    if (this.willDisplayProbability) displayProbability();
   }
 
   _updateTrackModeState() {
