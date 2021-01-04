@@ -52,11 +52,11 @@ function startGameSetupHandler() {
 }
 
 function displayScreenForGameSetup() {
-  removeElementClassNameModifier(aiBoard, "board", "attack");
+  removeElementState(aiBoard, "attack");
   hideElement(homeScreen, "homescreen");
   hideElement(endGameModal, "modal");
   showElement(shipMenu, "ship-menu");
-  shipMenuItems.forEach((item) => removeElementClassNameModifier(item, "ship-menu__item", "placed"));
+  shipMenuItems.forEach((item) => removeElementState(item, "placed"));
 }
 
 finishGameSetupButton.addEventListener("click", () => {
@@ -77,7 +77,7 @@ function startGameFight() {
   document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
-  addElementClassNameModifier(aiBoard, "board", "attack");
+  addElementState(aiBoard, "attack");
 }
 
 function userAttackTurnHandler(e) {

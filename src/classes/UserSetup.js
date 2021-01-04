@@ -37,7 +37,7 @@ class UserSetup extends PlayerSetup {
   _shipMenuItemHandler(e) {
     this._fixDraggedShipOutsideBody();
 
-    const clickedShipAlreadyPlaced = elementHasClassNameModifier(e.target, "ship-menu__item", "placed");
+    const clickedShipAlreadyPlaced = elementHasState(e.target, "placed");
     if (clickedShipAlreadyPlaced) return;
 
     this._draggedShip = e.target.id;
@@ -125,7 +125,7 @@ class UserSetup extends PlayerSetup {
     const wasPrevDraggedShipDraggedOutsideBody = !!this._draggedShip;
     if (wasPrevDraggedShipDraggedOutsideBody) {
       const prevDraggedShipMenuItem = document.querySelector(`.ship-menu__item#${this._draggedShip}`);
-      removeElementClassNameModifier(prevDraggedShipMenuItem, "ship-menu__item", "placed");
+      removeElementState(prevDraggedShipMenuItem, "placed");
     }
   }
 
@@ -147,7 +147,7 @@ class UserSetup extends PlayerSetup {
     document.querySelector(`.board--user`).rows[row].cells[column].append(this._createShipWithPopup());
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._draggedShip}`);
-    addElementClassNameModifier(menuShipElem, "ship-menu__item", "placed");
+    addElementState(menuShipElem, "placed");
   }
 
   _createShipWithPopup() {
@@ -224,7 +224,7 @@ class UserSetup extends PlayerSetup {
     this._shipInfo.orientation[this._draggedShip] = "h";
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._draggedShip}`);
-    removeElementClassNameModifier(menuShipElem, "ship-menu__item", "placed");
+    removeElementState(menuShipElem, "placed");
   }
 
   _removeDraggedShip() {
