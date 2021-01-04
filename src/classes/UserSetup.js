@@ -66,7 +66,7 @@ class UserSetup extends PlayerSetup {
       e.target.id !== this._draggedShip || this._draggedShipSegmentIndexOnHold != this._getDraggedShipSegmentIndexUnderCursor(e);
     if (shipDraggedToAnotherCell) {
       this._isHoldingAShip = false; // reset; pass only once
-      this._removeDraggedShip();
+      this._removeShip(this._draggedShip);
       this._hideAllShipPopups();
     }
   }
@@ -181,7 +181,7 @@ class UserSetup extends PlayerSetup {
     this._draggedShip = getElementAncestor(e.target, ".ship").id;
     this._newShipOrigin = this._shipInfo.origin[this._draggedShip];
 
-    this._removeDraggedShip();
+    this._removeShip(this._draggedShip);
     this._rotateDraggedShip();
 
     this._adjustShipOriginToInsideBoard();
@@ -210,34 +210,34 @@ class UserSetup extends PlayerSetup {
   }
 
   _shipRemoveButtonHandler(e) {
-    this._draggedShip = getElementAncestor(e.target, ".ship").id;
-    this._resetDraggedShip();
+    const shipToRemove = getElementAncestor(e.target, ".ship").id;
+    this._resetShip(shipToRemove);
 
     this._draggedShip = null; //reset
 
     this._updateFinishSetupButtonVisibility();
   }
 
-  _resetDraggedShip() {
-    this._removeDraggedShip();
+  _resetShip(ship) {
+    this._removeShip(ship);
 
-    this._shipInfo.orientation[this._draggedShip] = "h";
+    this._shipInfo.orientation[ship] = "h";
 
-    const menuShipElem = document.querySelector(`.ship-menu__item#${this._draggedShip}`);
+    const menuShipElem = document.querySelector(`.ship-menu__item#${ship}`);
     removeElementState(menuShipElem, "placed");
   }
 
-  _removeDraggedShip() {
+  _removeShip(ship) {
     // remove handlers to prevent memory leaks
-    const rotateButton = document.querySelector(`.ship#${this._draggedShip} .ship__button--rotate`);
-    const removeButton = document.querySelector(`.ship#${this._draggedShip} .ship__button--remove`);
+    const rotateButton = document.querySelector(`.ship#${ship} .ship__button--rotate`);
+    const removeButton = document.querySelector(`.ship#${ship} .ship__button--remove`);
     rotateButton.removeEventListener("click", this._shipRotateButtonHandler);
     removeButton.removeEventListener("click", this._shipRemoveButtonHandler);
 
-    const draggedShipElem = document.querySelector(`.ship#${this._draggedShip}`);
-    draggedShipElem.remove();
+    const shipElem = document.querySelector(`.ship#${ship}`);
+    shipElem.remove();
 
-    let [row, column] = this._shipInfo.origin[this._draggedShip];
+    let [row, column] = this._shipInfo.origin[ship];
     this.runByDraggedShipOrientation(
       () => {
         for (let i = 0; i < this._getDraggedShipLength(); i++) this.shipPlacementTable[row][column + i] = 0;
@@ -247,17 +247,11 @@ class UserSetup extends PlayerSetup {
       }
     );
 
-    this._shipInfo.origin[this._draggedShip] = null;
+    this._shipInfo.origin[ship] = null;
   }
 
   _removePlacedShips() {
-    for (let ship of this.shipNames) {
-      const shipPlaced = this._shipInfo.origin[ship];
-      if (!shipPlaced) continue;
-
-      this._draggedShip = ship;
-      this._resetDraggedShip();
-    }
+    for (let ship of this.shipNames) if (isShipPlaced) this._resetShip(ship);
   }
 
   _hideAllShipPopups() {
