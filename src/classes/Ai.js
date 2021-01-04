@@ -4,9 +4,10 @@ class Ai extends PlayerSetup {
 
     this._probabilityTable;
     this._isTrackMode = false;
+    this.parityFilterOn = true;
 
     this.baseProbabilityMultiplier = 1.2;
-    this.trackModeMultiplierIncreaser = 1.2;
+    this.trackModeMultiplierIncreaser = 1.3;
     this.willDisplayProbability = true;
 
     this._randomizeShips();
@@ -97,33 +98,18 @@ class Ai extends PlayerSetup {
         }
 
         for (let segment = 0; segment < shipLength; segment++) {
-          let [segmentRow, segmentColumn] = [row, column];
-          if (orientation === "h") segmentColumn += segment;
-          else if (orientation === "v") segmentRow += segment;
+          const [segmentRow, segmentColumn] = this._getSegmentCell([row, column], segment, orientation);
 
-          if (this._isTrackMode && (this._shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
+          const segmentCellNearHit = this._isCellNearHit([segmentRow, segmentColumn]);
+          const segmentCellIsHit = this._shotsTable[segmentRow][segmentColumn] === "x";
+          if (this._isTrackMode && (segmentCellIsHit || !segmentCellNearHit)) continue;
+
+          if (!this._isTrackMode && this.parityFilterOn && this._isCellOddParity([segmentRow, segmentColumn])) continue;
+
           this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
     }
-  }
-
-  cellNearHit([row, column]) {
-    // horizontally
-    let columnFloor = column - 1 >= 0 ? column - 1 : 0;
-    let columnCeil = column + 2 <= 10 ? column + 2 : 10;
-    if (this._shotsTable[row].slice(columnFloor, columnCeil).some((cell) => cell === "x")) return true;
-
-    // vertically
-    let rowFloor = row - 1 >= 0 ? row - 1 : 0;
-    let rowCeil = row + 2 <= 10 ? row + 2 : 10;
-    for (let i = rowFloor; i < rowCeil; i++) if (this._shotsTable[i][column] === "x") return true;
-
-    return false;
-  }
-
-  increaseCellProbability([row, column], multiplier) {
-    this._probabilityTable[row][column] = Number((this._probabilityTable[row][column] * multiplier).toFixed(2));
   }
 
   _presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation) {
@@ -149,6 +135,35 @@ class Ai extends PlayerSetup {
         return connectedHits;
       }
     );
+  }
+
+  _getSegmentCell([row, column], segment, orientation) {
+    return this.runFunctionByShipOrientation(
+      orientation,
+      () => [row, column + segment],
+      () => [row + segment, column]
+    );
+  }
+
+  _isCellNearHit([row, column]) {
+    // horizontally
+    let columnFloor = column - 1 >= 0 ? column - 1 : 0;
+    let columnCeil = column + 2 <= 10 ? column + 2 : 10;
+    if (this._shotsTable[row].slice(columnFloor, columnCeil).includes("x")) return true;
+
+    // vertically
+    let rowFloor = row - 1 >= 0 ? row - 1 : 0;
+    let rowCeil = row + 2 <= 10 ? row + 2 : 10;
+    for (let i = rowFloor; i < rowCeil; i++) if (this._shotsTable[i][column] === "x") return true;
+    return false;
+  }
+
+  _isCellOddParity([row, column]) {
+    return (row + column) % 2 === 0;
+  }
+
+  increaseCellProbability([row, column], multiplier) {
+    this._probabilityTable[row][column] = Number((this._probabilityTable[row][column] * multiplier).toFixed(2));
   }
 
   _getRandomShootCoords() {
