@@ -44,8 +44,7 @@ class Player {
     this._shipNames = "cbdsp";
   }
 
-  runFuncBasedOnShipOrientation(ship, horizontalFunction, verticalFunction) {
-    const orientation = this._shipInfo.orientation[ship];
+  runFunctionByShipOrientation(orientation, horizontalFunction, verticalFunction) {
     if (orientation === "h") return horizontalFunction();
     else if (orientation === "v") return verticalFunction();
   }

@@ -86,8 +86,8 @@ class UserSetup extends PlayerSetup {
       const cellRow = getElementAncestor(e.target, "tr").rowIndex;
       const cellColumn = e.target.cellIndex;
 
-      this.runFuncBasedOnShipOrientation(
-        this._grabbedShip,
+      this.runFunctionByShipOrientation(
+        this._shipInfo.orientation[this._grabbedShip],
         () => (this._grabbedShipNewOrigin = [cellRow, cellColumn - this._grabbedShipSegmentIndexUnderCursor]),
         () => (this._grabbedShipNewOrigin = [cellRow - this._grabbedShipSegmentIndexUnderCursor, cellColumn])
       );
@@ -135,8 +135,8 @@ class UserSetup extends PlayerSetup {
 
   _getGrabbedShipSegmentIndexUnderCursor(e) {
     const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
-    return this.runFuncBasedOnShipOrientation(
-      this._grabbedShip,
+    return this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
       () => Math.ceil((e.clientX - grabbedShipElem.getBoundingClientRect().left) / grabbedShipElem.getBoundingClientRect().height) - 1,
       () => Math.ceil((e.clientY - grabbedShipElem.getBoundingClientRect().top) / grabbedShipElem.getBoundingClientRect().width) - 1
     );
@@ -204,8 +204,8 @@ class UserSetup extends PlayerSetup {
   }
 
   _changeGrabbedShipInfoToRotate() {
-    this.runFuncBasedOnShipOrientation(
-      this._grabbedShip,
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
       () => {
         this._shipInfo.orientation[this._grabbedShip] = "v";
 
@@ -241,8 +241,8 @@ class UserSetup extends PlayerSetup {
     shipElem.remove();
 
     let [row, column] = this._shipInfo.origin[ship];
-    this.runFuncBasedOnShipOrientation(
-      ship,
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[ship],
       () => {
         for (let i = 0; i < this._getShipLength(ship); i++) this._shipPlacementTable[row][column + i] = 0;
       },

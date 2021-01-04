@@ -39,21 +39,8 @@ class Ai extends PlayerSetup {
     if (this.shipSunk(shipHit)) {
       const [shipOriginRow, shipOriginColumn] = this._shipInfo.origin[shipHit];
       const shipOriginCell = this._tableElem.rows[shipOriginRow].cells[shipOriginColumn];
-      shipOriginCell.append(this._createShip({ shipName: shipHit, sunk: true }));
+      shipOriginCell.append(this._createShip(shipHit, { sunk: true }));
     }
-  }
-
-  _removeHitsOfSunkenShipInShotsTable(sunkenShipInfo) {
-    const [row, column] = sunkenShipInfo.origin;
-    user.runFuncBasedOnShipOrientation(
-      sunkenShipInfo.name,
-      () => {
-        for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row][column + i] = 1;
-      },
-      () => {
-        for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row + i][column] = 1;
-      }
-    );
   }
 
   updateProbabilityTable(shipsToSearch) {
@@ -63,18 +50,34 @@ class Ai extends PlayerSetup {
 
     for (let ship of shipsToSearch) {
       const shipLength = this._shipInfo.length[ship];
-      this.addProbabilityForShip(shipLength, "h");
-      this.addProbabilityForShip(shipLength, "v");
+      this._addProbabilityForShipByOrientation(shipLength, "h");
+      this._addProbabilityForShipByOrientation(shipLength, "v");
     }
 
     if (this.showProbabilityDisplay) displayProbability();
   }
 
-  addProbabilityForShip(shipLength, orientation) {
+  _removeHitsOfSunkenShipInShotsTable(sunkenShipInfo) {
+    const [row, column] = sunkenShipInfo.origin;
+    user.runFuncBasedOnShipOrientation(
+      sunkenShipInfo.orientation,
+      () => {
+        for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row][column + i] = 1;
+      },
+      () => {
+        for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row + i][column] = 1;
+      }
+    );
+  }
+
+  _addProbabilityForShipByOrientation(shipLength, orientation) {
     let maxRow = 9;
     let maxColumn = 9;
-    if (orientation === "h") maxColumn -= shipLength - 1;
-    else if (orientation === "v") maxRow -= shipLength - 1;
+    this.runFunctionByShipOrientation(
+      orientation,
+      () => (maxColumn -= shipLength - 1),
+      () => (maxRow -= shipLength - 1)
+    );
 
     for (let row = 0; row <= maxRow; row++) {
       for (let column = 0; column <= maxColumn; column++) {
