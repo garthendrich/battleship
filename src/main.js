@@ -1,8 +1,6 @@
 /*
  TODO:
-  * ai algorithm
-    ! refactor
-    * shoot algorithm: odd cells
+  * modify ship randomizer
   * inspector settings
   * user setup: highlight cells on ship hover
   * replace shipInfo with array of ship instances
