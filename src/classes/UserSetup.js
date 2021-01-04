@@ -100,7 +100,7 @@ class UserSetup extends PlayerSetup {
 
     this._updateFinishSetupButtonVisibility();
 
-    this._grabbedShip = this._prevGrabbedShipOrigin = this._grabbedShipSegmentIndexUnderCursor = null; // reset
+    this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
   }
 
   _randomizeBoardButtonHandler() {
@@ -184,7 +184,7 @@ class UserSetup extends PlayerSetup {
     this._grabbedShipNewOrigin = this._shipInfo.origin[this._grabbedShip];
 
     this._removeShip(this._grabbedShip);
-    this._rotateGrabbedShip();
+    this._changeGrabbedShipInfoToRotate();
 
     this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
     this._adjustGrabbedShipNewOriginToPlaceShipUntoUnoccupiedCells();
@@ -194,7 +194,16 @@ class UserSetup extends PlayerSetup {
     this._grabbedShip = null; //reset
   }
 
-  _rotateGrabbedShip() {
+  _shipRemoveButtonHandler(e) {
+    const shipToRemove = getElementAncestor(e.target, ".ship").id;
+    this._resetShip(shipToRemove);
+
+    this._grabbedShip = null; //reset
+
+    this._updateFinishSetupButtonVisibility();
+  }
+
+  _changeGrabbedShipInfoToRotate() {
     this.runFuncBasedOnShipOrientation(
       this._grabbedShip,
       () => {
@@ -210,15 +219,6 @@ class UserSetup extends PlayerSetup {
         this._grabbedShipNewOrigin[1] -= this._getGrabbedShipMiddleSegmentIndex();
       }
     );
-  }
-
-  _shipRemoveButtonHandler(e) {
-    const shipToRemove = getElementAncestor(e.target, ".ship").id;
-    this._resetShip(shipToRemove);
-
-    this._grabbedShip = null; //reset
-
-    this._updateFinishSetupButtonVisibility();
   }
 
   _resetShip(ship) {
