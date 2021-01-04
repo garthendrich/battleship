@@ -153,7 +153,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _createShipWithPopup() {
-    const newShipObj = super._createShip();
+    const newShipObj = super._createShip(this._grabbedShip);
     newShipObj.append(this._createShipPopup());
     return newShipObj;
   }
