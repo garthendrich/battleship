@@ -6,7 +6,6 @@
   * replace shipInfo with array of ship instances
 
  ** THINGS THAT MAY BE CONSIDERED:
-  * create class for ships
   * current randomizer may be inefficient: rechecks occupied cells
   * better adjust-ship-on-rotate
  */
