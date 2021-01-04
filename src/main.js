@@ -1,12 +1,11 @@
 /*
  TODO:
-  * pass ships to Player methods instead of basing off of selectedShip field
-  * remove shipNames var
   * ai algorithm
     ! refactor
     * shoot algorithm: odd cells
   * inspector settings
   * user setup: highlight cells on ship hover
+  * replace shipInfo with array of ship instances
 
  ** THINGS THAT MAY BE CONSIDERED:
   * create class for ships
