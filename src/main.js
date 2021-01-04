@@ -1,8 +1,6 @@
 /*
  TODO:
-  * ai algorithm
-    ! refactor
-    * shoot algorithm: odd cells
+  * modify ship randomizer
   * inspector settings
   * user setup: highlight cells on ship hover
   * replace shipInfo with array of ship instances
@@ -70,41 +68,35 @@ function displayScreenForGameFight() {
 }
 
 function startGameFight() {
-  ai.updateProbabilityTable(user);
+  ai.updateProbabilityTable(user.getShipsToSearch());
   document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
-  aiBoard.addEventListener("click", userAttackTurnHandler);
-  user.isTurn = true;
+  aiBoard.addEventListener("click", aiBoardClickHandler);
   addElementState(aiBoard, "attack");
 }
 
-function userAttackTurnHandler(e) {
-  if (!user.isTurn) return;
-  user.isTurn = false;
+function aiBoardClickHandler(e) {
+  const cellRow = getElementAncestor(e.target, "tr")?.rowIndex;
+  const cellColumn = e.target.cellIndex;
 
-  const clickedCellRow = getElementAncestor(e.target, "tr")?.rowIndex;
-  const clickedCellcolumn = e.target.cellIndex;
-
-  const clickedCellExists = typeof clickedCellRow !== "undefined" && typeof clickedCellcolumn !== "undefined";
-  if (clickedCellExists && user.canShootEnemyCell([clickedCellRow, clickedCellcolumn])) {
-    user.shoot(ai, [clickedCellRow, clickedCellcolumn]);
+  const userClickedACell = typeof cellRow !== "undefined" && typeof cellColumn !== "undefined";
+  if (userClickedACell && user.canShootEnemyCell([cellRow, cellColumn])) {
+    user.shoot(ai, [cellRow, cellColumn]);
     ai.autoShoot(user);
 
     checkWinner();
   }
-
-  user.isTurn = true;
 }
 
 function checkWinner() {
-  if (ai.hasShips() && user.hasShips()) return;
+  if (ai.hasSailingShips() && user.hasSailingShips()) return;
 
-  if (!ai.hasShips()) {
+  if (!ai.hasSailingShips()) {
     showEndGameModal({ userWon: true });
   } else {
     showEndGameModal({ userWon: false });
   }
 
-  aiBoard.removeEventListener("click", userAttackTurnHandler);
+  aiBoard.removeEventListener("click", aiBoardClickHandler);
   canStartNewGame = true;
 }
 
