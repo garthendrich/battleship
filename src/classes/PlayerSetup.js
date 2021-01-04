@@ -45,25 +45,27 @@ class PlayerSetup extends Player {
     );
   }
 
+  // for ship rotating
   _adjustGrabbedShipNewOriginToPlaceShipUntoUnoccupiedCells() {
-    const [shipForwardDir, shipSidewayDir] = this.runFuncBasedOnShipOrientation(
+    let shipForwardDir, shipSidewayDir;
+    this.runFuncBasedOnShipOrientation(
       this._grabbedShip,
       // 0: row, 1: column
-      () => [1, 0],
-      () => [0, 1]
+      () => ([shipForwardDir, shipSidewayDir] = [1, 0]),
+      () => ([shipForwardDir, shipSidewayDir] = [0, 1])
     );
 
-    let firstIndex = this._grabbedShipNewOrigin[shipForwardDir];
-    let highestIndex = 10 - this._getShipLength(this._grabbedShip);
+    let firstCellIndexToFitShip = this._grabbedShipNewOrigin[shipForwardDir];
+    let lastCellIndexToFitShip = 10 - this._getShipLength(this._grabbedShip);
     while (this._grabbedShipOverlapOtherShips(this._grabbedShip, this._grabbedShipNewOrigin)) {
       this._grabbedShipNewOrigin[shipForwardDir]++;
-      this._grabbedShipNewOrigin[shipForwardDir] %= highestIndex + 1; // if ship extends outside board, reset back to 0
+      this._grabbedShipNewOrigin[shipForwardDir] %= lastCellIndexToFitShip + 1; // if ship extends outside board, go back to 0
 
       // if every possible index in shipForwardDir axis is checked, move to next line
-      if (this._grabbedShipNewOrigin[shipForwardDir] == firstIndex)
-        this._grabbedShipNewOrigin[shipSidewayDir] == 9
-          ? (this._grabbedShipNewOrigin[shipSidewayDir] = 0)
-          : this._grabbedShipNewOrigin[shipSidewayDir]++;
+      if (this._grabbedShipNewOrigin[shipForwardDir] == firstCellIndexToFitShip) {
+        this._grabbedShipNewOrigin[shipSidewayDir]++;
+        this._grabbedShipNewOrigin[shipSidewayDir] %= 10;
+      }
     }
   }
 
