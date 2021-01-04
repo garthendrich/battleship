@@ -73,14 +73,10 @@ function startGameFight() {
   ai.updateProbabilityTable(user);
   document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", userAttackTurnHandler);
-  user.isTurn = true;
   addElementState(aiBoard, "attack");
 }
 
 function userAttackTurnHandler(e) {
-  if (!user.isTurn) return;
-  user.isTurn = false;
-
   const clickedCellRow = getElementAncestor(e.target, "tr")?.rowIndex;
   const clickedCellcolumn = e.target.cellIndex;
 
@@ -91,8 +87,6 @@ function userAttackTurnHandler(e) {
 
     checkWinner();
   }
-
-  user.isTurn = true;
 }
 
 function checkWinner() {
