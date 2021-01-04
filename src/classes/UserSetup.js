@@ -21,6 +21,10 @@ class UserSetup extends PlayerSetup {
     resetBoardButton.addEventListener("click", this._resetBoardButtonHandler);
   }
 
+  allShipsPlaced() {
+    return !Object.values(this._shipInfo.origin).includes(null);
+  }
+
   detachGameSetupHandlers() {
     shipMenuItems.forEach((item) => item.removeEventListener("mousedown", this._shipMenuItemHandler));
     document.body.removeEventListener("mousedown", this._bodyMouseDownHandler);
@@ -28,10 +32,6 @@ class UserSetup extends PlayerSetup {
     document.body.removeEventListener("mouseup", this._bodyMouseUpHandler);
     randomizeBoardButton.removeEventListener("click", this._randomizeBoardButtonHandler);
     resetBoardButton.removeEventListener("click", this._resetBoardButtonHandler);
-  }
-
-  allShipsPlaced() {
-    return !Object.values(this._shipInfo.origin).includes(null);
   }
 
   _shipMenuItemHandler(e) {
@@ -54,7 +54,7 @@ class UserSetup extends PlayerSetup {
     if (this._selectedShipElem) {
       this._canMoveShip = true;
       this._selectedShip = this._selectedShipElem.id;
-      this._shipSegmentIndexOnMousedown = this._getCurrentShipSegmentIndexUnderCursor(e);
+      this._shipSegmentIndexOnMousedown = this._getSelectedShipSegmentIndexUnderCursor(e);
       this._prevSelectedShipOrigin = this._shipInfo.origin[this._selectedShip];
     }
   }
@@ -63,7 +63,7 @@ class UserSetup extends PlayerSetup {
     if (!this._canMoveShip) return;
 
     const shipDraggedToAnotherCell =
-      e.target.id !== this._selectedShip || this._shipSegmentIndexOnMousedown != this._getCurrentShipSegmentIndexUnderCursor(e);
+      e.target.id !== this._selectedShip || this._shipSegmentIndexOnMousedown != this._getSelectedShipSegmentIndexUnderCursor(e);
     if (shipDraggedToAnotherCell) {
       this._canMoveShip = false; // reset; pass only once
       this._removeSelectedShip();
@@ -121,10 +121,6 @@ class UserSetup extends PlayerSetup {
     this._selectedShip = null; // reset
   }
 
-  _getSelectedShipMiddleSegmentIndex() {
-    return Math.ceil(this._getSelectedShipLength() / 2) - 1;
-  }
-
   _fixDraggedShipOutsideBody() {
     const wasPrevSelectedShipDraggedOutsideBody = !!this._selectedShip;
     if (wasPrevSelectedShipDraggedOutsideBody) {
@@ -133,7 +129,11 @@ class UserSetup extends PlayerSetup {
     }
   }
 
-  _getCurrentShipSegmentIndexUnderCursor(e) {
+  _getSelectedShipMiddleSegmentIndex() {
+    return Math.ceil(this._getSelectedShipLength() / 2) - 1;
+  }
+
+  _getSelectedShipSegmentIndexUnderCursor(e) {
     return this.runBySelectedShipOrientation(
       () => Math.ceil((e.clientX - this._selectedShipElem.getBoundingClientRect().left) / this._selectedShipElem.getBoundingClientRect().height) - 1,
       () => Math.ceil((e.clientY - this._selectedShipElem.getBoundingClientRect().top) / this._selectedShipElem.getBoundingClientRect().width) - 1
