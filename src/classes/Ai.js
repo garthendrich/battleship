@@ -6,7 +6,7 @@ class Ai extends PlayerSetup {
     this._isTrackMode = false;
 
     this.baseProbabilityMultiplier = 1.2;
-    this.trackingProbabilityMultiplier = 1.8;
+    this.trackModeMultiplierIncreaser = 1.2;
     this.showProbabilityDisplay = true;
 
     this._randomizeShips();
@@ -87,8 +87,14 @@ class Ai extends PlayerSetup {
         if (this._presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation)) continue;
 
         let multiplier = this.baseProbabilityMultiplier;
-        const connectedHitShots = this._getConnectedHitShotsOnPresumedShipLocation(ship, [row, column], orientation);
-        if (this._trackMode && connectedHitShots > 1) multiplier = this.trackingProbabilityMultiplier ** connectedHitShots;
+        if (this._isTrackMode) {
+          const connectedHits = this._getConnectedHitsOnPresumedShipLocation(ship, [row, column], orientation);
+          if (connectedHits === 0) continue;
+          if (connectedHits > 1) {
+            const multiplierIncreaser = this.trackModeMultiplierIncreaser * connectedHits - 1;
+            multiplier = this.baseProbabilityMultiplier * multiplierIncreaser;
+          }
+        }
 
         for (let segment = 0; segment < shipLength; segment++) {
           let [segmentRow, segmentColumn] = [row, column];
@@ -132,7 +138,7 @@ class Ai extends PlayerSetup {
     );
   }
 
-  _getConnectedHitShotsOnPresumedShipLocation(ship, [row, column], orientation) {
+  _getConnectedHitsOnPresumedShipLocation(ship, [row, column], orientation) {
     const shipLength = this._shipInfo.length[ship];
     return this.runFunctionByShipOrientation(
       orientation,
