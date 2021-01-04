@@ -44,8 +44,10 @@ class Player {
     this.shipNames = "cbdsp";
   }
 
-  runByGrabbedShipOrientation(h, v) {
-    return this._shipInfo.orientation[this._grabbedShip] == "h" ? h() : v();
+  runFuncBasedOnShipOrientation(ship, horizontalFunction, verticalFunction) {
+    const orientation = this._shipInfo.orientation[ship];
+    if (orientation === "h") return horizontalFunction();
+    else if (orientation === "v") return verticalFunction();
   }
 
   shoot(enemyInstance, [row, column]) {
