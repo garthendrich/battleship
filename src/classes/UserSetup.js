@@ -63,7 +63,7 @@ class UserSetup extends PlayerSetup {
     if (!this._isHoldingAShip) return;
 
     const shipGrabbedToAnotherCell =
-      e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor != this._getGrabbedShipSegmentIndexUnderCursor(e);
+      e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor !== this._getGrabbedShipSegmentIndexUnderCursor(e);
     if (shipGrabbedToAnotherCell) {
       this._isHoldingAShip = false; // reset; pass only once
       this._removeShip(this._grabbedShip);
@@ -75,8 +75,8 @@ class UserSetup extends PlayerSetup {
     this._isHoldingAShip = false; // reset
     this._hideAllShipPopups();
 
-    const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && e.target.id == this._grabbedShip;
-    const shipDraggedOnUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName == "TD";
+    const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && e.target.id === this._grabbedShip;
+    const shipDraggedOnUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
     const shipDraggedOutsideUserBoardCell = this._grabbedShip && this._prevGrabbedShipOrigin;
 
     if (shipJustClicked) {
@@ -122,8 +122,8 @@ class UserSetup extends PlayerSetup {
   }
 
   _fixGrabbedShipOutsideBody() {
-    const wasPrevGrabbedShipGrabbedOutsideBody = !!this._grabbedShip;
-    if (wasPrevGrabbedShipGrabbedOutsideBody) {
+    const wasPrevGrabbedShipDraggedOutsideBody = this._grabbedShip;
+    if (wasPrevGrabbedShipDraggedOutsideBody) {
       const prevGrabbedShipMenuItem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
       removeElementState(prevGrabbedShipMenuItem, "placed");
     }
@@ -256,7 +256,7 @@ class UserSetup extends PlayerSetup {
 
   _removePlacedShips() {
     for (let ship of this.shipNames) {
-      const isShipPlaced = !!this._shipInfo.origin[ship];
+      const isShipPlaced = this._shipInfo.origin[ship];
       if (isShipPlaced) this._resetShip(ship);
     }
   }
