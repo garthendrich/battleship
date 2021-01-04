@@ -7,6 +7,18 @@ class PlayerSetup extends Player {
     return this._shipInfo.length[ship];
   }
 
+  _randomizeShips() {
+    for (let ship of this.shipNames) {
+      do {
+        this._grabbedShip = ship;
+        this._grabbedShipNewOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+        this._shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
+        this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
+      } while (this._grabbedShipOverlapOtherShips());
+      this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
+    }
+  }
+
   _adjustGrabbedShipNewOriginToPlaceShipInsideBoard() {
     const [originRow, originColumn] = this._grabbedShipNewOrigin;
 
@@ -90,20 +102,5 @@ class PlayerSetup extends Player {
     if (params.sunk) newShipObj.classList.add("ship--sunk");
     newShipObj.id = this._grabbedShip;
     return newShipObj;
-  }
-
-  _randomizeShips() {
-    // randomize orientations
-    for (let ship of this.shipNames) this._shipInfo.orientation[ship] = Math.floor(Math.random() * 2) ? "h" : "v";
-
-    // randomize ship cell origins
-    for (let i = 0; i < 5; i++) {
-      do {
-        this._grabbedShip = this.shipNames[i];
-        this._grabbedShipNewOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-        this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
-      } while (this._grabbedShipOverlapOtherShips());
-      this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
-    }
   }
 }
