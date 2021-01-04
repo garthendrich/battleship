@@ -98,10 +98,10 @@ class PlayerSetup extends Player {
     const newShipObj = document.createElement("div");
     this.runFuncBasedOnShipOrientation(
       this._grabbedShip,
-      () => newShipObj.classList.add("ship", "ship--hori"),
-      () => newShipObj.classList.add("ship", "ship--vert")
+      () => (newShipObj.className = "ship ship--hori"),
+      () => (newShipObj.className = "ship ship--vert")
     );
-    if (params.sunk) newShipObj.classList.add("ship--sunk");
+    if (params.sunk) addElementState(newShipObj, "sunk");
     newShipObj.id = this._grabbedShip;
     return newShipObj;
   }
