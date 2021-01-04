@@ -1,7 +1,7 @@
 class Player {
   constructor(boardName) {
-    this.tableEl = document.querySelector(boardName);
-    this.tableEl.innerHTML = `<tr>${"<td></td>".repeat(10)}</tr>`.repeat(10);
+    this._tableElem = document.querySelector(boardName);
+    this._tableElem.innerHTML = `<tr>${"<td></td>".repeat(10)}</tr>`.repeat(10);
 
     this._shipPlacementTable = Array(10)
       .fill()
@@ -41,7 +41,7 @@ class Player {
       },
     };
 
-    this.shipNames = "cbdsp";
+    this._shipNames = "cbdsp";
   }
 
   runFuncBasedOnShipOrientation(ship, horizontalFunction, verticalFunction) {
@@ -59,10 +59,9 @@ class Player {
   }
 
   shoot(enemyInstance, [row, column]) {
-    const shipHit = enemyInstance.shipPlacementTable[row][column];
+    const shipHit = enemyInstance.getShipOnCell([row, column]);
     if (shipHit) {
-      enemyInstance.shipInfo.status[shipHit]--;
-      enemyInstance.shipSegments--;
+      enemyInstance.decrementShipStatus(shipHit);
       this._shotsTable[row][column] = "x";
     } else {
       this._shotsTable[row][column] = 1;
@@ -71,8 +70,16 @@ class Player {
     enemyInstance.displayEnemyShot(shipHit, row, column);
   }
 
+  getShipOnCell([row, column]) {
+    return this._shipPlacementTable[row][column];
+  }
+
+  decrementShipStatus(ship) {
+    this._shipInfo.status[ship]--;
+  }
+
   displayEnemyShot(shipHit, row, column) {
-    const cell = this.tableEl.rows[row].cells[column];
+    const cell = this._tableElem.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
   }
@@ -81,7 +88,7 @@ class Player {
     return this._shipInfo.status[ship] === 0;
   }
 
-  hasShips() {
+  hasSomeShips() {
     return Object.values(this._shipInfo.status).some((status) => status !== 0);
   }
 }

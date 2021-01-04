@@ -8,7 +8,7 @@ class PlayerSetup extends Player {
   }
 
   _randomizeShips() {
-    for (let ship of this.shipNames) {
+    for (let ship of this._shipNames) {
       do {
         this._grabbedShip = ship;
         this._grabbedShipNewOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];

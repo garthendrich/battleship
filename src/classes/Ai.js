@@ -19,12 +19,12 @@ class Ai extends PlayerSetup {
   displayEnemyShot(shipHit, row, column) {
     super.displayEnemyShot(shipHit, row, column);
 
-    const cell = this.tableEl.rows[row].cells[column];
+    const cell = this._tableElem.rows[row].cells[column];
     cell.classList.add("shot");
 
     if (this.shipSunk(shipHit)) {
       const shipOrigin = this._shipInfo.origin[shipHit];
-      const shipOriginCell = this.tableEl.rows[shipOrigin[0]].cells[shipOrigin[1]];
+      const shipOriginCell = this._tableElem.rows[shipOrigin[0]].cells[shipOrigin[1]];
       this._grabbedShip = shipHit;
       shipOriginCell.append(this.createShip({ sunk: true }));
     }
@@ -65,7 +65,7 @@ class Ai extends PlayerSetup {
       .fill()
       .map(() => Array(10).fill(1));
 
-    for (let ship of this.shipNames) {
+    for (let ship of this._shipNames) {
       if (userInstance.shipSunk(ship)) continue;
 
       const shipLength = this._shipInfo.length[ship];
