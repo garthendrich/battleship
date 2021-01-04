@@ -62,7 +62,7 @@ class PlayerSetup extends Player {
       this._grabbedShipNewOrigin[shipForwardDir] %= lastCellIndexToFitShip + 1; // if ship extends outside board, go back to 0
 
       // if every possible index in shipForwardDir axis is checked, move to next line
-      if (this._grabbedShipNewOrigin[shipForwardDir] == firstCellIndexToFitShip) {
+      if (this._grabbedShipNewOrigin[shipForwardDir] === firstCellIndexToFitShip) {
         this._grabbedShipNewOrigin[shipSidewayDir]++;
         this._grabbedShipNewOrigin[shipSidewayDir] %= 10;
       }
@@ -73,9 +73,9 @@ class PlayerSetup extends Player {
     const [row, column] = this._grabbedShipNewOrigin;
     return this.runFuncBasedOnShipOrientation(
       this._grabbedShip,
-      () => !this._shipPlacementTable[row].slice(column, column + this._getShipLength(this._grabbedShip)).every((cell) => cell == 0),
+      () => this._shipPlacementTable[row].slice(column, column + this._getShipLength(this._grabbedShip)).some((cell) => cell !== 0),
       () => {
-        for (let i = row; i < row + this._getShipLength(this._grabbedShip); i++) if (this._shipPlacementTable[i][column]) return true;
+        for (let i = row; i < row + this._getShipLength(this._grabbedShip); i++) if (this._shipPlacementTable[i][column] !== 0) return true;
         return false;
       }
     );
