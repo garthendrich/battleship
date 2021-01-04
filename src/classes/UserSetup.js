@@ -147,7 +147,7 @@ class UserSetup extends PlayerSetup {
     document.querySelector(`.board--user`).rows[row].cells[column].append(this._createShipWithPopup());
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._draggedShip}`);
-    menuShipElem.classList.add("ship-menu__item--placed");
+    addElementClassNameModifier(menuShipElem, "ship-menu__item", "placed");
   }
 
   _createShipWithPopup() {
@@ -224,7 +224,7 @@ class UserSetup extends PlayerSetup {
     this._shipInfo.orientation[this._draggedShip] = "h";
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._draggedShip}`);
-    menuShipElem.classList.remove("ship-menu__item--placed");
+    removeElementClassNameModifier(menuShipElem, "ship-menu__item", "placed");
   }
 
   _removeDraggedShip() {
@@ -262,7 +262,7 @@ class UserSetup extends PlayerSetup {
 
   _hideAllShipPopups() {
     const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
-    if (shipPopupElems.length) shipPopupElems.forEach((popup) => popup.classList.add("ship__popup--hidden"));
+    if (shipPopupElems.length) shipPopupElems.forEach((popup) => hideElement(popup, "ship__popup"));
   }
 
   _updateFinishSetupButtonVisibility() {
