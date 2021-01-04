@@ -3,7 +3,7 @@ class Ai extends PlayerSetup {
     super(board);
 
     this._probabilityTable;
-    this._trackMode = false;
+    this._isTrackMode = false;
 
     this.baseProbabilityMultiplier = 1.2;
     this.trackingProbabilityMultiplier = 1.8;
@@ -21,11 +21,9 @@ class Ai extends PlayerSetup {
     super.shoot(userInstance, [row, column]);
 
     const shipHit = userInstance.getShipOnCell([row, column]);
+    if (shipHit && userInstance.shipSunk(shipHit)) this._removeHitsOfSunkenShipInShotsTable(user.getSunkenShipInfo(shipHit));
 
-    if (shipHit && userInstance.shipSunk(shipHit)) {
-      this._removeHitsOfSunkenShipInShotsTable(user.getSunkenShipInfo(shipHit));
-      this._trackMode = false;
-    } else if (shipHit) this._trackMode = true;
+    this._updateTrackModeState();
 
     this.updateProbabilityTable(userInstance.getShipsToSearch());
   }
@@ -49,12 +47,15 @@ class Ai extends PlayerSetup {
       .map(() => Array(10).fill(1));
 
     for (let ship of shipsToSearch) {
-      const shipLength = this._shipInfo.length[ship];
       this._addProbabilityForShipByOrientation(ship, "h");
       this._addProbabilityForShipByOrientation(ship, "v");
     }
 
     if (this.showProbabilityDisplay) displayProbability();
+  }
+
+  _updateTrackModeState() {
+    this._isTrackMode = this._shotsTable.flat().includes("x");
   }
 
   _removeHitsOfSunkenShipInShotsTable(sunkenShipInfo) {
@@ -94,7 +95,7 @@ class Ai extends PlayerSetup {
           if (orientation === "h") segmentColumn += segment;
           else if (orientation === "v") segmentRow += segment;
 
-          if (this._trackMode && (this._shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
+          if (this._isTrackMode && (this._shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
           this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
