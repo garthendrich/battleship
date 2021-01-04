@@ -6,20 +6,23 @@ function hideElement(element, className) {
   element.classList.add(className + "--hidden");
 }
 
-function addElementClassNameModifier(element, className, classNameModifier) {
-  element.classList.add(`${className}--${classNameModifier}`);
+function addElementState(element, state) {
+  const className = element.classList[0];
+  element.classList.add(`${className}--${state}`);
 }
 
-function removeElementClassNameModifier(element, className, classNameModifier) {
-  element.classList.remove(`${className}--${classNameModifier}`);
+function removeElementState(element, state) {
+  const className = element.classList[0];
+  element.classList.remove(`${className}--${state}`);
 }
 
 function elementHasClassName(element, className) {
   return element.classList.contains(className);
 }
 
-function elementHasClassNameModifier(element, className, classNameModifier) {
-  return element.classList.contains(`${className}--${classNameModifier}`);
+function elementHasState(element, state) {
+  const className = element.classList[0];
+  return element.classList.contains(`${className}--${state}`);
 }
 
 function getElementAncestor(element, ancestorIdentifier) {
