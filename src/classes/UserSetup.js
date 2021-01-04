@@ -255,7 +255,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _resetPlacedShips() {
-    for (let ship of this.shipNames) {
+    for (let ship of this._shipNames) {
       const isShipPlaced = this._shipInfo.origin[ship];
       if (isShipPlaced) this._resetShip(ship);
     }
