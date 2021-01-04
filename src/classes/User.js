@@ -6,6 +6,6 @@ class User extends UserSetup {
   }
 
   canShootEnemyCell([row, column]) {
-    return this.shotsTable[row][column] === 0;
+    return this._shotsTable[row][column] === 0;
   }
 }

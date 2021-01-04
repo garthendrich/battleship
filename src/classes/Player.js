@@ -3,10 +3,10 @@ class Player {
     this.tableEl = document.querySelector(boardName);
     this.tableEl.innerHTML = `<tr>${"<td></td>".repeat(10)}</tr>`.repeat(10);
 
-    this.shipPlacementTable = Array(10)
+    this._shipPlacementTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
-    this.shotsTable = Array(10)
+    this._shotsTable = Array(10)
       .fill()
       .map(() => Array(10).fill(0));
 
@@ -50,14 +50,22 @@ class Player {
     else if (orientation === "v") return verticalFunction();
   }
 
+  getShipPlacementTable() {
+    return this._shipPlacementTable;
+  }
+
+  getShotsTable() {
+    return this._shotsTable;
+  }
+
   shoot(enemyInstance, [row, column]) {
     const shipHit = enemyInstance.shipPlacementTable[row][column];
     if (shipHit) {
       enemyInstance.shipInfo.status[shipHit]--;
       enemyInstance.shipSegments--;
-      this.shotsTable[row][column] = "x";
+      this._shotsTable[row][column] = "x";
     } else {
-      this.shotsTable[row][column] = 1;
+      this._shotsTable[row][column] = 1;
     }
 
     enemyInstance.displayEnemyShot(shipHit, row, column);
