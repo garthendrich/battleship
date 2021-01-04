@@ -32,12 +32,12 @@ class Ai extends PlayerSetup {
   displayEnemyShot(shipHit, [row, column]) {
     super.displayEnemyShot(shipHit, [row, column]);
 
-    const cell = this._tableElem.rows[row].cells[column];
+    const cell = this._boardElem.rows[row].cells[column];
     addElementState(cell, "shot");
 
     if (this.shipSunk(shipHit)) {
       const [shipOriginRow, shipOriginColumn] = this._shipInfo.origin[shipHit];
-      const shipOriginCell = this._tableElem.rows[shipOriginRow].cells[shipOriginColumn];
+      const shipOriginCell = this._boardElem.rows[shipOriginRow].cells[shipOriginColumn];
       shipOriginCell.append(this._createShip(shipHit, { sunk: true }));
     }
   }

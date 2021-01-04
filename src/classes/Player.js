@@ -1,7 +1,7 @@
 class Player {
   constructor(boardName) {
-    this._tableElem = document.querySelector(boardName);
-    this._tableElem.innerHTML = `<tr>${`<td class="cell"></td>`.repeat(10)}</tr>`.repeat(10);
+    this._boardElem = document.querySelector(boardName);
+    this._boardElem.innerHTML = `<tr>${`<td class="cell"></td>`.repeat(10)}</tr>`.repeat(10);
 
     this._shipPlacementTable = Array(10)
       .fill()
@@ -78,7 +78,7 @@ class Player {
   }
 
   displayEnemyShot(shipHit, [row, column]) {
-    const cell = this._tableElem.rows[row].cells[column];
+    const cell = this._boardElem.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
   }
