@@ -1,9 +1,8 @@
 /*
  TODO:
+  * replace shipInfo with array of ship instances
   * modify ship randomizer
   * inspector settings
-  * user setup: highlight cells on ship hover
-  * replace shipInfo with array of ship instances
 
  ** THINGS THAT MAY BE CONSIDERED:
   * current randomizer may be inefficient: rechecks occupied cells
