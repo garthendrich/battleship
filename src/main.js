@@ -1,25 +1,21 @@
 /*
  TODO:
- * user setup: highlight cells on ship hover
- * ai algorithm
+  * ai algorithm
     ! refactor
     * shoot algorithm: odd cells
   * inspector settings
-  * rename Player selectedShip to draggedShip
-  * pass ships to Player methods instead of basing off of selectedShip field
-  * check on Player.selectedShipElem
-  * move runBySelectedShipOrientation to global functions
-  * remove shipNames var
+  * user setup: highlight cells on ship hover
+  * replace shipInfo with array of ship instances
 
  ** THINGS THAT MAY BE CONSIDERED:
- * create class for ships
- * current randomizer may be inefficient: rechecks occupied cells
- * better adjust-ship-on-rotate
+  * create class for ships
+  * current randomizer may be inefficient: rechecks occupied cells
+  * better adjust-ship-on-rotate
  */
 
 "use strict";
 
-let user, ai, gameSetup;
+let user, ai;
 let canStartNewGame = true;
 
 const homeScreen = document.querySelector(".homescreen");
@@ -48,29 +44,29 @@ function startGameSetupHandler() {
   user = new User(".board--user");
   ai = new Ai(".board--ai");
 
-  gameSetup = new GameSetup();
+  user.attachGameSetupHandlers();
   displayScreenForGameSetup();
 }
 
 function displayScreenForGameSetup() {
-  removeElementClassNameModifier(aiBoard, "board", "attack");
-  hideElement(homeScreen, "homescreen");
-  hideElement(endGameModal, "modal");
-  showElement(shipMenu, "ship-menu");
-  shipMenuItems.forEach((item) => removeElementClassNameModifier(item, "ship-menu__item", "placed"));
+  removeElementState(aiBoard, "attack");
+  hideElement(homeScreen);
+  hideElement(endGameModal);
+  showElement(shipMenu);
+  shipMenuItems.forEach((item) => removeElementState(item, "placed"));
 }
 
 finishGameSetupButton.addEventListener("click", () => {
   if (!user.allShipsPlaced()) return;
 
-  detachGameSetupHandlers();
+  user.detachGameSetupHandlers();
   startGameFight();
   displayScreenForGameFight();
 });
 
 function displayScreenForGameFight() {
-  hideElement(shipMenu, "ship-menu");
-  hideElement(finishGameSetupButton, "finish-setup-button");
+  hideElement(shipMenu);
+  hideElement(finishGameSetupButton);
 }
 
 function startGameFight() {
@@ -78,7 +74,7 @@ function startGameFight() {
   document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", userAttackTurnHandler);
   user.isTurn = true;
-  addElementClassNameModifier(aiBoard, "board", "attack");
+  addElementState(aiBoard, "attack");
 }
 
 function userAttackTurnHandler(e) {
@@ -114,5 +110,5 @@ function checkWinner() {
 
 function showEndGameModal({ userWon }) {
   endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
-  showElement(endGameModal, "modal");
+  showElement(endGameModal);
 }
