@@ -164,6 +164,14 @@ button:hover {
   cursor: grabbing;
 }
 
+.board--user.board--modifying .ship {
+  pointer-events: none;
+}
+
+.board--user.board--modifying .ship--to-move {
+  opacity: 0.3;
+}
+
 .board--attack .cell:not(.shot):hover {
   background: #94ea89;
   cursor: pointer;
