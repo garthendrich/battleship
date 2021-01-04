@@ -30,17 +30,16 @@ class Ai extends PlayerSetup {
     this.updateProbabilityTable(userInstance.getShipsToSearch());
   }
 
-  displayEnemyShot(shipHit, row, column) {
-    super.displayEnemyShot(shipHit, row, column);
+  displayEnemyShot(shipHit, [row, column]) {
+    super.displayEnemyShot(shipHit, [row, column]);
 
     const cell = this._tableElem.rows[row].cells[column];
-    cell.classList.add("shot");
+    addElementState(cell, "shot");
 
     if (this.shipSunk(shipHit)) {
       const [shipOriginRow, shipOriginColumn] = this._shipInfo.origin[shipHit];
       const shipOriginCell = this._tableElem.rows[shipOriginRow].cells[shipOriginColumn];
-      this._grabbedShip = shipHit;
-      shipOriginCell.append(this._createShip({ sunk: true }));
+      shipOriginCell.append(this._createShip({ shipName: shipHit, sunk: true }));
     }
   }
 
