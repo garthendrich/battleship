@@ -15,7 +15,7 @@ function displayProbability() {
   }
 }
 
-function displayPresumedShipAndCellToIncrease(ship, [row, column], orientation, [segmentRow, segmentColumn]) {
+function displayPresumedShipAndCurrentSegment(ship, [row, column], orientation, [segmentRow, segmentColumn]) {
   const shipLength = user._shipInfo.length[ship];
   for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = "none";
 
@@ -53,9 +53,9 @@ function setProbabilityMultiplier(multiplier) {
 }
 
 function toggleProbabilityDisplay() {
-  ai.showProbabilityDisplay = !ai.showProbabilityDisplay;
+  ai.willDisplayProbability = !ai.willDisplayProbability;
 
-  if (ai.showProbabilityDisplay) displayProbability();
+  if (ai.willDisplayProbability) displayProbability();
   else {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
