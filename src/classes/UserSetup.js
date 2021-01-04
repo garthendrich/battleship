@@ -61,6 +61,7 @@ class UserSetup extends PlayerSetup {
 
   _bodyMouseMoveHandler(e) {
     const draggingShipOverUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
+    const draggingShipOutsideUserBoardCell = this._grabbedShip;
     if (draggingShipOverUserBoardCell) {
       const cellOriginRow = getElementAncestor(e.target, "tr").rowIndex;
       const cellOriginColumn = e.target.cellIndex;
@@ -74,7 +75,7 @@ class UserSetup extends PlayerSetup {
       this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
 
       this._addCellHighlightsOverGrabbedShip(this._grabbedShipNewOrigin);
-    }
+    } else if (draggingShipOutsideUserBoardCell) this._removeAllCellHighlights();
 
     const shipGrabbedToAnotherCell =
       this._isHoldingAShip &&
