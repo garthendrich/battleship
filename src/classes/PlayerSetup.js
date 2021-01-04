@@ -3,28 +3,28 @@ class PlayerSetup extends Player {
     super(board);
   }
 
-  _getDraggedShipLength() {
-    return this._shipInfo.length[this._draggedShip];
+  _getGrabbedShipLength() {
+    return this._shipInfo.length[this._grabbedShip];
   }
 
   // to avoid ship going outside board
   _adjustShipOriginToInsideBoard() {
     let [row, column] = this._newShipOrigin;
-    this.runByDraggedShipOrientation(
+    this.runByGrabbedShipOrientation(
       () => {
         const shipFirstColumn = column;
-        const shipLastColumn = column + this._getDraggedShipLength() - 1;
+        const shipLastColumn = column + this._getGrabbedShipLength() - 1;
 
         if (shipFirstColumn < 0) column = 0;
-        else if (shipLastColumn > 9) column = 10 - this._getDraggedShipLength();
+        else if (shipLastColumn > 9) column = 10 - this._getGrabbedShipLength();
         else column = shipFirstColumn;
       },
       () => {
         const shipFirstRow = row;
-        const shipLastRow = row + this._getDraggedShipLength() - 1;
+        const shipLastRow = row + this._getGrabbedShipLength() - 1;
 
         if (shipFirstRow < 0) row = 0;
-        else if (shipLastRow > 9) row = 10 - this._getDraggedShipLength();
+        else if (shipLastRow > 9) row = 10 - this._getGrabbedShipLength();
         else row = shipFirstRow;
       }
     );
@@ -34,15 +34,15 @@ class PlayerSetup extends Player {
 
   // for rotate, to prevent overlapping with other ships
   _adjustShipOriginToAvailableSpace() {
-    const [shipForwardDir, shipSidewayDir] = this.runByDraggedShipOrientation(
+    const [shipForwardDir, shipSidewayDir] = this.runByGrabbedShipOrientation(
       // 0: row, 1: column
       () => [1, 0],
       () => [0, 1]
     );
 
     let firstIndex = this._newShipOrigin[shipForwardDir];
-    let highestIndex = 10 - this._getDraggedShipLength();
-    while (this._draggedShipOverlapOtherShips()) {
+    let highestIndex = 10 - this._getGrabbedShipLength();
+    while (this._grabbedShipOverlapOtherShips()) {
       this._newShipOrigin[shipForwardDir]++;
       this._newShipOrigin[shipForwardDir] %= highestIndex + 1; // if ship extends outside board, reset back to 0
 
@@ -52,37 +52,37 @@ class PlayerSetup extends Player {
     }
   }
 
-  _draggedShipOverlapOtherShips() {
+  _grabbedShipOverlapOtherShips() {
     const [row, column] = this._newShipOrigin;
-    return this.runByDraggedShipOrientation(
-      () => !this.shipPlacementTable[row].slice(column, column + this._getDraggedShipLength()).every((cell) => cell == 0),
+    return this.runByGrabbedShipOrientation(
+      () => !this.shipPlacementTable[row].slice(column, column + this._getGrabbedShipLength()).every((cell) => cell == 0),
       () => {
-        for (let i = row; i < row + this._getDraggedShipLength(); i++) if (this.shipPlacementTable[i][column]) return true;
+        for (let i = row; i < row + this._getGrabbedShipLength(); i++) if (this.shipPlacementTable[i][column]) return true;
         return false;
       }
     );
   }
 
-  _addDraggedShipToOrigin([row, column]) {
-    this.runByDraggedShipOrientation(
+  _addGrabbedShipToOrigin([row, column]) {
+    this.runByGrabbedShipOrientation(
       () => {
-        for (let i = 0; i < this._getDraggedShipLength(); i++) this.shipPlacementTable[row][column + i] = this._draggedShip;
+        for (let i = 0; i < this._getGrabbedShipLength(); i++) this.shipPlacementTable[row][column + i] = this._grabbedShip;
       },
       () => {
-        for (let i = 0; i < this._getDraggedShipLength(); i++) this.shipPlacementTable[row + i][column] = this._draggedShip;
+        for (let i = 0; i < this._getGrabbedShipLength(); i++) this.shipPlacementTable[row + i][column] = this._grabbedShip;
       }
     );
-    this._shipInfo.origin[this._draggedShip] = [row, column];
+    this._shipInfo.origin[this._grabbedShip] = [row, column];
   }
 
   _createShip(params = {}) {
     const newShipObj = document.createElement("div");
-    this.runByDraggedShipOrientation(
+    this.runByGrabbedShipOrientation(
       () => newShipObj.classList.add("ship", "ship--hori"),
       () => newShipObj.classList.add("ship", "ship--vert")
     );
     if (params.sunk) newShipObj.classList.add("ship--sunk");
-    newShipObj.id = this._draggedShip;
+    newShipObj.id = this._grabbedShip;
     return newShipObj;
   }
 
@@ -93,11 +93,11 @@ class PlayerSetup extends Player {
     // randomize ship cell origins
     for (let i = 0; i < 5; i++) {
       do {
-        this._draggedShip = this.shipNames[i];
+        this._grabbedShip = this.shipNames[i];
         this._newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
         this._adjustShipOriginToInsideBoard();
-      } while (this._draggedShipOverlapOtherShips());
-      this._addDraggedShipToOrigin(this._newShipOrigin);
+      } while (this._grabbedShipOverlapOtherShips());
+      this._addGrabbedShipToOrigin(this._newShipOrigin);
     }
   }
 }
