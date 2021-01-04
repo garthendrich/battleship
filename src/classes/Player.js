@@ -67,7 +67,7 @@ class Player {
       this._shotsTable[row][column] = 1;
     }
 
-    enemyInstance.displayEnemyShot(shipHit, row, column);
+    enemyInstance.displayEnemyShot(shipHit, [row, column]);
   }
 
   getShipOnCell([row, column]) {
@@ -78,7 +78,7 @@ class Player {
     this._shipInfo.status[ship]--;
   }
 
-  displayEnemyShot(shipHit, row, column) {
+  displayEnemyShot(shipHit, [row, column]) {
     const cell = this._tableElem.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
     else cell.style.background = "white";
