@@ -244,10 +244,10 @@ class UserSetup extends PlayerSetup {
     this.runFuncBasedOnShipOrientation(
       ship,
       () => {
-        for (let i = 0; i < this._getShipLength(ship); i++) this.shipPlacementTable[row][column + i] = 0;
+        for (let i = 0; i < this._getShipLength(ship); i++) this._shipPlacementTable[row][column + i] = 0;
       },
       () => {
-        for (let i = 0; i < this._getShipLength(ship); i++) this.shipPlacementTable[row + i][column] = 0;
+        for (let i = 0; i < this._getShipLength(ship); i++) this._shipPlacementTable[row + i][column] = 0;
       }
     );
 

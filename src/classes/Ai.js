@@ -2,7 +2,7 @@ class Ai extends PlayerSetup {
   constructor(board) {
     super(board);
 
-    this.probabilityTable;
+    this._probabilityTable;
     this.trackMode = false;
 
     this.probabilityMultiplier = 1.2;
@@ -10,6 +10,10 @@ class Ai extends PlayerSetup {
     this.showProbabilityDisplay = true;
 
     this._randomizeShips();
+  }
+
+  getProbabilityTable() {
+    return this._probabilityTable;
   }
 
   displayEnemyShot(shipHit, row, column) {
@@ -30,15 +34,15 @@ class Ai extends PlayerSetup {
     const [row, column] = this.getRandomShootCoords();
     super.shoot(userInstance, [row, column]);
 
-    const shipHit = userInstance.shipPlacementTable[row][column];
+    const shipHit = userInstance._shipPlacementTable[row][column];
 
     if (userInstance.shipSunk(shipHit)) {
-      const orientation = user.shipInfo.orientation[shipHit];
-      const [sunkenOriginRow, sunkenOriginColumn] = user.shipInfo.origin[shipHit];
+      const orientation = user._shipInfo.orientation[shipHit];
+      const [sunkenOriginRow, sunkenOriginColumn] = user._shipInfo.origin[shipHit];
       if (orientation === "h") {
-        for (let i = 0; i < user.shipInfo.length[shipHit]; i++) this.shotsTable[sunkenOriginRow][sunkenOriginColumn + i] = 1;
+        for (let i = 0; i < user._shipInfo.length[shipHit]; i++) this._shotsTable[sunkenOriginRow][sunkenOriginColumn + i] = 1;
       } else if (orientation === "v") {
-        for (let i = 0; i < user.shipInfo.length[shipHit]; i++) this.shotsTable[sunkenOriginRow + i][sunkenOriginColumn] = 1;
+        for (let i = 0; i < user._shipInfo.length[shipHit]; i++) this._shotsTable[sunkenOriginRow + i][sunkenOriginColumn] = 1;
       }
     }
 
@@ -50,14 +54,14 @@ class Ai extends PlayerSetup {
   getTrackModeState() {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
-        if (this.shotsTable[row][column] === "x") return true;
+        if (this._shotsTable[row][column] === "x") return true;
       }
     }
     return false;
   }
 
   updateProbabilityTable(userInstance) {
-    this.probabilityTable = Array(10)
+    this._probabilityTable = Array(10)
       .fill()
       .map(() => Array(10).fill(1));
 
@@ -93,7 +97,7 @@ class Ai extends PlayerSetup {
           if (orientation === "h") segmentColumn += segment;
           else if (orientation === "v") segmentRow += segment;
 
-          if (this.trackMode && (this.shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
+          if (this.trackMode && (this._shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
           // if (this.trackMode) {
           //   displayPresumedShipAndProbIncrease(shipLength, orientation, [row, column], [segmentRow, segmentColumn]);
           //   debugger;
@@ -111,47 +115,47 @@ class Ai extends PlayerSetup {
     // horizontally
     let columnFloor = column - 1 >= 0 ? column - 1 : 0;
     let columnCeil = column + 2 <= 10 ? column + 2 : 10;
-    if (this.shotsTable[row].slice(columnFloor, columnCeil).some((cell) => cell === "x")) return true;
+    if (this._shotsTable[row].slice(columnFloor, columnCeil).some((cell) => cell === "x")) return true;
 
     // vertically
     let rowFloor = row - 1 >= 0 ? row - 1 : 0;
     let rowCeil = row + 2 <= 10 ? row + 2 : 10;
-    for (let i = rowFloor; i < rowCeil; i++) if (this.shotsTable[i][column] === "x") return true;
+    for (let i = rowFloor; i < rowCeil; i++) if (this._shotsTable[i][column] === "x") return true;
 
     return false;
   }
 
   increaseCellProbability([row, column], multiplier) {
-    this.probabilityTable[row][column] = Number((this.probabilityTable[row][column] * multiplier).toFixed(2));
+    this._probabilityTable[row][column] = Number((this._probabilityTable[row][column] * multiplier).toFixed(2));
   }
 
   doesShipOverlapNonhitShots(shipLength, orientation, [row, column]) {
-    if (orientation == "h") return this.shotsTable[row].slice(column, column + shipLength).some((cell) => cell === 1);
-    else if (orientation == "v") for (let i = row; i < row + shipLength; i++) if (this.shotsTable[i][column] === 1) return true;
+    if (orientation == "h") return this._shotsTable[row].slice(column, column + shipLength).some((cell) => cell === 1);
+    else if (orientation == "v") for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === 1) return true;
     return false;
   }
 
   getOverlappingHitShots(shipLength, orientation, [row, column]) {
     let count = 0;
-    if (orientation == "h") return this.shotsTable[row].slice(column, column + shipLength).filter((cell) => cell === "x").length;
-    else if (orientation == "v") for (let i = row; i < row + shipLength; i++) if (this.shotsTable[i][column] === "x") count++;
+    if (orientation == "h") return this._shotsTable[row].slice(column, column + shipLength).filter((cell) => cell === "x").length;
+    else if (orientation == "v") for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === "x") count++;
     return count;
   }
 
   getRandomShootCoords() {
     // variables are multiplied by 1000 to fix floating point math errors
 
-    const probabilityTotal = this.probabilityTable.flat().reduce((accum, curr) => {
+    const probabilityTotal = this._probabilityTable.flat().reduce((accum, curr) => {
       if (curr === 1) return accum; // 1 is the initial probability value
       return accum + curr * 1000;
-    }, 0); // so value at probabilityTable[0][0] will also be multiplied by 1000
+    }, 0); // so value at _probabilityTable[0][0] will also be multiplied by 1000
 
     let random = Math.ceil(Math.random() * probabilityTotal);
 
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
-        if (this.probabilityTable[i][j] == 1) continue;
-        random -= this.probabilityTable[i][j] * 1000;
+        if (this._probabilityTable[i][j] == 1) continue;
+        random -= this._probabilityTable[i][j] * 1000;
         if (random <= 0) return [i, j];
       }
     }

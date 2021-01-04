@@ -8,11 +8,11 @@ function displayProbability() {
   const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
-      if (ai.shotsTable[row][column] == "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
-      else if (ai.shotsTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "white";
-      else if (ai.probabilityTable[row][column] == 1) userBoard.rows[row].cells[column].style.background = "none";
+      if (ai.getShotsTable()[row][column] == "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
+      else if (ai.getShotsTable()[row][column] == 1) userBoard.rows[row].cells[column].style.background = "white";
+      else if (ai.getProbabilityTable()[row][column] == 1) userBoard.rows[row].cells[column].style.background = "none";
       else {
-        const opacity = ai.probabilityTable[row][column] / Math.max(...ai.probabilityTable.flat());
+        const opacity = ai.getProbabilityTable()[row][column] / Math.max(...ai.getProbabilityTable().flat());
         userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${opacity})`;
       }
     }
@@ -49,7 +49,7 @@ function toggleProbabilityDisplay() {
   else {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
-        if (ai.shotsTable[row][column]) user.displayEnemyShot(user.shipPlacementTable[row][column], row, column);
+        if (ai.getShotsTable()[row][column]) user.displayEnemyShot(user.getShipPlacementTable()[row][column], row, column);
         else userBoard.rows[row].cells[column].style.background = null;
       }
     }

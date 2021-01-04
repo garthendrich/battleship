@@ -59,9 +59,9 @@ class PlayerSetup extends Player {
     const [row, column] = this._grabbedShipNewOrigin;
     return this.runFuncBasedOnShipOrientation(
       this._grabbedShip,
-      () => !this.shipPlacementTable[row].slice(column, column + this._getShipLength(this._grabbedShip)).every((cell) => cell == 0),
+      () => !this._shipPlacementTable[row].slice(column, column + this._getShipLength(this._grabbedShip)).every((cell) => cell == 0),
       () => {
-        for (let i = row; i < row + this._getShipLength(this._grabbedShip); i++) if (this.shipPlacementTable[i][column]) return true;
+        for (let i = row; i < row + this._getShipLength(this._grabbedShip); i++) if (this._shipPlacementTable[i][column]) return true;
         return false;
       }
     );
@@ -71,10 +71,10 @@ class PlayerSetup extends Player {
     this.runFuncBasedOnShipOrientation(
       this._grabbedShip,
       () => {
-        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this.shipPlacementTable[row][column + i] = this._grabbedShip;
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this._shipPlacementTable[row][column + i] = this._grabbedShip;
       },
       () => {
-        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this.shipPlacementTable[row + i][column] = this._grabbedShip;
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this._shipPlacementTable[row + i][column] = this._grabbedShip;
       }
     );
     this._shipInfo.origin[this._grabbedShip] = [row, column];
