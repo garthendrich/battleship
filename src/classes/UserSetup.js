@@ -104,7 +104,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _randomizeBoardButtonHandler() {
-    this._removePlacedShips();
+    this._resetPlacedShips();
     this._randomizeShips();
     this._hideAllShipPopups();
 
@@ -114,7 +114,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _resetBoardButtonHandler() {
-    this._removePlacedShips();
+    this._resetPlacedShips();
 
     this._updateFinishSetupButtonVisibility();
 
@@ -254,7 +254,7 @@ class UserSetup extends PlayerSetup {
     this._shipInfo.origin[ship] = null;
   }
 
-  _removePlacedShips() {
+  _resetPlacedShips() {
     for (let ship of this.shipNames) {
       const isShipPlaced = this._shipInfo.origin[ship];
       if (isShipPlaced) this._resetShip(ship);
