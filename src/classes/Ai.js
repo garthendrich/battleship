@@ -5,7 +5,7 @@ class Ai extends PlayerSetup {
     this._probabilityTable;
     this._trackMode = false;
 
-    this.probabilityMultiplier = 1.2;
+    this.baseProbabilityMultiplier = 1.2;
     this.trackingProbabilityMultiplier = 1.8;
     this.showProbabilityDisplay = true;
 
@@ -59,7 +59,7 @@ class Ai extends PlayerSetup {
 
   _removeHitsOfSunkenShipInShotsTable(sunkenShipInfo) {
     const [row, column] = sunkenShipInfo.origin;
-    user.runFuncBasedOnShipOrientation(
+    this.runFunctionByShipOrientation(
       sunkenShipInfo.orientation,
       () => {
         for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row][column + i] = 1;
@@ -85,11 +85,9 @@ class Ai extends PlayerSetup {
       for (let column = 0; column <= maxColumn; column++) {
         if (this._presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation)) continue;
 
-        let increaseProbTimes = 1;
-        if (this._trackMode) {
-          increaseProbTimes = this.getOverlappingHitShots(shipLength, orientation, [row, column]);
-          if (increaseProbTimes === 0) continue;
-        }
+        let multiplier = this.baseProbabilityMultiplier;
+        const connectedHitShots = this._getConnectedHitShotsOnPresumedShipLocation(ship, [row, column], orientation);
+        if (this._trackMode && connectedHitShots > 1) multiplier = this.trackingProbabilityMultiplier ** connectedHitShots;
 
         for (let segment = 0; segment < shipLength; segment++) {
           let [segmentRow, segmentColumn] = [row, column];
@@ -97,14 +95,7 @@ class Ai extends PlayerSetup {
           else if (orientation === "v") segmentRow += segment;
 
           if (this._trackMode && (this._shotsTable[segmentRow][segmentColumn] === "x" || !this.cellNearHit([segmentRow, segmentColumn]))) continue;
-          // if (this.trackMode) {
-          //   displayPresumedShipAndProbIncrease(shipLength, orientation, [row, column], [segmentRow, segmentColumn]);
-          //   debugger;
-          // }
-          this.increaseCellProbability(
-            [segmentRow, segmentColumn],
-            this._trackMode && increaseProbTimes > 1 ? this.trackingProbabilityMultiplier ** increaseProbTimes : this.probabilityMultiplier
-          );
+          this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
     }
@@ -130,7 +121,7 @@ class Ai extends PlayerSetup {
 
   _presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation) {
     const shipLength = this._shipInfo.length[ship];
-    return runFunctionByShipOrientation(
+    return this.runFunctionByShipOrientation(
       orientation,
       () => this._shotsTable[row].slice(column, column + shipLength).some((cell) => cell === 1),
       () => {
@@ -140,11 +131,17 @@ class Ai extends PlayerSetup {
     );
   }
 
-  getOverlappingHitShots(shipLength, orientation, [row, column]) {
-    let count = 0;
-    if (orientation == "h") return this._shotsTable[row].slice(column, column + shipLength).filter((cell) => cell === "x").length;
-    else if (orientation == "v") for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === "x") count++;
-    return count;
+  _getConnectedHitShotsOnPresumedShipLocation(ship, [row, column], orientation) {
+    const shipLength = this._shipInfo.length[ship];
+    return this.runFunctionByShipOrientation(
+      orientation,
+      () => this._shotsTable[row].slice(column, column + shipLength).filter((cell) => cell === "x").length,
+      () => {
+        let connectedHits = 0;
+        for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === "x") connectedHits++;
+        return connectedHits;
+      }
+    );
   }
 
   _getRandomShootCoords() {
