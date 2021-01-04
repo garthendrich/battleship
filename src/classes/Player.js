@@ -88,7 +88,7 @@ class Player {
     return this._shipInfo.status[ship] === 0;
   }
 
-  hasSomeShips() {
+  hasSailingShips() {
     return Object.values(this._shipInfo.status).some((status) => status !== 0);
   }
 }
