@@ -1,30 +1,10 @@
-function showElement(element, className) {
-  element.classList.remove(className + "--hidden");
-}
+const showElement = (element) => element.classList.remove(`${element.classList[0]}--hidden`);
+const hideElement = (element) => element.classList.add(`${element.classList[0]}--hidden`);
 
-function hideElement(element, className) {
-  element.classList.add(className + "--hidden");
-}
+const addElementState = (element, state) => element.classList.add(`${element.classList[0]}--${state}`);
+const removeElementState = (element, state) => element.classList.remove(`${element.classList[0]}--${state}`);
 
-function addElementState(element, state) {
-  const className = element.classList[0];
-  element.classList.add(`${className}--${state}`);
-}
+const elementHasClassName = (element, className) => element.classList.contains(className);
+const elementHasState = (element, state) => element.classList.contains(`${element.classList[0]}--${state}`);
 
-function removeElementState(element, state) {
-  const className = element.classList[0];
-  element.classList.remove(`${className}--${state}`);
-}
-
-function elementHasClassName(element, className) {
-  return element.classList.contains(className);
-}
-
-function elementHasState(element, state) {
-  const className = element.classList[0];
-  return element.classList.contains(`${className}--${state}`);
-}
-
-function getElementAncestor(element, ancestorIdentifier) {
-  return element.closest(ancestorIdentifier);
-}
+const getElementAncestor = (element, ancestorIdentifier) => element.closest(ancestorIdentifier);
