@@ -70,7 +70,7 @@ function displayScreenForGameFight() {
 }
 
 function startGameFight() {
-  ai.updateProbabilityTable(user);
+  ai.updateProbabilityTable(user.getShipsToSearch());
   document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", aiBoardClickHandler);
   addElementState(aiBoard, "attack");
@@ -90,9 +90,9 @@ function aiBoardClickHandler(e) {
 }
 
 function checkWinner() {
-  if (ai.hasShips() && user.hasShips()) return;
+  if (ai.hasSailingShips() && user.hasSailingShips()) return;
 
-  if (!ai.hasShips()) {
+  if (!ai.hasSailingShips()) {
     showEndGameModal({ userWon: true });
   } else {
     showEndGameModal({ userWon: false });
