@@ -41,7 +41,7 @@ class UserSetup extends PlayerSetup {
     if (clickedShipAlreadyPlaced) return;
 
     this._grabbedShip = e.target.id;
-    this._grabbedShipSegmentIndexOnHold = this._getGrabbedShipMiddleSegmentIndex();
+    this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
   }
 
   _bodyMouseDownHandler(e) {
@@ -53,7 +53,7 @@ class UserSetup extends PlayerSetup {
     const mouseDownOnShip = elementHasClassName(e.target, "ship");
     if (mouseDownOnShip) {
       this._grabbedShip = e.target.id;
-      this._grabbedShipSegmentIndexOnHold = this._getGrabbedShipSegmentIndexUnderCursor(e);
+      this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipSegmentIndexUnderCursor(e);
       this._prevGrabbedShipOrigin = this._shipInfo.origin[this._grabbedShip];
       this._isHoldingAShip = true;
     }
@@ -63,7 +63,7 @@ class UserSetup extends PlayerSetup {
     if (!this._isHoldingAShip) return;
 
     const shipGrabbedToAnotherCell =
-      e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexOnHold != this._getGrabbedShipSegmentIndexUnderCursor(e);
+      e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor != this._getGrabbedShipSegmentIndexUnderCursor(e);
     if (shipGrabbedToAnotherCell) {
       this._isHoldingAShip = false; // reset; pass only once
       this._removeShip(this._grabbedShip);
@@ -83,23 +83,24 @@ class UserSetup extends PlayerSetup {
       const grabbedShipPopup = e.target.firstChild;
       showElement(grabbedShipPopup);
     } else if (shipDraggedOnUserBoardCell) {
-      const cellRowUnderCursor = getElementAncestor(e.target, "tr").rowIndex;
-      const cellColumnUnderCursor = e.target.cellIndex;
+      const cellRow = getElementAncestor(e.target, "tr").rowIndex;
+      const cellColumn = e.target.cellIndex;
 
-      this._newShipOrigin = this.runByGrabbedShipOrientation(
-        () => [cellRowUnderCursor, cellColumnUnderCursor - this._grabbedShipSegmentIndexOnHold],
-        () => [cellRowUnderCursor - this._grabbedShipSegmentIndexOnHold, cellColumnUnderCursor]
+      this.runFuncBasedOnShipOrientation(
+        this._grabbedShip,
+        () => (this._grabbedShipNewOrigin = [cellRow, cellColumn - this._grabbedShipSegmentIndexUnderCursor]),
+        () => (this._grabbedShipNewOrigin = [cellRow - this._grabbedShipSegmentIndexUnderCursor, cellColumn])
       );
 
-      this._adjustShipOriginToInsideBoard();
+      this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
 
-      if (!this._grabbedShipOverlapOtherShips()) this._addGrabbedShipToOrigin(this._newShipOrigin);
+      if (!this._grabbedShipOverlapOtherShips()) this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
       else if (this._prevGrabbedShipOrigin) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
     } else if (shipDraggedOutsideUserBoardCell) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
 
     this._updateFinishSetupButtonVisibility();
 
-    this._grabbedShip = this._prevGrabbedShipOrigin = this._grabbedShipSegmentIndexOnHold = null; // reset
+    this._grabbedShip = this._prevGrabbedShipOrigin = this._grabbedShipSegmentIndexUnderCursor = null; // reset
   }
 
   _randomizeBoardButtonHandler() {
@@ -129,12 +130,13 @@ class UserSetup extends PlayerSetup {
   }
 
   _getGrabbedShipMiddleSegmentIndex() {
-    return Math.ceil(this._getGrabbedShipLength() / 2) - 1;
+    return Math.ceil(this._getShipLength(this._grabbedShip) / 2) - 1;
   }
 
   _getGrabbedShipSegmentIndexUnderCursor(e) {
     const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
-    return this.runByGrabbedShipOrientation(
+    return this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
       () => Math.ceil((e.clientX - grabbedShipElem.getBoundingClientRect().left) / grabbedShipElem.getBoundingClientRect().height) - 1,
       () => Math.ceil((e.clientY - grabbedShipElem.getBoundingClientRect().top) / grabbedShipElem.getBoundingClientRect().width) - 1
     );
@@ -143,7 +145,8 @@ class UserSetup extends PlayerSetup {
   _addGrabbedShipToOrigin([row, column]) {
     super._addGrabbedShipToOrigin([row, column]);
 
-    document.querySelector(`.board--user`).rows[row].cells[column].append(this._createShipWithPopup());
+    const cellElem = document.querySelector(`.board--user`).rows[row].cells[column];
+    cellElem.append(this._createShipWithPopup());
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
     addElementState(menuShipElem, "placed");
@@ -178,32 +181,33 @@ class UserSetup extends PlayerSetup {
 
   _shipRotateButtonHandler(e) {
     this._grabbedShip = getElementAncestor(e.target, ".ship").id;
-    this._newShipOrigin = this._shipInfo.origin[this._grabbedShip];
+    this._grabbedShipNewOrigin = this._shipInfo.origin[this._grabbedShip];
 
     this._removeShip(this._grabbedShip);
     this._rotateGrabbedShip();
 
-    this._adjustShipOriginToInsideBoard();
-    this._adjustShipOriginToAvailableSpace();
+    this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
+    this._adjustGrabbedShipNewOriginToPlaceShipUntoUnoccupiedCells();
 
-    this._addGrabbedShipToOrigin(this._newShipOrigin);
+    this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
 
     this._grabbedShip = null; //reset
   }
 
   _rotateGrabbedShip() {
-    this.runByGrabbedShipOrientation(
+    this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
       () => {
         this._shipInfo.orientation[this._grabbedShip] = "v";
 
-        this._newShipOrigin[0] -= this._getGrabbedShipMiddleSegmentIndex();
-        this._newShipOrigin[1] += this._getGrabbedShipMiddleSegmentIndex();
+        this._grabbedShipNewOrigin[0] -= this._getGrabbedShipMiddleSegmentIndex();
+        this._grabbedShipNewOrigin[1] += this._getGrabbedShipMiddleSegmentIndex();
       },
       () => {
         this._shipInfo.orientation[this._grabbedShip] = "h";
 
-        this._newShipOrigin[0] += this._getGrabbedShipMiddleSegmentIndex();
-        this._newShipOrigin[1] -= this._getGrabbedShipMiddleSegmentIndex();
+        this._grabbedShipNewOrigin[0] += this._getGrabbedShipMiddleSegmentIndex();
+        this._grabbedShipNewOrigin[1] -= this._getGrabbedShipMiddleSegmentIndex();
       }
     );
   }
@@ -237,12 +241,13 @@ class UserSetup extends PlayerSetup {
     shipElem.remove();
 
     let [row, column] = this._shipInfo.origin[ship];
-    this.runByGrabbedShipOrientation(
+    this.runFuncBasedOnShipOrientation(
+      ship,
       () => {
-        for (let i = 0; i < this._getGrabbedShipLength(); i++) this.shipPlacementTable[row][column + i] = 0;
+        for (let i = 0; i < this._getShipLength(ship); i++) this.shipPlacementTable[row][column + i] = 0;
       },
       () => {
-        for (let i = 0; i < this._getGrabbedShipLength(); i++) this.shipPlacementTable[row + i][column] = 0;
+        for (let i = 0; i < this._getShipLength(ship); i++) this.shipPlacementTable[row + i][column] = 0;
       }
     );
 
@@ -251,7 +256,7 @@ class UserSetup extends PlayerSetup {
 
   _removePlacedShips() {
     for (let ship of this.shipNames) {
-      const isShipPlaced = this._shipInfo.origin[ship];
+      const isShipPlaced = !!this._shipInfo.origin[ship];
       if (isShipPlaced) this._resetShip(ship);
     }
   }

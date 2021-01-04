@@ -1,19 +1,17 @@
 /*
  TODO:
- * user setup: highlight cells on ship hover
- * ai algorithm
+  * pass ships to Player methods instead of basing off of selectedShip field
+  * remove shipNames var
+  * ai algorithm
     ! refactor
     * shoot algorithm: odd cells
   * inspector settings
-  * rename Player selectedShip to draggedShip
-  * pass ships to Player methods instead of basing off of selectedShip field
-  * check on Player.selectedShipElem
-  * remove shipNames var
+  * user setup: highlight cells on ship hover
 
  ** THINGS THAT MAY BE CONSIDERED:
- * create class for ships
- * current randomizer may be inefficient: rechecks occupied cells
- * better adjust-ship-on-rotate
+  * create class for ships
+  * current randomizer may be inefficient: rechecks occupied cells
+  * better adjust-ship-on-rotate
  */
 
 "use strict";

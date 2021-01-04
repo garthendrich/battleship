@@ -3,73 +3,78 @@ class PlayerSetup extends Player {
     super(board);
   }
 
-  _getGrabbedShipLength() {
-    return this._shipInfo.length[this._grabbedShip];
+  _getShipLength(ship) {
+    return this._shipInfo.length[ship];
   }
 
-  // to avoid ship going outside board
-  _adjustShipOriginToInsideBoard() {
-    let [row, column] = this._newShipOrigin;
-    this.runByGrabbedShipOrientation(
-      () => {
-        const shipFirstColumn = column;
-        const shipLastColumn = column + this._getGrabbedShipLength() - 1;
+  _adjustGrabbedShipNewOriginToPlaceShipInsideBoard() {
+    const [originRow, originColumn] = this._grabbedShipNewOrigin;
 
-        if (shipFirstColumn < 0) column = 0;
-        else if (shipLastColumn > 9) column = 10 - this._getGrabbedShipLength();
-        else column = shipFirstColumn;
+    this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
+      () => {
+        const shipLastCellColumn = originColumn + this._getShipLength(this._grabbedShip) - 1;
+        const isShipInsideBoard = originColumn >= 0 && shipLastCellColumn <= 9;
+        if (isShipInsideBoard) return;
+
+        const shipMostRightOrigin = 10 - this._getShipLength(this._grabbedShip);
+        const newOriginColumn = shipLastCellColumn > 9 ? shipMostRightOrigin : 0;
+        this._grabbedShipNewOrigin = [originRow, newOriginColumn];
       },
       () => {
-        const shipFirstRow = row;
-        const shipLastRow = row + this._getGrabbedShipLength() - 1;
+        const shipLastCellRow = originRow + this._getShipLength(this._grabbedShip) - 1;
+        const isShipInsideBoard = originRow >= 0 && shipLastCellRow <= 9;
+        if (isShipInsideBoard) return;
 
-        if (shipFirstRow < 0) row = 0;
-        else if (shipLastRow > 9) row = 10 - this._getGrabbedShipLength();
-        else row = shipFirstRow;
+        const shipMostBottomOrigin = 10 - this._getShipLength(this._grabbedShip);
+        const newOriginRow = shipLastCellRow > 9 ? shipMostBottomOrigin : 0;
+        this._grabbedShipNewOrigin = [newOriginRow, originColumn];
       }
     );
-
-    this._newShipOrigin = [row, column];
   }
 
-  // for rotate, to prevent overlapping with other ships
-  _adjustShipOriginToAvailableSpace() {
-    const [shipForwardDir, shipSidewayDir] = this.runByGrabbedShipOrientation(
+  _adjustGrabbedShipNewOriginToPlaceShipUntoUnoccupiedCells() {
+    const [shipForwardDir, shipSidewayDir] = this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
       // 0: row, 1: column
       () => [1, 0],
       () => [0, 1]
     );
 
-    let firstIndex = this._newShipOrigin[shipForwardDir];
-    let highestIndex = 10 - this._getGrabbedShipLength();
-    while (this._grabbedShipOverlapOtherShips()) {
-      this._newShipOrigin[shipForwardDir]++;
-      this._newShipOrigin[shipForwardDir] %= highestIndex + 1; // if ship extends outside board, reset back to 0
+    let firstIndex = this._grabbedShipNewOrigin[shipForwardDir];
+    let highestIndex = 10 - this._getShipLength(this._grabbedShip);
+    while (this._grabbedShipOverlapOtherShips(this._grabbedShip, this._grabbedShipNewOrigin)) {
+      this._grabbedShipNewOrigin[shipForwardDir]++;
+      this._grabbedShipNewOrigin[shipForwardDir] %= highestIndex + 1; // if ship extends outside board, reset back to 0
 
       // if every possible index in shipForwardDir axis is checked, move to next line
-      if (this._newShipOrigin[shipForwardDir] == firstIndex)
-        this._newShipOrigin[shipSidewayDir] == 9 ? (this._newShipOrigin[shipSidewayDir] = 0) : this._newShipOrigin[shipSidewayDir]++;
+      if (this._grabbedShipNewOrigin[shipForwardDir] == firstIndex)
+        this._grabbedShipNewOrigin[shipSidewayDir] == 9
+          ? (this._grabbedShipNewOrigin[shipSidewayDir] = 0)
+          : this._grabbedShipNewOrigin[shipSidewayDir]++;
     }
   }
 
   _grabbedShipOverlapOtherShips() {
-    const [row, column] = this._newShipOrigin;
-    return this.runByGrabbedShipOrientation(
-      () => !this.shipPlacementTable[row].slice(column, column + this._getGrabbedShipLength()).every((cell) => cell == 0),
+    const [row, column] = this._grabbedShipNewOrigin;
+    return this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
+      () => !this.shipPlacementTable[row].slice(column, column + this._getShipLength(this._grabbedShip)).every((cell) => cell == 0),
       () => {
-        for (let i = row; i < row + this._getGrabbedShipLength(); i++) if (this.shipPlacementTable[i][column]) return true;
+        for (let i = row; i < row + this._getShipLength(this._grabbedShip); i++) if (this.shipPlacementTable[i][column]) return true;
         return false;
       }
     );
   }
 
   _addGrabbedShipToOrigin([row, column]) {
-    this.runByGrabbedShipOrientation(
+    this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
       () => {
-        for (let i = 0; i < this._getGrabbedShipLength(); i++) this.shipPlacementTable[row][column + i] = this._grabbedShip;
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this.shipPlacementTable[row][column + i] = this._grabbedShip;
       },
       () => {
-        for (let i = 0; i < this._getGrabbedShipLength(); i++) this.shipPlacementTable[row + i][column] = this._grabbedShip;
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) this.shipPlacementTable[row + i][column] = this._grabbedShip;
       }
     );
     this._shipInfo.origin[this._grabbedShip] = [row, column];
@@ -77,7 +82,8 @@ class PlayerSetup extends Player {
 
   _createShip(params = {}) {
     const newShipObj = document.createElement("div");
-    this.runByGrabbedShipOrientation(
+    this.runFuncBasedOnShipOrientation(
+      this._grabbedShip,
       () => newShipObj.classList.add("ship", "ship--hori"),
       () => newShipObj.classList.add("ship", "ship--vert")
     );
@@ -94,10 +100,10 @@ class PlayerSetup extends Player {
     for (let i = 0; i < 5; i++) {
       do {
         this._grabbedShip = this.shipNames[i];
-        this._newShipOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
-        this._adjustShipOriginToInsideBoard();
+        this._grabbedShipNewOrigin = [Math.floor(Math.random() * 10), Math.floor(Math.random() * 10)];
+        this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
       } while (this._grabbedShipOverlapOtherShips());
-      this._addGrabbedShipToOrigin(this._newShipOrigin);
+      this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
     }
   }
 }
