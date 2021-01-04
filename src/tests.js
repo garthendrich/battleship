@@ -1,16 +1,12 @@
-// function displayAiShipTable() {
-//   for (let row = 0; row < 10; row++)
-//     for (let column = 0; column < 10; column++)
-//       if (ai.shipPlacementTable[row][column]) document.querySelector(".board--ai").rows[row].cells[column].style.background = "#4a6fa5";
-// }
+// manual tests
 
 function displayProbability() {
   const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
-      if (ai.getShotsTable()[row][column] == "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
-      else if (ai.getShotsTable()[row][column] == 1) userBoard.rows[row].cells[column].style.background = "white";
-      else if (ai.getProbabilityTable()[row][column] == 1) userBoard.rows[row].cells[column].style.background = "none";
+      if (ai.getShotsTable()[row][column] === "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
+      else if (ai.getShotsTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = "white";
+      else if (ai.getProbabilityTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = "none";
       else {
         const opacity = ai.getProbabilityTable()[row][column] / Math.max(...ai.getProbabilityTable().flat());
         userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${opacity})`;
@@ -19,12 +15,26 @@ function displayProbability() {
   }
 }
 
-function displayPresumedShipAndProbIncrease(shipLength, orientation, [row, column], [segmentRow, segmentColumn]) {
+function displayPresumedShipAndCellToIncrease(ship, [row, column], orientation, [segmentRow, segmentColumn]) {
+  const shipLength = user._shipInfo.length[ship];
   for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = "none";
 
-  if (orientation === "h") for (let i = column; i < column + shipLength; i++) userBoard.rows[row].cells[i].style.background = "yellow";
-  else for (let i = row; i < row + shipLength; i++) userBoard.rows[i].cells[column].style.background = "yellow";
+  user.runFunctionByShipOrientation(
+    orientation,
+    () => {
+      for (let i = column; i < column + shipLength; i++) userBoard.rows[row].cells[i].style.background = "yellow";
+    },
+    () => {
+      for (let i = row; i < row + shipLength; i++) userBoard.rows[i].cells[column].style.background = "yellow";
+    }
+  );
+
   userBoard.rows[segmentRow].cells[segmentColumn].style.background = "orange";
+
+  for (let row = 0; row < 10; row++)
+    for (let column = 0; column < 10; column++)
+      if (ai.getShotsTable()[row][column] === "x") userBoard.rows[row].cells[column].style.boxShadow = "0 0 0 5px #B24B68 inset";
+      else if (ai.getShotsTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = "white";
 }
 
 // inspector functions -------------------------
