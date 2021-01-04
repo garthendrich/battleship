@@ -60,10 +60,25 @@ class UserSetup extends PlayerSetup {
   }
 
   _bodyMouseMoveHandler(e) {
-    if (!this._isHoldingAShip) return;
+    const draggingShipOverUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
+    if (draggingShipOverUserBoardCell) {
+      const cellOriginRow = getElementAncestor(e.target, "tr").rowIndex;
+      const cellOriginColumn = e.target.cellIndex;
+
+      this.runFunctionByShipOrientation(
+        this._shipInfo.orientation[this._grabbedShip],
+        () => (this._grabbedShipNewOrigin = [cellOriginRow, cellOriginColumn - this._grabbedShipSegmentIndexUnderCursor]),
+        () => (this._grabbedShipNewOrigin = [cellOriginRow - this._grabbedShipSegmentIndexUnderCursor, cellOriginColumn])
+      );
+
+      this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
+
+      this._addCellHighlightsOverGrabbedShip(this._grabbedShipNewOrigin);
+    }
 
     const shipGrabbedToAnotherCell =
-      e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor !== this._getGrabbedShipSegmentIndexUnderCursor(e);
+      this._isHoldingAShip &&
+      (e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor !== this._getGrabbedShipSegmentIndexUnderCursor(e));
     if (shipGrabbedToAnotherCell) {
       this._isHoldingAShip = false; // reset; pass only once
       this._removeShip(this._grabbedShip);
@@ -75,6 +90,8 @@ class UserSetup extends PlayerSetup {
     this._isHoldingAShip = false; // reset
     this._hideAllShipPopups();
 
+    if (this._grabbedShip) this._removeAllCellHighlights();
+
     const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && e.target.id === this._grabbedShip;
     const shipDraggedOnUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
     const shipDraggedOutsideUserBoardCell = this._grabbedShip && this._prevGrabbedShipOrigin;
@@ -83,17 +100,6 @@ class UserSetup extends PlayerSetup {
       const grabbedShipPopup = e.target.firstChild;
       showElement(grabbedShipPopup);
     } else if (shipDraggedOnUserBoardCell) {
-      const cellRow = getElementAncestor(e.target, "tr").rowIndex;
-      const cellColumn = e.target.cellIndex;
-
-      this.runFunctionByShipOrientation(
-        this._shipInfo.orientation[this._grabbedShip],
-        () => (this._grabbedShipNewOrigin = [cellRow, cellColumn - this._grabbedShipSegmentIndexUnderCursor]),
-        () => (this._grabbedShipNewOrigin = [cellRow - this._grabbedShipSegmentIndexUnderCursor, cellColumn])
-      );
-
-      this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
-
       if (!this._grabbedShipOverlapOtherShips()) this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
       else if (this._prevGrabbedShipOrigin) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
     } else if (shipDraggedOutsideUserBoardCell) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
@@ -140,6 +146,35 @@ class UserSetup extends PlayerSetup {
       () => Math.ceil((e.clientX - grabbedShipElem.getBoundingClientRect().left) / grabbedShipElem.getBoundingClientRect().height) - 1,
       () => Math.ceil((e.clientY - grabbedShipElem.getBoundingClientRect().top) / grabbedShipElem.getBoundingClientRect().width) - 1
     );
+  }
+
+  _addCellHighlightsOverGrabbedShip([cellOriginRow, cellOriginColumn]) {
+    this._removeAllCellHighlights();
+
+    this._grabbedShipNewOrigin = [cellOriginRow, cellOriginColumn];
+    const placeState = this._grabbedShipOverlapOtherShips() ? "cannot-place" : "can-place";
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
+      () => {
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) {
+          addElementState(this._tableElem.rows[cellOriginRow].cells[cellOriginColumn + i], placeState);
+        }
+      },
+      () => {
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) {
+          addElementState(this._tableElem.rows[cellOriginRow + i].cells[cellOriginColumn], placeState);
+        }
+      }
+    );
+  }
+
+  _removeAllCellHighlights() {
+    for (let row = 0; row < 10; row++) {
+      for (let column = 0; column < 10; column++) {
+        removeElementState(this._tableElem.rows[row].cells[column], "can-place");
+        removeElementState(this._tableElem.rows[row].cells[column], "cannot-place");
+      }
+    }
   }
 
   _addGrabbedShipToOrigin([row, column]) {

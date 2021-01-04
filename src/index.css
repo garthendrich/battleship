@@ -143,13 +143,23 @@ button:hover {
   border: 1px solid white;
 }
 
-td {
+.cell {
   height: var(--cell-size);
   width: var(--cell-size);
   position: relative;
 }
 
-.board--attack td:not(.shot):hover {
+.board--user .cell--can-place {
+  background: #94ea89;
+  cursor: grabbing;
+}
+
+.board--user .cell--cannot-place {
+  background: #eb897f;
+  cursor: grabbing;
+}
+
+.board--attack .cell:not(.shot):hover {
   background: #94ea89;
   cursor: pointer;
 }
@@ -161,6 +171,7 @@ td {
   background: #4a6fa5;
   border: 3px #404756 solid;
   z-index: 1;
+  cursor: pointer;
 }
 
 .ship--sunk {
