@@ -4,11 +4,11 @@
   --popup-gap: 10px;
   --popup-width: calc(var(--popup-height) * 2 + var(--popup-gap));
   --background1: #020c15;
-  --primary100: #328fa6;
-  --primary200: #007389;
-  --primary300: #00576d;
-  --primary400: #003e52;
-  --primary500: #002539;
+  --primary-100: #328fa6;
+  --primary-200: #007389;
+  --primary-300: #00576d;
+  --primary-400: #003e52;
+  --primary-500: #002539;
   --warning: #f22727;
   --mark: #f2d430;
 }
@@ -158,11 +158,11 @@ button:hover {
   height: var(--cell-size);
   width: var(--cell-size);
   position: relative;
-  border: 1px solid var(--primary400);
+  border: 1px solid var(--primary-400);
 }
 
 .board--user .cell--can-place {
-  background: var(--primary100);
+  background: var(--primary-100);
   cursor: grabbing;
 }
 
@@ -172,11 +172,11 @@ button:hover {
 }
 
 .cell--shot {
-  background: var(--primary400);
+  background: var(--primary-400);
 }
 
 .board--ai.board--attack .cell:not(.cell--shot):hover {
-  background: var(--primary100);
+  background: var(--primary-100);
   cursor: pointer;
 }
 
@@ -192,19 +192,31 @@ button:hover {
   position: absolute;
   top: 0;
   left: 0;
-  background: #4a6fa5;
-  border: 3px #404756 solid;
+  fill: var(--primary-100);
   z-index: 1;
   cursor: pointer;
 }
 
+.ship::after {
+  content: "";
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
 .ship--sunk {
-  background: var(--primary400);
-  border: 1px var(--primary500) solid;
+  background: var(--primary-400);
+  border: 1px var(--primary-500) solid;
   cursor: default;
 }
 
-/* horizontal ships */
+.ship#c::after {
+  background-image: url(./assets/carrier.svg);
+}
 
 .ship--hori {
   height: var(--cell-size);
@@ -227,10 +239,12 @@ button:hover {
   width: calc(var(--cell-size) * 2);
 }
 
-/* vertical ships */
-
 .ship--vert {
   width: var(--cell-size);
+}
+
+.ship--vert::after {
+  transform: rotate(90deg);
 }
 
 .ship--vert#c {
