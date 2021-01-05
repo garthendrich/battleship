@@ -42,6 +42,7 @@ class UserSetup extends PlayerSetup {
 
     this._grabbedShip = e.target.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
+    this._hideAllShipPopups();
   }
 
   _bodyMouseDownHandler(e) {
@@ -55,52 +56,74 @@ class UserSetup extends PlayerSetup {
       this._grabbedShip = e.target.id;
       this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipSegmentIndexUnderCursor(e);
       this._prevGrabbedShipOrigin = this._shipInfo.origin[this._grabbedShip];
-      this._isHoldingAShip = true;
+      this._canMoveShip = true;
     }
   }
 
   _bodyMouseMoveHandler(e) {
-    if (!this._isHoldingAShip) return;
+    const grabbedShipMovedToAnotherCell =
+      this._canMoveShip &&
+      (e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor !== this._getGrabbedShipSegmentIndexUnderCursor(e));
+    if (grabbedShipMovedToAnotherCell) {
+      this._canMoveShip = false; // reset; pass only once
+      this._removeShipData(this._grabbedShip);
 
-    const shipGrabbedToAnotherCell =
-      e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor !== this._getGrabbedShipSegmentIndexUnderCursor(e);
-    if (shipGrabbedToAnotherCell) {
-      this._isHoldingAShip = false; // reset; pass only once
-      this._removeShip(this._grabbedShip);
+      const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
+      addElementState(grabbedShipElem, "to-move");
+      addElementState(this._boardElem, "modifying");
+
       this._hideAllShipPopups();
     }
+
+    const draggingShipOverUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
+    const draggingShipOutsideUserBoardCell = this._grabbedShip;
+    if (draggingShipOverUserBoardCell) {
+      const cellOriginRow = getElementAncestor(e.target, "tr").rowIndex;
+      const cellOriginColumn = e.target.cellIndex;
+      this._grabbedShipNewOrigin = this._getInitialDraggedShipNewOrigin([cellOriginRow, cellOriginColumn]);
+      this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
+
+      this._addCellHighlightsOverGrabbedShip();
+    } else if (draggingShipOutsideUserBoardCell) this._removeAllCellHighlights();
   }
 
   _bodyMouseUpHandler(e) {
-    this._isHoldingAShip = false; // reset
+    this._canMoveShip = false; // reset
     this._hideAllShipPopups();
 
-    const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && e.target.id === this._grabbedShip;
+    if (this._grabbedShip) removeElementState(this._boardElem, "modifying");
+
+    const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && this._grabbedShip === e.target.id;
     const shipDraggedOnUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
     const shipDraggedOutsideUserBoardCell = this._grabbedShip && this._prevGrabbedShipOrigin;
 
     if (shipJustClicked) {
       const grabbedShipPopup = e.target.firstChild;
       showElement(grabbedShipPopup);
-    } else if (shipDraggedOnUserBoardCell) {
-      const cellRow = getElementAncestor(e.target, "tr").rowIndex;
-      const cellColumn = e.target.cellIndex;
 
-      this.runFunctionByShipOrientation(
-        this._shipInfo.orientation[this._grabbedShip],
-        () => (this._grabbedShipNewOrigin = [cellRow, cellColumn - this._grabbedShipSegmentIndexUnderCursor]),
-        () => (this._grabbedShipNewOrigin = [cellRow - this._grabbedShipSegmentIndexUnderCursor, cellColumn])
-      );
+      this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
+      return;
+    }
 
-      this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
+    if (shipDraggedOnUserBoardCell) {
+      if (this._prevGrabbedShipOrigin) this._removeShipFromUserBoard(this._grabbedShip);
+
+      this._removeAllCellHighlights();
 
       if (!this._grabbedShipOverlapOtherShips()) this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
       else if (this._prevGrabbedShipOrigin) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
-    } else if (shipDraggedOutsideUserBoardCell) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
 
-    this._updateFinishSetupButtonVisibility();
+      this._updateFinishSetupButtonVisibility();
 
-    this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
+      this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
+      return;
+    }
+
+    if (shipDraggedOutsideUserBoardCell) {
+      this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
+
+      this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
+    }
   }
 
   _randomizeBoardButtonHandler() {
@@ -140,6 +163,43 @@ class UserSetup extends PlayerSetup {
       () => Math.ceil((e.clientX - grabbedShipElem.getBoundingClientRect().left) / grabbedShipElem.getBoundingClientRect().height) - 1,
       () => Math.ceil((e.clientY - grabbedShipElem.getBoundingClientRect().top) / grabbedShipElem.getBoundingClientRect().width) - 1
     );
+  }
+
+  _getInitialDraggedShipNewOrigin([row, column]) {
+    return this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
+      () => [row, column - this._grabbedShipSegmentIndexUnderCursor],
+      () => [row - this._grabbedShipSegmentIndexUnderCursor, column]
+    );
+  }
+
+  _addCellHighlightsOverGrabbedShip() {
+    this._removeAllCellHighlights(); // reset
+
+    const [cellOriginRow, cellOriginColumn] = this._grabbedShipNewOrigin;
+    const placeState = this._grabbedShipOverlapOtherShips() ? "cannot-place" : "can-place";
+    this.runFunctionByShipOrientation(
+      this._shipInfo.orientation[this._grabbedShip],
+      () => {
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) {
+          addElementState(this._boardElem.rows[cellOriginRow].cells[cellOriginColumn + i], placeState);
+        }
+      },
+      () => {
+        for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) {
+          addElementState(this._boardElem.rows[cellOriginRow + i].cells[cellOriginColumn], placeState);
+        }
+      }
+    );
+  }
+
+  _removeAllCellHighlights() {
+    for (let row = 0; row < 10; row++) {
+      for (let column = 0; column < 10; column++) {
+        removeElementState(this._boardElem.rows[row].cells[column], "can-place");
+        removeElementState(this._boardElem.rows[row].cells[column], "cannot-place");
+      }
+    }
   }
 
   _addGrabbedShipToOrigin([row, column]) {
@@ -183,7 +243,8 @@ class UserSetup extends PlayerSetup {
     this._grabbedShip = getElementAncestor(e.target, ".ship").id;
     this._grabbedShipNewOrigin = this._shipInfo.origin[this._grabbedShip];
 
-    this._removeShip(this._grabbedShip);
+    this._removeShipData(this._grabbedShip);
+    this._removeShipFromUserBoard(this._grabbedShip);
     this._changeGrabbedShipInfoToRotate();
 
     this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
@@ -222,7 +283,8 @@ class UserSetup extends PlayerSetup {
   }
 
   _resetShip(ship) {
-    this._removeShip(ship);
+    this._removeShipData(ship);
+    this._removeShipFromUserBoard(ship);
 
     this._shipInfo.orientation[ship] = "h";
 
@@ -230,16 +292,7 @@ class UserSetup extends PlayerSetup {
     removeElementState(menuShipElem, "placed");
   }
 
-  _removeShip(ship) {
-    // remove handlers to prevent memory leaks
-    const rotateButton = document.querySelector(`.ship#${ship} .ship__button--rotate`);
-    const removeButton = document.querySelector(`.ship#${ship} .ship__button--remove`);
-    rotateButton.removeEventListener("click", this._shipRotateButtonHandler);
-    removeButton.removeEventListener("click", this._shipRemoveButtonHandler);
-
-    const shipElem = document.querySelector(`.ship#${ship}`);
-    shipElem.remove();
-
+  _removeShipData(ship) {
     let [row, column] = this._shipInfo.origin[ship];
     this.runFunctionByShipOrientation(
       this._shipInfo.orientation[ship],
@@ -252,6 +305,18 @@ class UserSetup extends PlayerSetup {
     );
 
     this._shipInfo.origin[ship] = null;
+  }
+
+  _removeShipFromUserBoard(ship) {
+    const shipElem = document.querySelector(`.board--user .ship#${ship}`);
+
+    // remove handlers to prevent memory leaks
+    const rotateButton = shipElem.querySelector(`.ship__button--rotate`);
+    const removeButton = shipElem.querySelector(`.ship__button--remove`);
+    rotateButton.removeEventListener("click", this._shipRotateButtonHandler);
+    removeButton.removeEventListener("click", this._shipRemoveButtonHandler);
+
+    shipElem.remove();
   }
 
   _resetPlacedShips() {
