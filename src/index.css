@@ -1,9 +1,16 @@
 :root {
-  --cell-size: 5vh;
+  --cell-size: 7vh;
   --popup-height: 50px;
   --popup-gap: 10px;
-
   --popup-width: calc(var(--popup-height) * 2 + var(--popup-gap));
+  --background1: #020c15;
+  --primary100: #328fa6;
+  --primary200: #007389;
+  --primary300: #00576d;
+  --primary400: #003e52;
+  --primary500: #002539;
+  --warning: #f22727;
+  --mark: #f2d430;
 }
 
 * {
@@ -18,12 +25,12 @@
 html,
 body {
   height: 100%;
-  margin: 0;
+  min-width: 1600px;
 }
 
 body {
-  min-width: 1000px;
-  background: #3ccfbf;
+  background: rgb(2, 12, 21);
+  /* background-image: radial-gradient(circle, #020c15, #0f1d26, #142c37, #183c49, #1b4d5a); */
 }
 
 svg {
@@ -145,23 +152,32 @@ button:hover {
 .board {
   border-collapse: collapse;
   margin: 0 15px;
-  border: 1px solid white;
 }
 
 .cell {
   height: var(--cell-size);
   width: var(--cell-size);
   position: relative;
+  border: 1px solid var(--primary400);
 }
 
 .board--user .cell--can-place {
-  background: #94ea89;
+  background: var(--primary100);
   cursor: grabbing;
 }
 
 .board--user .cell--cannot-place {
-  background: #eb897f;
+  background: var(--warning);
   cursor: grabbing;
+}
+
+.cell--shot {
+  background: var(--primary400);
+}
+
+.board--ai.board--attack .cell:not(.cell--shot):hover {
+  background: var(--primary100);
+  cursor: pointer;
 }
 
 .board--user.board--modifying .ship {
@@ -170,11 +186,6 @@ button:hover {
 
 .board--user.board--modifying .ship--to-move {
   opacity: 0.3;
-}
-
-.board--attack .cell:not(.shot):hover {
-  background: #94ea89;
-  cursor: pointer;
 }
 
 .ship {
@@ -188,8 +199,9 @@ button:hover {
 }
 
 .ship--sunk {
-  background: #b24b68;
-  border: 3px #564145 solid;
+  background: var(--primary400);
+  border: 1px var(--primary500) solid;
+  cursor: default;
 }
 
 /* horizontal ships */

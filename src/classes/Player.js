@@ -80,7 +80,7 @@ class Player {
   displayEnemyShot(shipHit, [row, column]) {
     const cell = this._boardElem.rows[row].cells[column];
     if (shipHit) cell.style.background = "#B24B68";
-    else cell.style.background = "white";
+    else cell.style.background = "#ccc";
   }
 
   shipSunk(ship) {
