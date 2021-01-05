@@ -97,7 +97,7 @@ class UserSetup extends PlayerSetup {
 
     if (shipJustClicked) {
       const grabbedShipPopup = e.target.firstChild.firstChild;
-      showElement(grabbedShipPopup);
+      this._hideAllShipPopups({ exclude: grabbedShipPopup });
 
       this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
       return;
@@ -334,9 +334,11 @@ class UserSetup extends PlayerSetup {
     }
   }
 
-  _hideAllShipPopups() {
-    const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
-    setTimeout(() => shipPopupElems.length && shipPopupElems.forEach((popup) => hideElement(popup)));
+  _hideAllShipPopups({ exclude } = {}) {
+    const popupElems = document.querySelectorAll(`.ship__popup`) || null;
+    setTimeout(() => {
+      if (popupElems.length) popupElems.forEach((popup) => (popup === exclude ? showElement(popup) : hideElement(popup)));
+    });
   }
 
   _updateFinishSetupButtonVisibility() {
