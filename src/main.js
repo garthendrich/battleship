@@ -69,7 +69,6 @@ function displayScreenForGameFight() {
 
 function startGameFight() {
   ai.updateProbabilityTable(user.getShipsToSearch());
-  document.querySelectorAll(".board--user .ship").forEach((ship) => (ship.style.zIndex = -1)); // ! change
   aiBoard.addEventListener("click", aiBoardClickHandler);
   addElementState(aiBoard, "attack");
 }
