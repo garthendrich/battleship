@@ -35,7 +35,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _shipMenuItemHandler(e) {
-    this._fixGrabbedShipOutsideBody();
+    this._resetShipDraggedOutsideBody();
 
     const clickedShipAlreadyPlaced = elementHasState(e.target, "placed");
     if (clickedShipAlreadyPlaced) return;
@@ -46,10 +46,10 @@ class UserSetup extends PlayerSetup {
   }
 
   _bodyMouseDownHandler(e) {
+    this._resetShipDraggedOutsideBody();
+
     const clickedOutsidethisBoard = !getElementAncestor(e.target, ".board--user");
     if (clickedOutsidethisBoard) return;
-
-    this._fixGrabbedShipOutsideBody();
 
     const mouseDownOnShip = elementHasClassName(e.target, "ship");
     if (mouseDownOnShip) {
@@ -89,7 +89,9 @@ class UserSetup extends PlayerSetup {
   _bodyMouseUpHandler(e) {
     this._canMoveShip = false; // reset
 
-    if (this._grabbedShip) removeElementState(this._boardElem, "modifying");
+    removeElementState(this._boardElem, "modifying");
+
+    this._hideAllShipPopups();
 
     const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && this._grabbedShip === e.target.id;
     const shipDraggedOnUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
@@ -102,8 +104,6 @@ class UserSetup extends PlayerSetup {
       this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
       return;
     }
-
-    this._hideAllShipPopups();
 
     if (shipDraggedOnUserBoardCell) {
       if (this._prevGrabbedShipOrigin) this._removeShipFromUserBoard(this._grabbedShip);
@@ -144,11 +144,12 @@ class UserSetup extends PlayerSetup {
     this._grabbedShip = null; // reset
   }
 
-  _fixGrabbedShipOutsideBody() {
-    const wasPrevGrabbedShipDraggedOutsideBody = this._grabbedShip;
-    if (wasPrevGrabbedShipDraggedOutsideBody) {
-      const prevGrabbedShipMenuItem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
-      removeElementState(prevGrabbedShipMenuItem, "placed");
+  _resetShipDraggedOutsideBody() {
+    if (this._grabbedShip && this._prevGrabbedShipOrigin) {
+      this._resetShip(this._grabbedShip);
+      this._removeAllCellHighlights();
+
+      this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
     }
   }
 
@@ -291,7 +292,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _resetShip(ship) {
-    this._removeShipData(ship);
+    if (this._shipInfo.origin[ship]) this._removeShipData(ship);
     this._removeShipFromUserBoard(ship);
 
     this._shipInfo.orientation[ship] = "h";
