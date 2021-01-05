@@ -70,7 +70,6 @@ class UserSetup extends PlayerSetup {
 
       const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
       addElementState(grabbedShipElem, "to-move");
-      addElementState(this._boardElem, "modifying");
 
       this._hideAllShipPopups();
     }
@@ -78,6 +77,8 @@ class UserSetup extends PlayerSetup {
     const draggingShipOverUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
     const draggingShipOutsideUserBoardCell = this._grabbedShip;
     if (draggingShipOverUserBoardCell) {
+      addElementState(this._boardElem, "modifying");
+
       const cellOriginRow = getElementAncestor(e.target, "tr").rowIndex;
       const cellOriginColumn = e.target.cellIndex;
       this._grabbedShipNewOrigin = this._getInitialDraggedShipNewOrigin([cellOriginRow, cellOriginColumn]);
