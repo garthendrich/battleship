@@ -3,6 +3,8 @@
   * replace shipInfo with array of ship instances
   * modify ship randomizer
   * inspector settings
+  
+  ! BUG - drag ship unto ship menu
 
  ** THINGS THAT MAY BE CONSIDERED:
   * current randomizer may be inefficient: rechecks occupied cells

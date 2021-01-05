@@ -43,7 +43,6 @@ class UserSetup extends PlayerSetup {
     addElementState(this._boardElem, "modifying");
     this._grabbedShip = e.target.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
-    this._hideAllShipPopups();
   }
 
   _bodyMouseDownHandler(e) {
@@ -72,12 +71,12 @@ class UserSetup extends PlayerSetup {
       addElementState(this._boardElem, "modifying");
       const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
       addElementState(grabbedShipElem, "to-move");
-
-      this._hideAllShipPopups();
     }
 
     const draggingShipOverUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
     if (draggingShipOverUserBoardCell) {
+      this._hideAllShipPopups();
+
       const cellOriginRow = getElementAncestor(e.target, "tr").rowIndex;
       const cellOriginColumn = e.target.cellIndex;
       this._grabbedShipNewOrigin = this._getInitialDraggedShipNewOrigin([cellOriginRow, cellOriginColumn]);
@@ -89,7 +88,6 @@ class UserSetup extends PlayerSetup {
 
   _bodyMouseUpHandler(e) {
     this._canMoveShip = false; // reset
-    this._hideAllShipPopups();
 
     if (this._grabbedShip) removeElementState(this._boardElem, "modifying");
 
@@ -104,6 +102,8 @@ class UserSetup extends PlayerSetup {
       this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
       return;
     }
+
+    this._hideAllShipPopups();
 
     if (shipDraggedOnUserBoardCell) {
       if (this._prevGrabbedShipOrigin) this._removeShipFromUserBoard(this._grabbedShip);
@@ -206,14 +206,7 @@ class UserSetup extends PlayerSetup {
     super._addGrabbedShipToOrigin([row, column]);
 
     const cellElem = document.querySelector(`.board--user`).rows[row].cells[column];
-    const shipElem = this._createShipElemWithPopup();
-    cellElem.append(shipElem);
-
-    // animate popup on ship add
-    setTimeout(() => {
-      const popupElem = shipElem.firstChild.firstChild;
-      showElement(popupElem);
-    });
+    cellElem.append(this._createShipElemWithPopup());
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
     addElementState(menuShipElem, "placed");
@@ -243,6 +236,9 @@ class UserSetup extends PlayerSetup {
     const popupElem = document.createElement("div");
     popupElem.className = "ship__popup ship__popup--hidden";
     popupElem.append(rotateButton, removeButton);
+
+    // to animate popup
+    setTimeout(() => showElement(popupElem));
 
     // popup needs wrapper because of transform scale and rotate conflict (see index.css)
     const popupWrapperElem = document.createElement("div");
@@ -340,7 +336,7 @@ class UserSetup extends PlayerSetup {
 
   _hideAllShipPopups() {
     const shipPopupElems = document.querySelectorAll(`.ship__popup`) || null;
-    if (shipPopupElems.length) shipPopupElems.forEach((popup) => hideElement(popup));
+    setTimeout(() => shipPopupElems.length && shipPopupElems.forEach((popup) => hideElement(popup)));
   }
 
   _updateFinishSetupButtonVisibility() {
