@@ -98,7 +98,7 @@ class UserSetup extends PlayerSetup {
     const shipDraggedOutsideUserBoardCell = this._grabbedShip && this._prevGrabbedShipOrigin;
 
     if (shipJustClicked) {
-      const grabbedShipPopup = e.target.firstChild;
+      const grabbedShipPopup = e.target.firstChild.firstChild;
       showElement(grabbedShipPopup);
 
       this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
@@ -206,16 +206,23 @@ class UserSetup extends PlayerSetup {
     super._addGrabbedShipToOrigin([row, column]);
 
     const cellElem = document.querySelector(`.board--user`).rows[row].cells[column];
-    cellElem.append(this._createShipWithPopup());
+    const shipElem = this._createShipElemWithPopup();
+    cellElem.append(shipElem);
+
+    // animate popup on ship add
+    setTimeout(() => {
+      const popupElem = shipElem.firstChild.firstChild;
+      showElement(popupElem);
+    });
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
     addElementState(menuShipElem, "placed");
   }
 
-  _createShipWithPopup() {
-    const newShipObj = super._createShip(this._grabbedShip);
-    newShipObj.append(this._createShipPopup());
-    return newShipObj;
+  _createShipElemWithPopup() {
+    const newShipElem = super._createShipElem(this._grabbedShip);
+    newShipElem.append(this._createShipPopup());
+    return newShipElem;
   }
 
   _createShipPopup() {
@@ -233,10 +240,15 @@ class UserSetup extends PlayerSetup {
     rotateButton.addEventListener("click", this._shipRotateButtonHandler);
     removeButton.addEventListener("click", this._shipRemoveButtonHandler);
 
-    const popupObj = document.createElement("div");
-    popupObj.className = "ship__popup";
-    popupObj.append(rotateButton, removeButton);
-    return popupObj;
+    const popupElem = document.createElement("div");
+    popupElem.className = "ship__popup ship__popup--hidden";
+    popupElem.append(rotateButton, removeButton);
+
+    // popup needs wrapper because of transform scale and rotate conflict (see index.css)
+    const popupWrapperElem = document.createElement("div");
+    popupWrapperElem.className = "ship__popup__wrapper";
+    popupWrapperElem.append(popupElem);
+    return popupWrapperElem;
   }
 
   _shipRotateButtonHandler(e) {
