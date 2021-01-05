@@ -40,6 +40,7 @@ class UserSetup extends PlayerSetup {
     const clickedShipAlreadyPlaced = elementHasState(e.target, "placed");
     if (clickedShipAlreadyPlaced) return;
 
+    addElementState(this._boardElem, "modifying");
     this._grabbedShip = e.target.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
     this._hideAllShipPopups();
@@ -68,6 +69,7 @@ class UserSetup extends PlayerSetup {
       this._canMoveShip = false; // reset; pass only once
       this._removeShipData(this._grabbedShip);
 
+      addElementState(this._boardElem, "modifying");
       const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
       addElementState(grabbedShipElem, "to-move");
 
@@ -75,17 +77,14 @@ class UserSetup extends PlayerSetup {
     }
 
     const draggingShipOverUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
-    const draggingShipOutsideUserBoardCell = this._grabbedShip;
     if (draggingShipOverUserBoardCell) {
-      addElementState(this._boardElem, "modifying");
-
       const cellOriginRow = getElementAncestor(e.target, "tr").rowIndex;
       const cellOriginColumn = e.target.cellIndex;
       this._grabbedShipNewOrigin = this._getInitialDraggedShipNewOrigin([cellOriginRow, cellOriginColumn]);
       this._adjustGrabbedShipNewOriginToPlaceShipInsideBoard();
 
       this._addCellHighlightsOverGrabbedShip();
-    } else if (draggingShipOutsideUserBoardCell) this._removeAllCellHighlights();
+    } else if (this._grabbedShip) this._removeAllCellHighlights();
   }
 
   _bodyMouseUpHandler(e) {
