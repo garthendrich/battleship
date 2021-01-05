@@ -94,7 +94,7 @@ class PlayerSetup extends Player {
     this._shipInfo.origin[this._grabbedShip] = [row, column];
   }
 
-  _createShip(shipName, params = {}) {
+  _createShipElem(shipName, params = {}) {
     const newShipObj = document.createElement("div");
     this.runFunctionByShipOrientation(
       this._shipInfo.orientation[shipName],

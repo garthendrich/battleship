@@ -185,27 +185,49 @@ button:hover {
 }
 
 .board--user.board--modifying .ship--to-move {
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .ship {
   position: absolute;
   top: 0;
   left: 0;
+  height: var(--cell-size);
   fill: var(--primary-100);
   z-index: 1;
   cursor: pointer;
-}
-
-.ship::after {
-  content: "";
-  height: 100%;
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.ship#c {
+  width: calc(var(--cell-size) * 5);
+  background-image: url(./assets/carrier.svg);
+}
+
+.ship#b {
+  width: calc(var(--cell-size) * 4);
+  background-image: url(./assets/battleship.svg);
+}
+
+.ship#d {
+  width: calc(var(--cell-size) * 3);
+  background-image: url(./assets/destroyer.svg);
+}
+
+.ship#s {
+  width: calc(var(--cell-size) * 3);
+  background-image: url(./assets/submarine.svg);
+}
+
+.ship#p {
+  width: calc(var(--cell-size) * 2);
+  background-image: url(./assets/patrol-boat.svg);
+}
+
+.ship--vert {
+  transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
+  transform-origin: top left;
 }
 
 .ship--sunk {
@@ -214,70 +236,36 @@ button:hover {
   cursor: default;
 }
 
-.ship#c::after {
-  background-image: url(./assets/carrier.svg);
-}
-
-.ship--hori {
-  height: var(--cell-size);
-}
-
-.ship--hori#c {
-  width: calc(var(--cell-size) * 5);
-}
-
-.ship--hori#b {
-  width: calc(var(--cell-size) * 4);
-}
-
-.ship--hori#d,
-.ship--hori#s {
-  width: calc(var(--cell-size) * 3);
-}
-
-.ship--hori#p {
-  width: calc(var(--cell-size) * 2);
-}
-
-.ship--vert {
-  width: var(--cell-size);
-}
-
-.ship--vert::after {
-  transform: rotate(90deg);
-}
-
-.ship--vert#c {
-  height: calc(var(--cell-size) * 5);
-}
-
-.ship--vert#b {
-  height: calc(var(--cell-size) * 4);
-}
-
-.ship--vert#d,
-.ship--vert#s {
-  height: calc(var(--cell-size) * 3);
-}
-
-.ship--vert#p {
-  height: calc(var(--cell-size) * 2);
-}
-
-.ship__popup {
+.ship__popup__wrapper {
   content: "";
   position: absolute;
   bottom: calc(100% + var(--popup-gap));
   left: calc(50% - var(--popup-width) / 2);
   height: var(--popup-height);
   width: var(--popup-width);
+  pointer-events: none;
+}
+
+.ship--vert .ship__popup__wrapper {
+  transform: rotate(-90deg);
+  transform-origin: bottom right;
+  right: calc(100% + 10px);
+  top: calc(-50% - 110px / 2);
+  bottom: auto;
+  left: auto;
+}
+
+.ship__popup {
+  height: 100%;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
   background: white;
   box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.14), 0 3px 3px -2px rgba(0, 0, 0, 0.12), 0 1px 8px 0 rgba(0, 0, 0, 0.2);
-  transition: transform 0.1s;
+  pointer-events: auto;
+  transition: all 0.15s;
   transform-origin: bottom center;
 }
 
