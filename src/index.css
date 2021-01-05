@@ -3,7 +3,7 @@
   --popup-height: 50px;
   --popup-gap: 10px;
   --popup-width: calc(var(--popup-height) * 2 + var(--popup-gap));
-  --background1: #020c15;
+  --background: #020c15;
   --primary-100: #328fa6;
   --primary-200: #007389;
   --primary-300: #00576d;
@@ -162,7 +162,7 @@ button:hover {
 }
 
 .board--user .cell--can-place {
-  background: var(--primary-100);
+  background: var(--primary-200);
   cursor: grabbing;
 }
 
@@ -172,11 +172,11 @@ button:hover {
 }
 
 .cell--shot {
-  background: var(--primary-400);
+  background: var(--primary-500);
 }
 
 .board--ai.board--attack .cell:not(.cell--shot):hover {
-  background: var(--primary-100);
+  background: var(--primary-200);
   cursor: pointer;
 }
 
@@ -193,7 +193,7 @@ button:hover {
   top: 0;
   left: 0;
   height: var(--cell-size);
-  fill: var(--primary-100);
+  fill: var(--primary-200);
   z-index: 1;
   cursor: pointer;
   background-repeat: no-repeat;
@@ -231,8 +231,6 @@ button:hover {
 }
 
 .ship--sunk {
-  background: var(--primary-400);
-  border: 1px var(--primary-500) solid;
   cursor: default;
 }
 
