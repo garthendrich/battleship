@@ -59,7 +59,7 @@ function toggleProbabilityDisplay() {
   else {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
-        if (ai.getShotsTable()[row][column]) user.displayEnemyShot(user.getShipPlacementTable()[row][column], row, column);
+        if (ai.getShotsTable()[row][column]) user.updateEnemyShotsDisplay(user.getShipPlacementTable()[row][column], row, column);
         else userBoard.rows[row].cells[column].style.background = null;
       }
     }

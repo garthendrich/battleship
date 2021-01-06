@@ -9,18 +9,7 @@ class User extends UserSetup {
 
   getShipsToSearch() {
     const shipsToSearch = [];
-    for (let ship of this._shipNames) if (!this.shipSunk(ship)) shipsToSearch.push(ship);
+    for (let ship of this._shipNames) if (!this.isShipSunk(ship)) shipsToSearch.push(ship);
     return shipsToSearch;
-  }
-
-  getSunkenShipInfo(ship) {
-    if (!this.shipSunk(ship)) return;
-
-    return {
-      name: ship,
-      origin: this._shipInfo.origin[ship],
-      orientation: this._shipInfo.orientation[ship],
-      length: this._shipInfo.length[ship],
-    };
   }
 }
