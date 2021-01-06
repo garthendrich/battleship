@@ -33,7 +33,6 @@
   user-select: none;
   outline: none;
 
-  letter-spacing: inherit;
   text-transform: inherit;
 }
 
@@ -49,10 +48,12 @@ svg {
 
 h1 {
   font-size: 3.6rem;
+  letter-spacing: 2.4px;
 }
 
 h2 {
-  font-size: 2.1rem;
+  font-size: 2.5rem;
+  letter-spacing: 1.6px;
 }
 
 h3 {
@@ -155,34 +156,12 @@ body.grabbing * {
   z-index: 3;
 }
 
-.homescreen h1 {
+.homescreen__title {
   margin-bottom: 64px;
 }
 
 .homescreen--hidden {
   display: none;
-}
-
-.modal {
-  height: 100vh;
-  width: 100vw;
-  position: fixed;
-  top: 0;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: white;
-  z-index: 3;
-}
-
-.modal--hidden {
-  display: none;
-}
-
-.modal__box {
-  padding: 50px;
-  max-width: 500px;
 }
 
 .sidebar {
@@ -201,7 +180,7 @@ body.grabbing * {
 
 .ship-menu {
   margin: 16px 0;
-  padding: 12px 32px;
+  padding: 16px 32px;
   border-top: 1px solid var(--primary-500);
   border-bottom: 1px solid var(--primary-500);
   background: linear-gradient(transparent, rgba(50, 143, 166, 0.2));
@@ -463,6 +442,36 @@ body.grabbing .board--user .ship--to-move {
 
 .ship__button:hover {
   background: var(--primary-300);
+}
+
+.modal {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.modal--hidden {
+  display: none;
+}
+
+.modal__box {
+  background-image: linear-gradient(rgba(25, 72, 83, 0.9), rgba(15, 43, 50, 0.9));
+  padding: 48px 64px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal__dialogue {
+  margin-bottom: 32px;
 }
 
 @media only screen and (max-width: 1200px) {

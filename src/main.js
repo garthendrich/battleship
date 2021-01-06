@@ -28,8 +28,8 @@ const randomizeBoardButton = document.querySelector(".ship-menu__button--random"
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 const finishGameSetupButton = document.querySelector(".finish-setup-button");
 
-const endGameModal = document.querySelector(".modal--end-game");
-const endGameModalDialogue = endGameModal.querySelector(".modal__dialogue");
+const gameOverModal = document.querySelector(".modal--game-over");
+const gameOverModalDialogue = gameOverModal.querySelector(".modal__dialogue");
 const playAgainButton = document.querySelector(".play-again-button");
 
 playButton.addEventListener("click", startGameSetupHandler);
@@ -49,8 +49,9 @@ function startGameSetupHandler() {
 function displayScreenForGameSetup() {
   hideElement(aiBoard.parentElement);
   hideElement(homeScreen);
-  hideElement(endGameModal);
+  hideElement(gameOverModal);
   showElement(sidebar);
+  showElement(finishGameSetupButton);
   shipMenuItems.forEach((item) => removeElementState(item, "taken"));
 }
 
@@ -63,9 +64,9 @@ finishGameSetupButton.addEventListener("click", () => {
 });
 
 function displayScreenForGameFight() {
-  showElement(aiBoard.parentElement);
   hideElement(sidebar);
   hideElement(finishGameSetupButton);
+  showElement(aiBoard.parentElement);
 }
 
 function startGameFight() {
@@ -92,28 +93,27 @@ function aiBoardClickHandler(e) {
   const userClickedACell = typeof cellRow !== "undefined" && typeof cellColumn !== "undefined";
   if (userClickedACell && user.canShootEnemyCell([cellRow, cellColumn])) {
     user.shoot(ai, [cellRow, cellColumn]);
+    if (hasWinner()) return;
     ai.autoShoot(user);
-
-    checkWinner();
+    hasWinner();
   }
 }
 
-function checkWinner() {
-  if (ai.hasSailingShips() && user.hasSailingShips()) return;
+function hasWinner() {
+  if (ai.getNumSailingShips() && user.getNumSailingShips()) return false;
 
-  if (!ai.hasSailingShips()) {
-    showEndGameModal({ userWon: true });
-  } else {
-    showEndGameModal({ userWon: false });
-  }
+  if (user.getNumSailingShips() === 0) showGameOverModal("Defeat");
+  else if (user.getNumSailingShips() === 1) showGameOverModal("Clutch");
+  else showGameOverModal("Victory");
 
   aiBoard.removeEventListener("click", aiBoardClickHandler);
   addElementState(finishGameSetupButton, "prohibited");
-  showElement(finishGameSetupButton);
   canStartNewGame = true;
+
+  return true;
 }
 
-function showEndGameModal({ userWon }) {
-  endGameModalDialogue.innerHTML = userWon ? "win" : "lose";
-  showElement(endGameModal);
+function showGameOverModal(text) {
+  gameOverModalDialogue.innerHTML = text;
+  showElement(gameOverModal);
 }

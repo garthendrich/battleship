@@ -56,8 +56,10 @@ class Player {
     return this._shotsTable;
   }
 
-  hasSailingShips() {
-    return Object.values(this._shipInfo.status).some((status) => status !== 0);
+  getNumSailingShips() {
+    return Object.values(this._shipInfo.status).reduce((accum, curr) => {
+      return curr === 0 ? accum : accum + 1;
+    }, 0);
   }
 
   shoot(enemyInstance, [row, column]) {

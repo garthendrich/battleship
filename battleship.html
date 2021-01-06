@@ -8,7 +8,7 @@
   </head>
   <body>
     <div class="homescreen">
-      <h1>Battleship</h1>
+      <h1 class="homescreen__title">Battleship</h1>
       <button class="play-button button--primary"><h3>Play</h3></button>
     </div>
 
@@ -65,11 +65,11 @@
 
     <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
 
-    <div class="modal modal--end-game modal--hidden">
+    <div class="modal modal--game-over modal--hidden">
       <div class="modal__box">
-        <div class="modal__dialogue"></div>
+        <h2 class="modal__dialogue"></h2>
         <div class="modal__buttons">
-          <button class="play-again-button">Play Again</button>
+          <button class="play-again-button button--primary">Play Again</button>
         </div>
       </div>
     </div>
