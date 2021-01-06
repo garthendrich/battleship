@@ -71,8 +71,13 @@ function displayScreenForGameFight() {
 
 function startGameFight() {
   ai.updateProbabilityTable(user.getShipsToSearch());
+  addHoverEffectToAiCells();
   aiBoard.addEventListener("click", aiBoardClickHandler);
-  addElementState(aiBoard, "attack");
+}
+
+function addHoverEffectToAiCells() {
+  const cells = aiBoard.querySelectorAll(".cell");
+  cells.forEach((cell) => addElementState(cell, "can-shoot"));
 }
 
 function aiBoardClickHandler(e) {
