@@ -257,8 +257,8 @@ class UserSetup extends PlayerSetup {
     const removeSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M5 11H19V13H5z"/></svg>';
     const parsedRotateSVG = new DOMParser().parseFromString(rotateSVG, "image/svg+xml").firstChild;
     const parsedRemoveSVG = new DOMParser().parseFromString(removeSVG, "image/svg+xml").firstChild;
-    const rotateButton = document.createElement("div");
-    const removeButton = document.createElement("div");
+    const rotateButton = document.createElement("button");
+    const removeButton = document.createElement("button");
     rotateButton.className = "ship__button ship__button--rotate";
     removeButton.className = "ship__button ship__button--remove";
     rotateButton.append(parsedRotateSVG);
