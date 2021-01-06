@@ -7,7 +7,10 @@
     <title>Battleship</title>
   </head>
   <body>
-    <div class="homescreen"><button class="play-button">Play</button></div>
+    <div class="homescreen">
+      <button class="play-button">Play</button>
+    </div>
+
     <div class="sidebar">
       <ul class="ship-menu">
         <li class="ship-menu__item" id="c">
@@ -51,11 +54,16 @@
       </div>
     </div>
 
-    <button class="finish-setup-button finish-setup-button--hidden">Start</button>
-    <div class="board-container">
+    <div class="board-wrapper">
       <table class="board board--user"></table>
+    </div>
+
+    <div class="board-wrapper board-wrapper--hidden">
       <table class="board board--ai"></table>
     </div>
+
+    <button class="finish-setup-button finish-setup-button--hidden">Start</button>
+
     <div class="modal modal--end-game modal--hidden">
       <div class="modal__box">
         <div class="modal__dialogue"></div>
