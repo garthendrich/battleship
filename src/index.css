@@ -8,7 +8,7 @@
   --popup-height: 48px;
   --popup-gap: 4px;
   --popup-width: calc(var(--popup-height) * 2 + 8px);
-  --background: #020c15;
+  --background: #050e11;
   --primary-100: #ebf4f6;
   --primary-200: #c2dde4;
   --primary-300: #99c7d3;
@@ -47,6 +47,18 @@ svg {
   width: 100%;
 }
 
+h1 {
+  font-size: 3.6rem;
+}
+
+h2 {
+  font-size: 2.1rem;
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
 button {
   font-family: inherit;
   font-size: 1rem;
@@ -59,6 +71,7 @@ button {
 }
 
 .button--primary {
+  position: relative;
   color: var(--primary-100);
   background: var(--primary-500);
   border: none;
@@ -116,8 +129,8 @@ body {
   min-width: max-content;
   display: flex;
   justify-content: center;
-  background: var(--background);
-  /* background-image: radial-gradient(circle, #020c15, #0f1d26, #142c37, #183c49, #1b4d5a); */
+  background-image: linear-gradient(to top, #172c32, #050e11);
+  /* background-image: linear-gradient(to top, #328fa6, #2a6c7d, #214a57, #172c32, #050e11); */
 }
 
 body.grabbing,
@@ -131,11 +144,19 @@ body.grabbing * {
   position: fixed;
   top: 0;
   left: 0;
+  color: var(--primary-200);
+  background-image: radial-gradient(circle, #050e11, #172c32, #328fa6);
+  background-size: 200% 250%;
+  background-position: center bottom;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: white;
   z-index: 3;
+}
+
+.homescreen h1 {
+  margin-bottom: 64px;
 }
 
 .homescreen--hidden {
