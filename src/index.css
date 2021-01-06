@@ -56,14 +56,61 @@ svg {
 }
 
 button {
-  background: #fff;
-  color: inherit;
-  border: 1px solid black;
-  padding: 12px;
   font-family: inherit;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.1s;
+
+  color: black;
+  background: white;
+  border: 1px solid black;
+  padding: 16px;
+}
+
+.button--primary {
+  color: var(--primary-100);
+  background: var(--primary-500);
+  border: none;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button--primary::before {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: -4px;
+  border-bottom: 1px solid var(--primary-200);
+  border-left: 1px solid var(--primary-200);
+  height: 8px;
+  width: 8px;
+  transition: all 0.3s;
+}
+
+.button--primary::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  height: 8px;
+  width: 8px;
+  border-top: 1px solid var(--primary-200);
+  border-right: 1px solid var(--primary-200);
+  transition: all 0.3s;
+}
+
+.button--primary:hover {
+  background: var(--primary-400);
+}
+
+.button--primary:hover::before {
+  left: -8px;
+  bottom: -8px;
+}
+
+.button--primary:hover::after {
+  top: -8px;
+  right: -8px;
 }
 
 body.grabbing,
@@ -193,7 +240,6 @@ body.grabbing * {
   padding: 6px;
   background: var(--primary-200);
   color: var(--primary-700);
-  text-transform: uppercase;
 }
 
 .sidebar__button--disabled {
@@ -208,63 +254,25 @@ body.grabbing * {
   position: fixed;
   bottom: 32px;
   right: 48px;
-  background: var(--primary-500);
   transform: translateY(-8px);
-  cursor: pointer;
-  transition: all 0.3s;
 }
 
-.finish-setup-button::before {
-  content: "";
-  position: absolute;
-  bottom: -4px;
-  left: -4px;
-  border-bottom: 1px solid var(--primary-200);
-  border-left: 1px solid var(--primary-200);
-  height: 8px;
-  width: 8px;
-  transition: all 0.3s;
-}
-
-.finish-setup-button::after {
-  content: "";
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  height: 8px;
-  width: 8px;
-  border-top: 1px solid var(--primary-200);
-  border-right: 1px solid var(--primary-200);
-  transition: all 0.3s;
-}
-
-.finish-setup-button:not(.finish-setup-button--prohibited):hover {
-  background: var(--primary-400);
-}
-
-.finish-setup-button:not(.finish-setup-button--prohibited):hover::before {
-  left: -8px;
-  bottom: -8px;
-}
-
-.finish-setup-button:not(.finish-setup-button--prohibited):hover::after {
-  top: -8px;
-  right: -8px;
-}
-
-.finish-setup-button--prohibited {
+.finish-setup-button--prohibited,
+.finish-setup-button--prohibited:hover {
   background: var(--primary-800);
   cursor: no-drop;
 }
 
-.finish-setup-button--prohibited::before {
+.finish-setup-button--prohibited::before,
+.finish-setup-button--prohibited:hover::before {
   bottom: 0;
   left: 0;
   border-bottom: 1px solid var(--primary-600);
   border-left: 1px solid var(--primary-600);
 }
 
-.finish-setup-button--prohibited::after {
+.finish-setup-button--prohibited::after,
+.finish-setup-button--prohibited:hover::after {
   top: 0;
   right: 0;
   border-top: 1px solid var(--primary-600);
@@ -429,7 +437,7 @@ body.grabbing .board--user .ship--to-move {
 }
 
 .ship__button:hover {
-  background: var(--primary-100);
+  background: var(--primary-300);
 }
 
 @media only screen and (max-width: 1200px) {
