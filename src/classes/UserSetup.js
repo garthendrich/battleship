@@ -131,6 +131,7 @@ class UserSetup extends PlayerSetup {
     // if dragged ship outside user board (cell)
     if (this._grabbedShip) {
       if (this._prevGrabbedShipOrigin) {
+        this._removeShipFromUserBoard(this._grabbedShip);
         this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
       } else {
         const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
