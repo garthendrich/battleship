@@ -55,6 +55,8 @@ button {
   background: #fff;
   border: 1px solid black;
   padding: 12px;
+  font-family: inherit;
+  font-size: 1rem;
   cursor: pointer;
 }
 
@@ -109,7 +111,7 @@ button:hover {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   transition: transform 0.5s;
 }
@@ -119,7 +121,7 @@ button:hover {
 }
 
 .ship-menu {
-  margin: 32px;
+  margin: 16px 32px;
   padding: 12px 32px;
   border-top: 1px solid var(--primary-500);
   border-bottom: 1px solid var(--primary-500);
@@ -170,6 +172,26 @@ button:hover {
   margin-right: 8px;
 }
 
+.sidebar__button__wrapper {
+  display: flex;
+  margin: 0 32px;
+  padding: 4px 0;
+}
+
+.sidebar__button {
+  margin: auto;
+  width: 50%;
+  border: none;
+  padding: 6px;
+  background: var(--primary-200);
+  color: var(--primary-700);
+  text-transform: uppercase;
+}
+
+.sidebar__button:hover {
+  background: var(--primary-100);
+}
+
 @media only screen and (max-width: 1100px) {
   .ship-menu__item {
     display: block;
@@ -179,16 +201,10 @@ button:hover {
     margin-left: 0;
     margin-top: 12px;
   }
-}
 
-/* .sidebar__button__wrapper {
-  display: flex;
-} */
-
-.sidebar__button {
-  width: 90%;
-  background: var(--primary-300);
-  color: var(--primary-900);
+  .sidebar__button {
+    width: 100%;
+  }
 }
 
 .finish-setup-button {
