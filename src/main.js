@@ -70,9 +70,15 @@ function displayScreenForGameFight() {
 }
 
 function startGameFight() {
-  ai.updateProbabilityTable(user.getShipsToSearch());
+  addLockedStateToUserShips();
   addHoverEffectToAiCells();
+  ai.updateProbabilityTable(user.getShipsToSearch());
   aiBoard.addEventListener("click", aiBoardClickHandler);
+}
+
+function addLockedStateToUserShips() {
+  const ships = userBoard.querySelectorAll(".ship");
+  ships.forEach((ship) => addElementState(ship, "locked"));
 }
 
 function addHoverEffectToAiCells() {

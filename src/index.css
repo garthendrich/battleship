@@ -339,6 +339,7 @@ button {
   transform-origin: top left;
 }
 
+.ship--locked,
 .ship--sunk {
   cursor: default;
 }
