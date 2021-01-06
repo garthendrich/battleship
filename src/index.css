@@ -147,8 +147,12 @@ button:hover {
   width: 200px;
 }
 
-.ship-menu__display::before,
-.ship-menu__display::after {
+.ship-menu__display img {
+  height: 100%;
+  width: 100%;
+}
+
+.ship-menu__display::before {
   content: "";
   display: inline-block;
   position: absolute;
@@ -156,37 +160,9 @@ button:hover {
   left: 0;
   height: 100%;
   width: 100%;
-  background-repeat: no-repeat;
-}
-
-.ship-menu__display::before {
   background-image: url(./assets/menu-grid-display.svg);
   background-size: 100% 100%;
-}
-
-.ship-menu__display::after {
-  background-size: contain;
-  background-position: center;
-}
-
-.ship-menu__item#c .ship-menu__display::after {
-  background-image: url(./assets/carrier.svg);
-}
-
-.ship-menu__item#b .ship-menu__display::after {
-  background-image: url(./assets/battleship.svg);
-}
-
-.ship-menu__item#d .ship-menu__display::after {
-  background-image: url(./assets/destroyer.svg);
-}
-
-.ship-menu__item#s .ship-menu__display::after {
-  background-image: url(./assets/submarine.svg);
-}
-
-.ship-menu__item#p .ship-menu__display::after {
-  background-image: url(./assets/patrol-boat.svg);
+  background-repeat: no-repeat;
 }
 
 .ship-menu__label {
