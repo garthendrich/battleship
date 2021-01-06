@@ -60,6 +60,10 @@ h3 {
   font-size: 1.4rem;
 }
 
+h4 {
+  font-size: 0.8rem;
+}
+
 button {
   font-family: inherit;
   font-size: 1rem;
@@ -171,7 +175,6 @@ body.grabbing * {
   flex-direction: column;
   align-items: stretch;
   justify-content: center;
-  z-index: 2;
 }
 
 .sidebar--hidden {
@@ -442,6 +445,64 @@ body.grabbing .board--user .ship--to-move {
 
 .ship__button:hover {
   background: var(--primary-300);
+}
+
+.inspector {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 8px 24px;
+  background: var(--primary-800);
+  text-transform: none;
+}
+
+.inspector__toggler {
+  margin: 0 8px;
+}
+
+.inspector__column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  margin-right: 24px;
+}
+
+.inspector__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 2px 4px;
+}
+
+.inspector__switch {
+  cursor: pointer;
+}
+
+.inspector__display {
+  height: 12px;
+  width: 12px;
+  border: 1px solid var(--primary-500);
+  margin-right: 8px;
+}
+
+.inspector__display--on {
+  background-color: var(--primary-500);
+}
+
+.inspector__input {
+  height: 1.4rem;
+  width: 3rem;
+  margin-right: 8px;
+  text-align: center;
+  color: inherit;
+  font-family: inherit;
+  background: var(--primary-500);
+  border: none;
 }
 
 .modal {

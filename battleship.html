@@ -65,6 +65,36 @@
 
     <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
 
+    <div class="inspector">
+      <div class="inspector__column">
+        <div class="inspector__item inspector__switch inspector__switch--probability">
+          <div class="inspector__display"></div>
+          <h4>Probability display</h4>
+        </div>
+        <div class="inspector__item inspector__switch inspector__switch--parity">
+          <div class="inspector__display"></div>
+          <h4>Parity filter</h4>
+        </div>
+      </div>
+      <div class="inspector__column">
+        <div class="inspector__item inspector__item--base">
+          <input type="text" class="inspector__input" value="1.2" />
+          <div>
+            <h4>Base probability</h4>
+            <h4>multiplier</h4>
+          </div>
+        </div>
+        <div class="inspector__item inspector__item--increaser">
+          <input type="text" class="inspector__input" value="1.4" />
+          <div>
+            <h4>Track mode probability</h4>
+            <h4>multiplier increaser</h4>
+          </div>
+        </div>
+      </div>
+      <h4 class="inspector__toggler">inspector</h4>
+    </div>
+
     <div class="modal modal--game-over modal--hidden">
       <div class="modal__box">
         <h2 class="modal__dialogue"></h2>
