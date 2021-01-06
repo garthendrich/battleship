@@ -42,14 +42,6 @@ body {
   height: 100%;
 }
 
-body {
-  min-width: max-content;
-  display: flex;
-  justify-content: center;
-  background: var(--background);
-  /* background-image: radial-gradient(circle, #020c15, #0f1d26, #142c37, #183c49, #1b4d5a); */
-}
-
 svg {
   height: 100%;
   width: 100%;
@@ -70,7 +62,7 @@ button {
   color: var(--primary-100);
   background: var(--primary-500);
   border: none;
-  padding: 12px;
+  padding: 12px 16px;
   cursor: pointer;
   transition: all 0.3s;
 }
@@ -111,6 +103,21 @@ button {
 .button--primary:hover::after {
   top: -8px;
   right: -8px;
+}
+
+.button--secondary {
+  border: none;
+  padding: 8px 12px;
+  background: var(--primary-200);
+  color: var(--primary-700);
+}
+
+body {
+  min-width: max-content;
+  display: flex;
+  justify-content: center;
+  background: var(--background);
+  /* background-image: radial-gradient(circle, #020c15, #0f1d26, #142c37, #183c49, #1b4d5a); */
 }
 
 body.grabbing,
@@ -234,12 +241,9 @@ body.grabbing * {
 }
 
 .sidebar__button {
+  padding: 6px;
   margin: auto;
   width: 50%;
-  border: none;
-  padding: 6px;
-  background: var(--primary-200);
-  color: var(--primary-700);
 }
 
 .sidebar__button--disabled {
