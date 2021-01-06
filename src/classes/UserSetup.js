@@ -37,11 +37,13 @@ class UserSetup extends PlayerSetup {
   _shipMenuItemHandler(e) {
     this._resetShipDraggedOutsideBody();
 
-    const clickedShipAlreadyPlaced = elementHasState(e.target.parentNode, "taken");
+    const shipElem = getElementAncestor(e.target, ".ship-menu__item");
+    const clickedShipAlreadyPlaced = elementHasState(shipElem, "taken");
     if (clickedShipAlreadyPlaced) return;
 
     addElementState(this._boardElem, "modifying");
-    this._grabbedShip = e.target.parentNode.id;
+    document.body.classList.add("grabbing");
+    this._grabbedShip = shipElem.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
   }
 
@@ -61,6 +63,11 @@ class UserSetup extends PlayerSetup {
   }
 
   _bodyMouseMoveHandler(e) {
+    if (this._grabbedShip) {
+      const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
+      addElementState(menuShipElem, "taken");
+    }
+
     const grabbedShipMovedToAnotherCell =
       this._canMoveShip &&
       (e.target.id !== this._grabbedShip || this._grabbedShipSegmentIndexUnderCursor !== this._getGrabbedShipSegmentIndexUnderCursor(e));
@@ -69,6 +76,7 @@ class UserSetup extends PlayerSetup {
       this._removeShipData(this._grabbedShip);
 
       addElementState(this._boardElem, "modifying");
+      document.body.classList.add("grabbing");
       const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
       addElementState(grabbedShipElem, "to-move");
     }
@@ -90,12 +98,12 @@ class UserSetup extends PlayerSetup {
     this._canMoveShip = false; // reset
 
     removeElementState(this._boardElem, "modifying");
+    document.body.classList.remove("grabbing");
 
     this._hideAllShipPopups();
 
     const shipJustClicked = this._grabbedShip && elementHasClassName(e.target, "ship") && this._grabbedShip === e.target.id;
     const shipDraggedOnUserBoardCell = this._grabbedShip && getElementAncestor(e.target, ".board--user") && e.target.nodeName === "TD";
-    const shipDraggedOutsideUserBoardCell = this._grabbedShip && this._prevGrabbedShipOrigin;
 
     if (shipJustClicked) {
       const grabbedShipPopup = e.target.firstChild.firstChild;
@@ -119,8 +127,14 @@ class UserSetup extends PlayerSetup {
       return;
     }
 
-    if (shipDraggedOutsideUserBoardCell) {
-      this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
+    // if dragged ship outside user board (cell)
+    if (this._grabbedShip) {
+      if (this._prevGrabbedShipOrigin) {
+        this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
+      } else {
+        const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
+        removeElementState(menuShipElem, "taken");
+      }
 
       this._grabbedShip = this._prevGrabbedShipOrigin = null; // reset
     }
