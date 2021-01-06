@@ -3,6 +3,7 @@
   * replace shipInfo with array of ship instances
   * modify ship randomizer
   * inspector settings
+  * animate on game fight start
   ! bug: ship popups sometimes peeks for a sec when randomizing board
 
  ** THINGS THAT MAY BE CONSIDERED:
@@ -21,7 +22,7 @@ const playButton = document.querySelector(".play-button");
 const userBoard = document.querySelector(".board--user");
 const aiBoard = document.querySelector(".board--ai");
 
-const shipMenu = document.querySelector(".ship-menu");
+const sidebar = document.querySelector(".sidebar");
 const shipMenuItems = document.querySelectorAll(".ship-menu__item");
 const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
@@ -47,10 +48,11 @@ function startGameSetupHandler() {
 
 function displayScreenForGameSetup() {
   removeElementState(aiBoard, "attack");
+  hideElement(aiBoard.parentElement);
   hideElement(homeScreen);
   hideElement(endGameModal);
-  showElement(shipMenu);
-  shipMenuItems.forEach((item) => removeElementState(item, "placed"));
+  showElement(sidebar);
+  shipMenuItems.forEach((item) => removeElementState(item, "taken"));
 }
 
 finishGameSetupButton.addEventListener("click", () => {
@@ -62,7 +64,8 @@ finishGameSetupButton.addEventListener("click", () => {
 });
 
 function displayScreenForGameFight() {
-  hideElement(shipMenu);
+  showElement(aiBoard.parentElement);
+  hideElement(sidebar);
   hideElement(finishGameSetupButton);
 }
 
