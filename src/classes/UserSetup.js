@@ -37,11 +37,11 @@ class UserSetup extends PlayerSetup {
   _shipMenuItemHandler(e) {
     this._resetShipDraggedOutsideBody();
 
-    const clickedShipAlreadyPlaced = elementHasState(e.target, "placed");
+    const clickedShipAlreadyPlaced = elementHasState(e.target.parentNode, "taken");
     if (clickedShipAlreadyPlaced) return;
 
     addElementState(this._boardElem, "modifying");
-    this._grabbedShip = e.target.id;
+    this._grabbedShip = e.target.parentNode.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
   }
 
@@ -210,7 +210,7 @@ class UserSetup extends PlayerSetup {
     cellElem.append(this._createShipElemWithPopup());
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
-    addElementState(menuShipElem, "placed");
+    addElementState(menuShipElem, "taken");
   }
 
   _createShipElemWithPopup() {
@@ -298,7 +298,7 @@ class UserSetup extends PlayerSetup {
     this._shipInfo.orientation[ship] = "h";
 
     const menuShipElem = document.querySelector(`.ship-menu__item#${ship}`);
-    removeElementState(menuShipElem, "placed");
+    removeElementState(menuShipElem, "taken");
   }
 
   _removeShipData(ship) {
