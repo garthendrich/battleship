@@ -3,6 +3,7 @@
   * replace shipInfo with array of ship instances
   * modify ship randomizer
   * inspector settings
+  ! bug: ship popups sometimes peeks for a sec when randomizing board
 
  ** THINGS THAT MAY BE CONSIDERED:
   * current randomizer may be inefficient: rechecks occupied cells

@@ -22,7 +22,8 @@
   --mark: #f2d430;
 
   font-family: "A-Space Light";
-  color: var(--primary-200);
+  color: var(--primary-100);
+  letter-spacing: 0.8px;
   text-transform: uppercase;
 }
 
@@ -32,7 +33,9 @@
   box-sizing: border-box;
   user-select: none;
   outline: none;
-  -webkit-tap-highlight-color: transparent;
+
+  letter-spacing: inherit;
+  text-transform: inherit;
 }
 
 html,
@@ -53,15 +56,13 @@ svg {
 
 button {
   background: #fff;
+  color: inherit;
   border: 1px solid black;
   padding: 12px;
   font-family: inherit;
   font-size: 1rem;
   cursor: pointer;
-}
-
-button:hover {
-  background: #ddd;
+  transition: all 0.1s;
 }
 
 .homescreen {
@@ -209,13 +210,72 @@ button:hover {
 
 .finish-setup-button {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  transition: transform 0.5s;
+  bottom: 32px;
+  right: 32px;
+  background: var(--primary-500);
+  cursor: default;
+  transition: all 0.3s;
+}
+
+.finish-setup-button::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 8px;
+  width: 8px;
+  border-left: 1px solid var(--primary-600);
+  border-bottom: 1px solid var(--primary-600);
+  transition: all 0.3s;
+}
+
+.finish-setup-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 8px;
+  width: 8px;
+  border-right: 1px solid var(--primary-600);
+  border-top: 1px solid var(--primary-600);
+  transition: all 0.3s;
+}
+
+.finish-setup-button:not(.finish-setup-button--hidden) {
+  transform: translateY(-8px);
+  cursor: pointer;
+}
+
+.finish-setup-button:not(.finish-setup-button--hidden)::before {
+  bottom: -4px;
+  left: -4px;
+  border-left: 1px solid var(--primary-200);
+  border-bottom: 1px solid var(--primary-200);
+}
+
+.finish-setup-button:not(.finish-setup-button--hidden)::after {
+  top: -4px;
+  right: -4px;
+  border-top: 1px solid var(--primary-200);
+  border-right: 1px solid var(--primary-200);
+}
+
+.finish-setup-button:not(.finish-setup-button--hidden):hover {
+  background: var(--primary-400);
+}
+
+.finish-setup-button:not(.finish-setup-button--hidden):hover::before {
+  left: -8px;
+  bottom: -8px;
+}
+
+.finish-setup-button:not(.finish-setup-button--hidden):hover::after {
+  top: -8px;
+  right: -8px;
 }
 
 .finish-setup-button--hidden {
-  transform: translateY(200%);
+  background: var(--primary-800);
 }
 
 .board-container {
