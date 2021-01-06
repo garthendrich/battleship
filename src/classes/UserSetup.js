@@ -375,7 +375,7 @@ class UserSetup extends PlayerSetup {
   }
 
   _updateFinishSetupButtonVisibility() {
-    if (this.allShipsPlaced()) showElement(finishGameSetupButton);
-    else hideElement(finishGameSetupButton);
+    if (this.allShipsPlaced()) removeElementState(finishGameSetupButton, "prohibited");
+    else addElementState(finishGameSetupButton, "prohibited");
   }
 }

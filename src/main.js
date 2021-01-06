@@ -109,6 +109,7 @@ function checkWinner() {
   }
 
   aiBoard.removeEventListener("click", aiBoardClickHandler);
+  showElement(finishGameSetupButton);
   canStartNewGame = true;
 }
 

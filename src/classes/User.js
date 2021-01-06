@@ -9,9 +9,7 @@ class User extends UserSetup {
 
   getShipsToSearch() {
     const shipsToSearch = [];
-    for (let ship of this._shipNames) {
-      if (!this.shipSunk(ship)) shipsToSearch.push(ship);
-    }
+    for (let ship of this._shipNames) if (!this.shipSunk(ship)) shipsToSearch.push(ship);
     return shipsToSearch;
   }
 
