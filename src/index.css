@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "A-Space Light";
+  src: url("./assets/A-Space Light Demo.otf");
+}
+
 :root {
   --cell-size: 7vh;
   --popup-height: 50px;
@@ -15,6 +20,10 @@
   --primary-900: #050e11;
   --warning: #f22727;
   --mark: #f2d430;
+
+  font-family: "A-Space Light";
+  color: var(--primary-200);
+  text-transform: uppercase;
 }
 
 * {
@@ -29,7 +38,7 @@
 html,
 body {
   height: 100%;
-  min-width: 1600px;
+  min-width: 100%;
 }
 
 body {
@@ -45,8 +54,7 @@ svg {
 button {
   background: #fff;
   border: 1px solid black;
-  border-radius: 5px;
-  padding: 10px;
+  padding: 12px;
   cursor: pointer;
 }
 
@@ -93,46 +101,118 @@ button:hover {
   max-width: 500px;
 }
 
-.ship-menu {
-  background: white;
+.sidebar {
   z-index: 2;
   position: fixed;
   left: 0;
   top: 0;
   height: 100%;
-  width: 150px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
-  border-right: 1px solid black;
-  transition: transform 1s;
+  transition: transform 0.5s;
 }
 
-.ship-menu--hidden {
+.sidebar--hidden {
   transform: translateX(-100%);
 }
 
-.ship-menu__list {
-  width: 100%;
+.ship-menu {
+  margin: 32px;
+  padding: 12px 32px;
+  border-top: 1px solid var(--primary-500);
+  border-bottom: 1px solid var(--primary-500);
+  background: linear-gradient(transparent, rgba(50, 143, 166, 0.2));
 }
 
-.ship-menu__buttons {
-  display: flex;
-}
-
-.ship-menu__item,
-.ship-menu__button {
+.ship-menu__item {
   list-style-type: none;
-  padding: 10px;
-  margin: 10px;
-  border: 1px solid black;
-  border-radius: 5px;
-  text-align: center;
+  padding: 12px 0;
+  display: flex;
+  align-items: center;
 }
 
-.ship-menu__item--placed {
-  opacity: 0.3;
+.ship-menu__item--taken .ship-menu__display::after {
+  content: none;
+}
+
+.ship-menu__item--taken .ship-menu__label {
+  color: var(--primary-700);
+}
+
+.ship-menu__display {
+  position: relative;
+  height: 40px;
+  width: 200px;
+}
+
+.ship-menu__display::before,
+.ship-menu__display::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+}
+
+.ship-menu__display::before {
+  background-image: url(./assets/menu-grid-display.svg);
+  background-size: 100% 100%;
+}
+
+.ship-menu__display::after {
+  background-size: contain;
+  background-position: center;
+}
+
+.ship-menu__item#c .ship-menu__display::after {
+  background-image: url(./assets/carrier.svg);
+}
+
+.ship-menu__item#b .ship-menu__display::after {
+  background-image: url(./assets/battleship.svg);
+}
+
+.ship-menu__item#d .ship-menu__display::after {
+  background-image: url(./assets/destroyer.svg);
+}
+
+.ship-menu__item#s .ship-menu__display::after {
+  background-image: url(./assets/submarine.svg);
+}
+
+.ship-menu__item#p .ship-menu__display::after {
+  background-image: url(./assets/patrol-boat.svg);
+}
+
+.ship-menu__label {
+  margin-left: 24px;
+  margin-right: 8px;
+}
+
+@media only screen and (max-width: 1100px) {
+  .ship-menu__item {
+    display: block;
+  }
+
+  .ship-menu__label {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+}
+
+/* .sidebar__button__wrapper {
+  display: flex;
+} */
+
+.sidebar__button {
+  width: 90%;
+  background: var(--primary-300);
+  color: var(--primary-900);
 }
 
 .finish-setup-button {
@@ -147,6 +227,7 @@ button:hover {
 }
 
 .board-container {
+  margin-left: 500px; /* ! temporary */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -154,6 +235,8 @@ button:hover {
 }
 
 .board {
+  height: calc(var(--cell-size) * 10);
+  width: calc(var(--cell-size) * 10);
   border-collapse: collapse;
   margin: 0 15px;
 }
