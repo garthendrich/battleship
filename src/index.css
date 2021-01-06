@@ -40,10 +40,10 @@
 html,
 body {
   height: 100%;
-  min-width: 100%;
 }
 
 body {
+  min-width: max-content;
   display: flex;
   justify-content: center;
   background: var(--background);
@@ -202,21 +202,6 @@ button {
   background: var(--primary-100);
 }
 
-@media only screen and (max-width: 1200px) {
-  .ship-menu__item {
-    display: block;
-  }
-
-  .ship-menu__label {
-    margin-left: 0;
-    margin-top: 12px;
-  }
-
-  .sidebar__button {
-    width: 100%;
-  }
-}
-
 .finish-setup-button {
   position: fixed;
   bottom: 32px;
@@ -289,6 +274,7 @@ button {
 
 .board-wrapper {
   height: 100%;
+  padding: 0 48px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -302,7 +288,6 @@ button {
   height: calc(var(--cell-size) * 10);
   width: calc(var(--cell-size) * 10);
   border-collapse: collapse;
-  margin: 0 48px;
 }
 
 .cell {
@@ -320,21 +305,21 @@ button {
   background: var(--warning);
 }
 
-.cell--shot {
-  background: var(--primary-800);
+.cell--miss {
+  background: var(--primary-100);
 }
 
-.board--ai.board--attack .cell:not(.cell--shot):hover {
+.cell--hit {
+  background: var(--warning);
+}
+
+.cell--sunk {
+  background: var(--primary-700);
+}
+
+.cell--can-shoot:hover {
   background: var(--primary-500);
   cursor: pointer;
-}
-
-body.grabbing .board--user .ship {
-  pointer-events: none;
-}
-
-body.grabbing .board--user .ship--to-move {
-  opacity: 0.5;
 }
 
 .ship {
@@ -347,6 +332,23 @@ body.grabbing .board--user .ship--to-move {
   cursor: pointer;
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.ship--vert {
+  transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
+  transform-origin: top left;
+}
+
+.ship--sunk {
+  cursor: default;
+}
+
+body.grabbing .board--user .ship {
+  pointer-events: none;
+}
+
+body.grabbing .board--user .ship--to-move {
+  opacity: 0.5;
 }
 
 .ship#c {
@@ -372,15 +374,6 @@ body.grabbing .board--user .ship--to-move {
 .ship#p {
   width: calc(var(--cell-size) * 2);
   background-image: url(./assets/patrol-boat.svg);
-}
-
-.ship--vert {
-  transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
-  transform-origin: top left;
-}
-
-.ship--sunk {
-  cursor: default;
 }
 
 .ship__popup__wrapper {
@@ -439,4 +432,27 @@ body.grabbing .board--user .ship--to-move {
 
 .ship__button--remove svg {
   fill: #b15042;
+}
+
+@media only screen and (max-width: 1200px) {
+  .sidebar {
+    padding: 0 32px;
+  }
+
+  .ship-menu__item {
+    display: block;
+  }
+
+  .ship-menu__label {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+
+  .sidebar__button {
+    width: 100%;
+  }
+
+  .board-wrapper {
+    padding: 0 32px;
+  }
 }

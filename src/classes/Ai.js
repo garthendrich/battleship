@@ -7,8 +7,8 @@ class Ai extends PlayerSetup {
     this.parityFilterOn = true;
 
     this.baseProbabilityMultiplier = 1.2;
-    this.trackModeMultiplierIncreaser = 1.3;
-    this.willDisplayProbability = true;
+    this.trackModeMultiplierIncreaser = 1.4;
+    this.willDisplayProbability = false;
 
     this._randomizeShips();
   }
