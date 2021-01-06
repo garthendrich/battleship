@@ -45,8 +45,7 @@ class Player {
   }
 
   runFunctionByShipOrientation(orientation, horizontalFunction, verticalFunction) {
-    if (orientation === "h") return horizontalFunction();
-    else if (orientation === "v") return verticalFunction();
+    return orientation === "h" ? horizontalFunction() : verticalFunction();
   }
 
   getShipPlacementTable() {
@@ -57,19 +56,25 @@ class Player {
     return this._shotsTable;
   }
 
+  hasSailingShips() {
+    return Object.values(this._shipInfo.status).some((status) => status !== 0);
+  }
+
   shoot(enemyInstance, [row, column]) {
-    const shipHit = enemyInstance.getShipOnCell([row, column]);
+    const shipHit = enemyInstance.getShipOnShotCell([row, column]);
     if (shipHit) {
       enemyInstance.decrementShipStatus(shipHit);
       this._shotsTable[row][column] = "x";
+
+      if (enemyInstance.isShipSunk(shipHit)) this._recordSunkenShip(enemyInstance.getSunkenShipInfo(shipHit));
     } else {
       this._shotsTable[row][column] = 1;
     }
 
-    enemyInstance.displayEnemyShot(shipHit, [row, column]);
+    enemyInstance.updateEnemyShotsDisplay(this._shotsTable, shipHit);
   }
 
-  getShipOnCell([row, column]) {
+  getShipOnShotCell([row, column]) {
     return this._shipPlacementTable[row][column];
   }
 
@@ -77,17 +82,46 @@ class Player {
     this._shipInfo.status[ship]--;
   }
 
-  displayEnemyShot(shipHit, [row, column]) {
-    const cell = this._boardElem.rows[row].cells[column];
-    if (shipHit) cell.style.background = "#B24B68";
-    else cell.style.background = "#ccc";
-  }
-
-  shipSunk(ship) {
+  isShipSunk(ship) {
     return this._shipInfo.status[ship] === 0;
   }
 
-  hasSailingShips() {
-    return Object.values(this._shipInfo.status).some((status) => status !== 0);
+  getSunkenShipInfo(ship) {
+    if (!this.isShipSunk(ship)) return;
+
+    return {
+      name: ship,
+      origin: this._shipInfo.origin[ship],
+      orientation: this._shipInfo.orientation[ship],
+      length: this._shipInfo.length[ship],
+    };
+  }
+
+  updateEnemyShotsDisplay(shotsTable) {
+    for (let row = 0; row < 10; row++) {
+      for (let column = 0; column < 10; column++) {
+        const cellShotInfo = shotsTable[row][column];
+        const cellElem = this._boardElem.rows[row].cells[column];
+        if (cellShotInfo === 0) continue;
+
+        removeElementState(cellElem, "can-shoot");
+        if (cellShotInfo === 1) addElementState(cellElem, "miss");
+        else if (cellShotInfo === "x") addElementState(cellElem, "hit");
+        else if (cellShotInfo === "o") addElementState(cellElem, "sunk");
+      }
+    }
+  }
+
+  _recordSunkenShip(shipInfo) {
+    const [row, column] = shipInfo.origin;
+    this.runFunctionByShipOrientation(
+      shipInfo.orientation,
+      () => {
+        for (let i = 0; i < shipInfo.length; i++) this._shotsTable[row][column + i] = "o";
+      },
+      () => {
+        for (let i = 0; i < shipInfo.length; i++) this._shotsTable[row + i][column] = "o";
+      }
+    );
   }
 }
