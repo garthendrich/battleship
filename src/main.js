@@ -47,7 +47,6 @@ function startGameSetupHandler() {
 }
 
 function displayScreenForGameSetup() {
-  removeElementState(aiBoard, "attack");
   hideElement(aiBoard.parentElement);
   hideElement(homeScreen);
   hideElement(endGameModal);
@@ -109,6 +108,7 @@ function checkWinner() {
   }
 
   aiBoard.removeEventListener("click", aiBoardClickHandler);
+  addElementState(finishGameSetupButton, "prohibited");
   showElement(finishGameSetupButton);
   canStartNewGame = true;
 }
