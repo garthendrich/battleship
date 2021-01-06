@@ -4,38 +4,37 @@ function displayProbability() {
   const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
-      if (ai.getShotsTable()[row][column] === "x") userBoard.rows[row].cells[column].style.background = "#B24B68";
-      else if (ai.getShotsTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = "#ccc";
-      else if (ai.getProbabilityTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = null;
-      else {
+      let style = null;
+      if (ai.getProbabilityTable()[row][column] > 1) {
         const opacity = ai.getProbabilityTable()[row][column] / Math.max(...ai.getProbabilityTable().flat());
-        userBoard.rows[row].cells[column].style.background = `rgba(230, 111, 47, ${opacity})`;
+        style = `rgba(242, 212, 48, ${opacity})`;
       }
+      userBoard.rows[row].cells[column].style.background = style;
     }
   }
 }
 
-function displayPresumedShipAndCurrentSegment(ship, [row, column], orientation, [segmentRow, segmentColumn]) {
-  const shipLength = user._shipInfo.length[ship];
-  for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = null;
+// function displayPresumedShipAndCurrentSegment(ship, [row, column], orientation, [segmentRow, segmentColumn]) {
+//   const shipLength = user._shipInfo.length[ship];
+//   for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = null;
 
-  user.runFunctionByShipOrientation(
-    orientation,
-    () => {
-      for (let i = column; i < column + shipLength; i++) userBoard.rows[row].cells[i].style.background = "yellow";
-    },
-    () => {
-      for (let i = row; i < row + shipLength; i++) userBoard.rows[i].cells[column].style.background = "yellow";
-    }
-  );
+//   user.runFunctionByShipOrientation(
+//     orientation,
+//     () => {
+//       for (let i = column; i < column + shipLength; i++) userBoard.rows[row].cells[i].style.background = "yellow";
+//     },
+//     () => {
+//       for (let i = row; i < row + shipLength; i++) userBoard.rows[i].cells[column].style.background = "yellow";
+//     }
+//   );
 
-  userBoard.rows[segmentRow].cells[segmentColumn].style.background = "orange";
+//   userBoard.rows[segmentRow].cells[segmentColumn].style.background = "orange";
 
-  for (let row = 0; row < 10; row++)
-    for (let column = 0; column < 10; column++)
-      if (ai.getShotsTable()[row][column] === "x") userBoard.rows[row].cells[column].style.boxShadow = "0 0 0 5px #B24B68 inset";
-      else if (ai.getShotsTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = "#ccc";
-}
+//   for (let row = 0; row < 10; row++)
+//     for (let column = 0; column < 10; column++)
+//       if (ai.getShotsTable()[row][column] === "x") userBoard.rows[row].cells[column].style.boxShadow = "0 0 0 5px #B24B68 inset";
+//       else if (ai.getShotsTable()[row][column] === 1) userBoard.rows[row].cells[column].style.background = "#ccc";
+// }
 
 // inspector functions -------------------------
 
