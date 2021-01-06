@@ -198,7 +198,7 @@ class UserSetup extends PlayerSetup {
     this._removeAllCellHighlights(); // reset
 
     const [cellOriginRow, cellOriginColumn] = this._grabbedShipNewOrigin;
-    const placeState = this._grabbedShipOverlapOtherShips() ? "cannot-place" : "can-place";
+    const placeState = this._grabbedShipOverlapOtherShips() ? "occupied" : "unoccupied";
     this.runFunctionByShipOrientation(
       this._shipInfo.orientation[this._grabbedShip],
       () => {
@@ -217,8 +217,8 @@ class UserSetup extends PlayerSetup {
   _removeAllCellHighlights() {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
-        removeElementState(this._boardElem.rows[row].cells[column], "can-place");
-        removeElementState(this._boardElem.rows[row].cells[column], "cannot-place");
+        removeElementState(this._boardElem.rows[row].cells[column], "unoccupied");
+        removeElementState(this._boardElem.rows[row].cells[column], "occupied");
       }
     }
   }

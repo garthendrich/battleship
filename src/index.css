@@ -308,15 +308,15 @@ button {
 .cell {
   height: var(--cell-size);
   width: var(--cell-size);
-  position: relative;
   border: 1px solid var(--primary-600);
+  position: relative;
 }
 
-.board--user .cell--can-place {
+.board--user .cell--unoccupied {
   background: var(--primary-500);
 }
 
-.board--user .cell--cannot-place {
+.board--user .cell--occupied {
   background: var(--warning);
 }
 
