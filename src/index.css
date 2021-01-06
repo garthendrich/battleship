@@ -194,6 +194,10 @@ button {
   text-transform: uppercase;
 }
 
+.sidebar__button--disabled {
+  pointer-events: none;
+}
+
 .sidebar__button:hover {
   background: var(--primary-100);
 }
@@ -322,11 +326,11 @@ button {
   cursor: pointer;
 }
 
-.board--user.board--modifying .ship {
+body.grabbing .board--user .ship {
   pointer-events: none;
 }
 
-.board--user.board--modifying .ship--to-move {
+body.grabbing .board--user .ship--to-move {
   opacity: 0.5;
 }
 

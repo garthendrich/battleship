@@ -41,8 +41,9 @@ class UserSetup extends PlayerSetup {
     const clickedShipAlreadyPlaced = elementHasState(shipElem, "taken");
     if (clickedShipAlreadyPlaced) return;
 
-    addElementState(this._boardElem, "modifying");
+    this._disableSetupButtons();
     document.body.classList.add("grabbing");
+
     this._grabbedShip = shipElem.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
   }
@@ -75,8 +76,9 @@ class UserSetup extends PlayerSetup {
       this._canMoveShip = false; // reset; pass only once
       this._removeShipData(this._grabbedShip);
 
-      addElementState(this._boardElem, "modifying");
+      this._disableSetupButtons();
       document.body.classList.add("grabbing");
+
       const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
       addElementState(grabbedShipElem, "to-move");
     }
@@ -97,7 +99,7 @@ class UserSetup extends PlayerSetup {
   _bodyMouseUpHandler(e) {
     this._canMoveShip = false; // reset
 
-    removeElementState(this._boardElem, "modifying");
+    this._enableSetupButtons();
     document.body.classList.remove("grabbing");
 
     this._hideAllShipPopups();
@@ -115,7 +117,6 @@ class UserSetup extends PlayerSetup {
 
     if (shipDraggedOnUserBoardCell) {
       if (this._prevGrabbedShipOrigin) this._removeShipFromUserBoard(this._grabbedShip);
-
       this._removeAllCellHighlights();
 
       if (!this._grabbedShipOverlapOtherShips()) this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
@@ -215,6 +216,18 @@ class UserSetup extends PlayerSetup {
         removeElementState(this._boardElem.rows[row].cells[column], "cannot-place");
       }
     }
+  }
+
+  _disableSetupButtons() {
+    addElementState(randomizeBoardButton, "disabled");
+    addElementState(resetBoardButton, "disabled");
+    addElementState(finishGameSetupButton, "disabled");
+  }
+
+  _enableSetupButtons() {
+    removeElementState(randomizeBoardButton, "disabled");
+    removeElementState(resetBoardButton, "disabled");
+    removeElementState(finishGameSetupButton, "disabled");
   }
 
   _addGrabbedShipToOrigin([row, column]) {
