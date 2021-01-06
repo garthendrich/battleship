@@ -49,6 +49,10 @@ body {
   /* background-image: radial-gradient(circle, #020c15, #0f1d26, #142c37, #183c49, #1b4d5a); */
 }
 
+body.grabbing * {
+  cursor: grabbing;
+}
+
 svg {
   height: 80%;
   width: 80%;
@@ -303,12 +307,10 @@ button {
 
 .board--user .cell--can-place {
   background: var(--primary-600);
-  cursor: grabbing;
 }
 
 .board--user .cell--cannot-place {
   background: var(--warning);
-  cursor: grabbing;
 }
 
 .cell--shot {
