@@ -121,6 +121,10 @@ class UserSetup extends PlayerSetup {
 
       if (!this._grabbedShipOverlapOtherShips()) this._addGrabbedShipToOrigin(this._grabbedShipNewOrigin);
       else if (this._prevGrabbedShipOrigin) this._addGrabbedShipToOrigin(this._prevGrabbedShipOrigin);
+      else {
+        const menuShipElem = document.querySelector(`.ship-menu__item#${this._grabbedShip}`);
+        removeElementState(menuShipElem, "taken");
+      }
 
       this._updateFinishSetupButtonVisibility();
 
