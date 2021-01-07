@@ -47,7 +47,7 @@ body {
 .tutorial {
   width: 240px;
   position: absolute;
-  top: -60px;
+  bottom: -8px;
   display: flex;
   justify-content: center;
   padding: 12px 16px;
@@ -66,17 +66,37 @@ body {
 }
 
 .tutorial--left {
-  right: calc(100% + 14px);
+  right: calc(100% + 16px);
   animation: lookHerePlsLeft 2s infinite;
 }
 
 .tutorial--right {
-  left: calc(100% + 14px);
+  left: calc(100% + 16px);
   animation: lookHerePlsRight 2s infinite;
 }
 
+.tutorial--left::before,
+.tutorial--right::before {
+  content: "";
+  position: absolute;
+  bottom: 15%;
+  box-sizing: content-box;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+}
+
+.tutorial--left::before {
+  left: 100%;
+  border-left: 12px solid var(--primary-300);
+}
+
+.tutorial--right::before {
+  right: 100%;
+  border-right: 12px solid var(--primary-300);
+}
+
 .tutorial--board {
-  top: 50%;
+  bottom: 50%;
   right: 100%;
 }
 
