@@ -333,6 +333,11 @@ body.grabbing .board--user .ship--to-move {
   background: none;
 }
 
+.inspector--hidden {
+  background: none;
+  display: none;
+}
+
 .inspector__button {
   padding: 4px 8px;
   cursor: pointer;
