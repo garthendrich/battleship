@@ -22,7 +22,7 @@
             <img src="./src/assets/carrier.svg" />
           </div>
           <div class="ship-menu__label">Carrier</div>
-          <div class="tutorial tutorial--0">Hold a ship and drag it onto the board</div>
+          <div class="tutorial tutorial--right tutorial--0">Hold a ship and drag it onto the board</div>
         </li>
         <li class="ship-menu__item" id="b">
           <div class="ship-menu__display">
@@ -52,6 +52,7 @@
 
       <div class="sidebar__button__wrapper">
         <button class="sidebar__button button--secondary ship-menu__button--random"><p>Randomize</p></button>
+        <div class="tutorial tutorial--right tutorial--1">You can randomize or reset the board using these buttons</div>
       </div>
 
       <div class="sidebar__button__wrapper">
@@ -69,7 +70,10 @@
       <table class="board board--ai"></table>
     </div>
 
-    <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
+    <div class="finish-setup-button__wrapper">
+      <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
+      <div class="tutorial tutorial--left tutorial--2">You can only click start button if every ship is placed</div>
+    </div>
 
     <div class="inspector inspector--closed inspector--hidden">
       <div class="inspector__column">
