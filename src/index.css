@@ -5,6 +5,10 @@ body {
   background-image: linear-gradient(to top, #172c32, #050e11);
 }
 
+.body--tutorial * {
+  pointer-events: none;
+}
+
 .body--grabbing,
 .body--grabbing * {
   cursor: grabbing;
@@ -39,6 +43,45 @@ body {
   display: none;
 }
 
+.tutorial {
+  height: 120px;
+  width: 240px;
+  position: absolute;
+  top: calc(50% - 60px);
+  right: -120%;
+  display: flex;
+  justify-content: center;
+  padding: 12px 16px;
+  line-height: 1.2rem;
+  font-size: 0.8rem;
+  text-align: center;
+  background: linear-gradient(rgba(25, 72, 83, 0.9), rgba(50, 143, 166, 0.9));
+  animation: lookHerePls 2s infinite;
+}
+
+.tutorial::after {
+  content: "click anywhere to continue";
+  margin: 8px 16px;
+  position: absolute;
+  bottom: 0;
+  font-size: 0.6rem;
+}
+
+@keyframes lookHerePls {
+  0% {
+    transform: translateX(0);
+    animation-timing-function: ease-out;
+  }
+  50% {
+    transform: translateX(5%);
+    animation-timing-function: ease-in;
+  }
+  100% {
+    transform: translateX(0);
+    animation-timing-function: ease-out;
+  }
+}
+
 .sidebar {
   height: 100%;
   padding: 0 48px;
@@ -61,6 +104,7 @@ body {
 }
 
 .ship-menu__item {
+  position: relative;
   list-style-type: none;
   margin: 12px 0;
   display: flex;
