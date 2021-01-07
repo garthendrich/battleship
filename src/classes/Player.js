@@ -1,7 +1,7 @@
 class Player {
   constructor(boardName) {
-    this._boardElem = document.querySelector(boardName);
-    this._boardElem.innerHTML = `<tr>${`<td class="cell"></td>`.repeat(10)}</tr>`.repeat(10);
+    this.boardElem = document.querySelector(boardName);
+    this.boardElem.innerHTML = `<tr>${`<td class="cell"></td>`.repeat(10)}</tr>`.repeat(10);
 
     this._shipPlacementTable = Array(10)
       .fill()
@@ -76,6 +76,9 @@ class Player {
     }
 
     enemyInstance.updateEnemyShotsDisplay(this._shotsTable, shipHit);
+
+    const cellElem = enemyInstance.boardElem.rows[row].cells[column];
+    cellElem.innerHTML += `<div class="cell__tag"><h4>Hit</h4></div>`;
   }
 
   getShipOnShotCell([row, column]) {
@@ -105,7 +108,7 @@ class Player {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
         const cellShotInfo = shotsTable[row][column];
-        const cellElem = this._boardElem.rows[row].cells[column];
+        const cellElem = this.boardElem.rows[row].cells[column];
         if (cellShotInfo === 0) continue;
 
         removeElementState(cellElem, "can-shoot");

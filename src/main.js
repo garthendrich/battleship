@@ -38,7 +38,6 @@ tutorialButton.addEventListener("click", () => {
 });
 
 function showNextTutorialPopup() {
-  console.log(tutorialPart);
   if (tutorialPart === 0 || tutorialPart === 4) addElementState(document.body, "tutorial");
 
   const prevTutorialPopup = document.querySelector(`.tutorial--${tutorialPart - 1}`);
