@@ -323,7 +323,7 @@ body.grabbing .board--user .ship--to-move {
   display: flex;
   align-items: stretch;
   justify-content: center;
-  padding: 8px 24px;
+  padding: 4px 24px;
   background: var(--primary-800);
   text-transform: none;
   transition: background 0.3s;
@@ -362,6 +362,11 @@ body.grabbing .board--user .ship--to-move {
   justify-content: flex-start;
   flex: 1;
   padding: 2px 4px;
+  transition: opacity 0.15s;
+}
+
+.inspector__item--inactive {
+  opacity: 0.1;
 }
 
 .inspector__switch {
