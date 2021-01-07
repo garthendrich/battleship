@@ -4,7 +4,7 @@ class Ai extends PlayerSetup {
 
     this._probabilityTable;
     this._isTrackMode = false;
-    this.parityFilterOn = true;
+    this.hasParityFilter = true;
 
     this.baseProbabilityMultiplier = 1.2;
     this.trackModeMultiplierIncreaser = 1.4;
@@ -46,7 +46,7 @@ class Ai extends PlayerSetup {
       this._addProbabilityForShipByOrientation(ship, "v");
     }
 
-    if (this.willDisplayProbability) displayProbability();
+    if (this.willDisplayProbability) updateProbabilityDisplay();
   }
 
   _updateTrackModeState() {
@@ -85,7 +85,7 @@ class Ai extends PlayerSetup {
           const segmentCellIsHit = this._shotsTable[segmentRow][segmentColumn] === "x";
           if (this._isTrackMode && (segmentCellIsHit || !segmentCellNearHit)) continue;
 
-          if (!this._isTrackMode && this.parityFilterOn && this._isCellOddParity([segmentRow, segmentColumn])) continue;
+          if (!this._isTrackMode && this.hasParityFilter && this._isCellOddParity([segmentRow, segmentColumn])) continue;
           this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
