@@ -77,8 +77,9 @@ class Player {
 
     enemyInstance.updateEnemyShotsDisplay(this._shotsTable, shipHit);
 
+    const cellTagLabel = shipHit ? "hit" : "miss";
     const cellElem = enemyInstance.boardElem.rows[row].cells[column];
-    cellElem.innerHTML += `<div class="cell__tag"><h4>Hit</h4></div>`;
+    cellElem.innerHTML += `<div class="cell__tag cell__tag--${cellTagLabel}"><h4>${cellTagLabel}</h4></div>`;
   }
 
   getShipOnShotCell([row, column]) {
