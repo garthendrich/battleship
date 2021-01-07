@@ -1,0 +1,461 @@
+body {
+  min-width: max-content;
+  display: flex;
+  justify-content: center;
+  background-image: linear-gradient(to top, #172c32, #050e11);
+  /* background-image: linear-gradient(to top, #328fa6, #2a6c7d, #214a57, #172c32, #050e11); */
+}
+
+body.grabbing,
+body.grabbing * {
+  cursor: grabbing;
+}
+
+.homescreen {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: var(--primary-200);
+  background-image: radial-gradient(circle, #050e11, #172c32, #328fa6);
+  background-size: 200% 250%;
+  background-position: center bottom;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.homescreen__title {
+  margin-bottom: 64px;
+}
+
+.homescreen--hidden {
+  display: none;
+}
+
+.sidebar {
+  height: 100%;
+  padding: 0 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+}
+
+.sidebar--hidden {
+  display: none;
+}
+
+.ship-menu {
+  margin: 16px 0;
+  padding: 16px 32px;
+  border-top: 1px solid var(--primary-500);
+  border-bottom: 1px solid var(--primary-500);
+  background: linear-gradient(transparent, rgba(50, 143, 166, 0.2));
+}
+
+.ship-menu__item {
+  list-style-type: none;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  cursor: grab;
+}
+
+.ship-menu__display {
+  position: relative;
+  height: 40px;
+  width: 200px;
+}
+
+.ship-menu__display img {
+  height: 100%;
+  width: 100%;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.ship-menu__item--taken .ship-menu__display img {
+  opacity: 0;
+}
+
+.ship-menu__display::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-image: url(./assets/menu-grid-display.svg);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.ship-menu__label {
+  margin-left: 24px;
+  margin-right: 8px;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.ship-menu__item--taken .ship-menu__label {
+  color: var(--primary-700);
+}
+
+.sidebar__button__wrapper {
+  display: flex;
+  padding: 4px 0;
+}
+
+.sidebar__button {
+  padding: 6px;
+  margin: auto;
+  width: 50%;
+}
+
+.sidebar__button--disabled {
+  pointer-events: none;
+}
+
+.sidebar__button:hover {
+  background: var(--primary-100);
+}
+
+.finish-setup-button {
+  position: fixed;
+  bottom: 32px;
+  right: 48px;
+  transform: translateY(-8px);
+}
+
+.finish-setup-button--prohibited,
+.finish-setup-button--prohibited:hover {
+  background: var(--primary-800);
+  cursor: no-drop;
+}
+
+.finish-setup-button--prohibited::before,
+.finish-setup-button--prohibited:hover::before {
+  bottom: 0;
+  left: 0;
+  border-bottom: 1px solid var(--primary-600);
+  border-left: 1px solid var(--primary-600);
+}
+
+.finish-setup-button--prohibited::after,
+.finish-setup-button--prohibited:hover::after {
+  top: 0;
+  right: 0;
+  border-top: 1px solid var(--primary-600);
+  border-right: 1px solid var(--primary-600);
+}
+
+.finish-setup-button--hidden {
+  transform: translateY(300%);
+  transition: 1s;
+}
+
+.board-wrapper {
+  height: 100%;
+  padding: 0 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.board-wrapper--hidden {
+  display: none;
+}
+
+.board-wrapper__label {
+  margin-bottom: 16px;
+}
+
+.board {
+  height: calc(var(--cell-size) * 10);
+  width: calc(var(--cell-size) * 10);
+  border-collapse: collapse;
+}
+
+.cell {
+  height: var(--cell-size);
+  width: var(--cell-size);
+  border: 1px solid var(--primary-600);
+  position: relative;
+  transition: background 0.15s;
+}
+
+.board--user .cell--unoccupied {
+  background: var(--primary-500);
+}
+
+.board--user .cell--occupied {
+  background: var(--warning);
+}
+
+.cell--miss {
+  background: var(--primary-100);
+}
+
+.cell--hit {
+  background: var(--warning);
+}
+
+.cell--sunk {
+  background: var(--primary-700);
+}
+
+.cell--can-shoot:hover {
+  background: var(--primary-500);
+  cursor: pointer;
+}
+
+.ship {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--cell-size);
+  fill: var(--primary-600);
+  z-index: 1;
+  cursor: pointer;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.ship--vert {
+  transform: rotate(90deg) translateY(calc(var(--cell-size) * -1));
+  transform-origin: top left;
+}
+
+.ship--locked,
+.ship--sunk {
+  cursor: default;
+}
+
+body.grabbing .board--user .ship {
+  pointer-events: none;
+}
+
+body.grabbing .board--user .ship--to-move {
+  opacity: 0.5;
+}
+
+.ship#c {
+  width: calc(var(--cell-size) * 5);
+  background-image: url(./assets/carrier.svg);
+}
+
+.ship#b {
+  width: calc(var(--cell-size) * 4);
+  background-image: url(./assets/battleship.svg);
+}
+
+.ship#d {
+  width: calc(var(--cell-size) * 3);
+  background-image: url(./assets/destroyer.svg);
+}
+
+.ship#s {
+  width: calc(var(--cell-size) * 3);
+  background-image: url(./assets/submarine.svg);
+}
+
+.ship#p {
+  width: calc(var(--cell-size) * 2);
+  background-image: url(./assets/patrol-boat.svg);
+}
+
+.ship__popup__wrapper {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + var(--popup-gap));
+  left: calc(50% - var(--popup-width) / 2);
+  height: var(--popup-height);
+  width: var(--popup-width);
+  pointer-events: none;
+}
+
+.ship--vert .ship__popup__wrapper {
+  transform: rotate(-90deg);
+  transform-origin: top left;
+  left: calc(0px - var(--popup-gap) - var(--popup-height));
+  top: calc(50% + var(--popup-width) / 2);
+  bottom: auto;
+}
+
+.ship__popup {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-200);
+  pointer-events: auto;
+  transition: all 0.15s;
+  transform-origin: bottom center;
+}
+
+.ship__popup--hidden {
+  transform: scale(0);
+}
+
+.ship__button {
+  height: var(--popup-height);
+  width: var(--popup-height);
+  fill: var(--primary-700);
+  padding: 5%;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ship__button:hover {
+  background: var(--primary-300);
+}
+
+.inspector {
+  position: fixed;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 4px 24px;
+  background: var(--primary-800);
+  text-transform: none;
+  transition: background 0.3s;
+}
+
+.inspector--closed {
+  background: none;
+}
+
+.inspector--hidden {
+  background: none;
+  display: none;
+}
+
+.inspector__button {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.inspector__column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin-right: 24px;
+  transition: opacity 0.3s;
+}
+
+.inspector--closed .inspector__column {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.inspector__item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  padding: 2px 4px;
+  transition: opacity 0.15s;
+}
+
+.inspector__item--inactive {
+  opacity: 0.1;
+}
+
+.inspector__switch {
+  cursor: pointer;
+}
+
+.inspector__display {
+  height: 12px;
+  width: 12px;
+  border: 1px solid var(--primary-500);
+  margin-right: 8px;
+  transition: background 0.15s;
+}
+
+.inspector__item--on .inspector__display {
+  background-color: var(--primary-500);
+}
+
+.inspector__input {
+  height: 22.4px;
+  width: 32px;
+  margin-right: 8px;
+}
+
+.inspector__text__container {
+  margin-right: 8px;
+}
+
+.inspector__reset {
+  font-size: 0.8rem;
+  padding: 0 4px;
+  margin-left: auto;
+  display: block;
+}
+
+.modal {
+  height: 100vh;
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+
+.modal--hidden {
+  display: none;
+}
+
+.modal__box {
+  background-image: linear-gradient(rgba(25, 72, 83, 0.9), rgba(15, 43, 50, 0.9));
+  padding: 48px 64px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal__dialogue {
+  margin-bottom: 32px;
+}
+
+@media only screen and (max-width: 1200px) {
+  .sidebar {
+    padding: 0 32px;
+  }
+
+  .ship-menu__item {
+    display: block;
+  }
+
+  .ship-menu__label {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+
+  .sidebar__button {
+    width: 100%;
+  }
+
+  .board-wrapper {
+    padding: 0 32px;
+  }
+}

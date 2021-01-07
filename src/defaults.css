@@ -1,0 +1,141 @@
+@font-face {
+  font-family: "A-Space Light";
+  src: url("./assets/A-Space Light Demo.otf");
+}
+
+:root {
+  --cell-size: 7vh;
+  --popup-height: 48px;
+  --popup-gap: 4px;
+  --popup-width: calc(var(--popup-height) * 2 + 8px);
+  --background: #050e11;
+  --primary-100: #ebf4f6;
+  --primary-200: #c2dde4;
+  --primary-300: #99c7d3;
+  --primary-400: #5ba5b8;
+  --primary-500: #328fa6;
+  --primary-600: #287285;
+  --primary-700: #194853;
+  --primary-800: #0f2b32;
+  --warning: #f22727;
+  --mark: #f2d430;
+
+  font-family: "A-Space Light";
+  color: var(--primary-100);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+  outline: none;
+
+  text-transform: inherit;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+h1 {
+  font-size: 3.6rem;
+  letter-spacing: 2.4px;
+}
+
+h2 {
+  font-size: 2.5rem;
+  letter-spacing: 1.6px;
+}
+
+h3 {
+  font-size: 1.4rem;
+}
+
+h4 {
+  font-size: 0.8rem;
+}
+
+svg {
+  height: 100%;
+  width: 100%;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+
+  color: black;
+  background: white;
+  border: 1px solid black;
+  padding: 16px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+
+  background: transparent;
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  cursor: pointer;
+  background: var(--primary-500);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  height: 20px;
+  width: 8px;
+  background: var(--primary-100);
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -8px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 4px;
+  cursor: pointer;
+  background: var(--primary-500);
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 20px;
+  width: 8px;
+  background: var(--primary-100);
+  cursor: pointer;
+}
+
+input[type="range"]::-ms-track {
+  height: 4px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background: var(--primary-500);
+}
+
+input[type="range"]::-ms-fill-upper {
+  background: var(--primary-500);
+}
+
+input[type="range"]::-ms-thumb {
+  height: 20px;
+  width: 8px;
+  background: var(--primary-100);
+  cursor: pointer;
+}
+
+input[type="range"]:focus::-ms-fill-lower {
+  background: var(--primary-500);
+}
