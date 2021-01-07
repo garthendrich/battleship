@@ -12,7 +12,21 @@
     <div class="homescreen">
       <h1 class="homescreen__title">Battleship</h1>
       <button class="play-button button--primary"><h3>Play</h3></button>
-      <button class="tutorial-button button--primary"><h3>Tutorial</h3></button>
+      <button class="how-to-play-button button--primary"><h3>How to play</h3></button>
+    </div>
+
+    <div class="modal modal--how-to-play modal--hidden">
+      <div class="modal__box">
+        <h2 class="modal__title">How to play</h2>
+        <p class="modal__text">
+          Battleship is a board game where two players playing against each other will attempt to guess the location of the other person's ships and
+          sink them.
+        </p>
+        <p class="modal__text">The first to sink all their opponent's ships wins.</p>
+        <div class="modal__buttons">
+          <button class="button--primary">Lez get it!</button>
+        </div>
+      </div>
     </div>
 
     <div class="sidebar">
@@ -51,7 +65,7 @@
       </ul>
 
       <div class="sidebar__button__wrapper">
-        <button class="sidebar__button button--secondary ship-menu__button--random"><p>Randomize</p></button>
+        <button class="sidebar__button button--secondary ship-menu__button--random">Randomize</button>
         <div class="tutorial tutorial--hidden tutorial--right tutorial--1">You can modify the board using these buttons</div>
       </div>
 
@@ -116,7 +130,7 @@
 
     <div class="modal modal--game-over modal--hidden">
       <div class="modal__box">
-        <h2 class="modal__dialogue"></h2>
+        <h2 class="modal__title"></h2>
         <div class="modal__buttons">
           <button class="play-again-button button--primary">Play Again</button>
         </div>
