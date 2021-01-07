@@ -7,18 +7,23 @@ let willDisplayProbability = false;
 
 let user, ai;
 let canStartNewGame = true;
+let isTutorialMode = false;
+let tutorialPart = 0;
 
 const homeScreen = document.querySelector(".homescreen");
 const playButton = document.querySelector(".play-button");
+const tutorialButton = document.querySelector(".tutorial-button");
 
-const userBoard = document.querySelector(".board--user");
-const aiBoard = document.querySelector(".board--ai");
+const tutorialPopups = document.querySelectorAll(".tutorial");
 
 const sidebar = document.querySelector(".sidebar");
 const shipMenuItems = document.querySelectorAll(".ship-menu__item");
 const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 const finishGameSetupButton = document.querySelector(".finish-setup-button");
+
+const userBoard = document.querySelector(".board--user");
+const aiBoard = document.querySelector(".board--ai");
 
 const inspectorSettings = document.querySelector(".inspector");
 const gameOverModal = document.querySelector(".modal--game-over");
@@ -27,6 +32,31 @@ const playAgainButton = document.querySelector(".play-again-button");
 
 playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
+tutorialButton.addEventListener("click", () => {
+  isTutorialMode = true;
+  tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
+  showNextTutorialPopup();
+  startGameSetupHandler();
+});
+
+function showNextTutorialPopup() {
+  console.log(tutorialPart);
+  if (tutorialPart === 0) addElementState(document.body, "tutorial");
+
+  const prevTutorialPopup = document.querySelector(`.tutorial--${tutorialPart - 1}`);
+  prevTutorialPopup && hideElement(prevTutorialPopup);
+
+  if (tutorialPart === 3) {
+    tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
+    removeElementState(document.body, "tutorial");
+    return;
+  }
+
+  const currTutorialPopup = document.querySelector(`.tutorial--${tutorialPart}`);
+  showElement(currTutorialPopup);
+
+  tutorialPart++;
+}
 
 function startGameSetupHandler() {
   if (!canStartNewGame) return;
