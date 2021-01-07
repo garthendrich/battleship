@@ -38,6 +38,30 @@ function displayProbability() {
 
 // inspector functions -------------------------
 
+const inspectorButton = document.querySelector(".inspector__button");
+const inspectorContainer = document.querySelector(".inspector");
+inspectorButton.addEventListener("click", () => {
+  elementHasState(inspectorContainer, "hidden") ? showElement(inspectorContainer) : hideElement(inspectorContainer);
+});
+
+const probabilityDisplayToggler = document.querySelector(".inspector__switch--probability");
+probabilityDisplayToggler.addEventListener("click", () => {
+  ai.willDisplayProbability = !ai.willDisplayProbability;
+
+  if (ai.willDisplayProbability) {
+    addElementState(probabilityDisplayToggler, "on");
+    displayProbability();
+  } else {
+    removeElementState(probabilityDisplayToggler, "on");
+    for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = null;
+  }
+});
+
+const parityFilterToggler = document.querySelector(".inspector__switch--parity");
+parityFilterToggler.addEventListener("click", () => {
+  elementHasState(parityFilterToggler, "on") ? removeElementState(parityFilterToggler, "on") : addElementState(parityFilterToggler, "on");
+});
+
 function setProbabilityMultiplier(multiplier) {
   if (multiplier < 1.01) {
     console.log("Multiplier must be greater than or equal to 1.01");
@@ -49,18 +73,4 @@ function setProbabilityMultiplier(multiplier) {
   }
   ai.probabilityMultiplier = multiplier;
   ai.updateProbabilityTable();
-}
-
-function toggleProbabilityDisplay() {
-  ai.willDisplayProbability = !ai.willDisplayProbability;
-
-  if (ai.willDisplayProbability) displayProbability();
-  else {
-    for (let row = 0; row < 10; row++) {
-      for (let column = 0; column < 10; column++) {
-        if (ai.getShotsTable()[row][column]) user.updateEnemyShotsDisplay(user.getShipPlacementTable()[row][column], row, column);
-        else userBoard.rows[row].cells[column].style.background = null;
-      }
-    }
-  }
 }

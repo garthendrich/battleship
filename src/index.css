@@ -314,6 +314,7 @@ body.grabbing * {
   width: var(--cell-size);
   border: 1px solid var(--primary-600);
   position: relative;
+  transition: background 0.15s;
 }
 
 .board--user .cell--unoccupied {
@@ -457,10 +458,16 @@ body.grabbing .board--user .ship--to-move {
   padding: 8px 24px;
   background: var(--primary-800);
   text-transform: none;
+  transition: background 0.3s;
 }
 
-.inspector__toggler {
-  margin: 0 8px;
+.inspector--hidden {
+  background: none;
+}
+
+.inspector__button {
+  padding: 4px 8px;
+  cursor: pointer;
 }
 
 .inspector__column {
@@ -469,6 +476,12 @@ body.grabbing .board--user .ship--to-move {
   align-items: flex-start;
   justify-content: space-evenly;
   margin-right: 24px;
+  transition: opacity 0.3s;
+}
+
+.inspector--hidden .inspector__column {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .inspector__item {
@@ -488,9 +501,10 @@ body.grabbing .board--user .ship--to-move {
   width: 12px;
   border: 1px solid var(--primary-500);
   margin-right: 8px;
+  transition: background 0.15s;
 }
 
-.inspector__display--on {
+.inspector__item--on .inspector__display {
   background-color: var(--primary-500);
 }
 
