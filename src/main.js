@@ -1,16 +1,3 @@
-/*
- TODO:
-  * replace shipInfo with array of ship instances
-  * modify ship randomizer
-  * inspector settings
-  * animate on game fight start
-  ! bug: ship popups sometimes peeks for a sec when randomizing board
-
- ** THINGS THAT MAY BE CONSIDERED:
-  * current randomizer may be inefficient: rechecks occupied cells
-  * better adjust-ship-on-rotate
- */
-
 "use strict";
 
 let user, ai;
