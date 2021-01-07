@@ -72,7 +72,7 @@ function displayScreenForGameFight() {
 function startGameFight() {
   addLockedStateToUserShips();
   addHoverEffectToAiCells();
-  ai.updateProbabilityTable(user.getShipsToSearch());
+  ai.updateProbabilityTable(user.getSailingShips());
   aiBoard.addEventListener("click", aiBoardClickHandler);
 }
 

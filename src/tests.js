@@ -62,7 +62,7 @@ parityFilterToggler.addEventListener("click", () => {
   ai.hasParityFilter = !ai.hasParityFilter;
 
   ai.hasParityFilter ? addElementState(parityFilterToggler, "on") : removeElementState(parityFilterToggler, "on");
-  ai.updateProbabilityTable(user.getShipsToSearch());
+  ai.updateProbabilityTable(user.getSailingShips());
   updateProbabilityDisplay();
 });
 
