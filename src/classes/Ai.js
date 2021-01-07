@@ -4,11 +4,6 @@ class Ai extends PlayerSetup {
 
     this._probabilityTable;
     this._isTrackMode = false;
-    this.parityFilterOn = true;
-
-    this.baseProbabilityMultiplier = 1.2;
-    this.trackModeMultiplierIncreaser = 1.3;
-    this.willDisplayProbability = true;
 
     this._randomizeShips();
   }
@@ -21,24 +16,18 @@ class Ai extends PlayerSetup {
     const [row, column] = this._getRandomShootCoords();
     super.shoot(userInstance, [row, column]);
 
-    const shipHit = userInstance.getShipOnCell([row, column]);
-    if (shipHit && userInstance.shipSunk(shipHit)) this._removeHitsOfSunkenShipInShotsTable(user.getSunkenShipInfo(shipHit));
-
     this._updateTrackModeState();
 
-    this.updateProbabilityTable(userInstance.getShipsToSearch());
+    this.updateProbabilityTable(userInstance.getSailingShips());
   }
 
-  displayEnemyShot(shipHit, [row, column]) {
-    super.displayEnemyShot(shipHit, [row, column]);
+  updateEnemyShotsDisplay(shotsTable, shipHit = null) {
+    super.updateEnemyShotsDisplay(shotsTable);
 
-    const cell = this._boardElem.rows[row].cells[column];
-    addElementState(cell, "shot");
-
-    if (this.shipSunk(shipHit)) {
+    if (shipHit && this.isShipSunk(shipHit)) {
       const [shipOriginRow, shipOriginColumn] = this._shipInfo.origin[shipHit];
       const shipOriginCell = this._boardElem.rows[shipOriginRow].cells[shipOriginColumn];
-      shipOriginCell.append(this._createShip(shipHit, { sunk: true }));
+      shipOriginCell.append(this._createShipElem(shipHit, { sunk: true }));
     }
   }
 
@@ -52,24 +41,21 @@ class Ai extends PlayerSetup {
       this._addProbabilityForShipByOrientation(ship, "v");
     }
 
-    if (this.willDisplayProbability) displayProbability();
+    updateProbabilityDisplay();
   }
 
   _updateTrackModeState() {
     this._isTrackMode = this._shotsTable.flat().includes("x");
-  }
 
-  _removeHitsOfSunkenShipInShotsTable(sunkenShipInfo) {
-    const [row, column] = sunkenShipInfo.origin;
-    this.runFunctionByShipOrientation(
-      sunkenShipInfo.orientation,
-      () => {
-        for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row][column + i] = 1;
-      },
-      () => {
-        for (let i = 0; i < sunkenShipInfo.length; i++) this._shotsTable[row + i][column] = 1;
+    addElementState(multiplierIncreaserInput.parentNode, "inactive");
+    let hits = 0;
+    for (let shot of this._shotsTable.flat()) {
+      if (shot === "x") hits++;
+      if (hits > 1) {
+        removeElementState(multiplierIncreaserInput.parentNode, "inactive");
+        break;
       }
-    );
+    }
   }
 
   _addProbabilityForShipByOrientation(ship, orientation) {
@@ -87,13 +73,13 @@ class Ai extends PlayerSetup {
       for (let column = 0; column <= maxColumn; column++) {
         if (this._presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation)) continue;
 
-        let multiplier = this.baseProbabilityMultiplier;
+        let multiplier = baseProbabilityMultiplier;
         if (this._isTrackMode) {
           const connectedHits = this._getConnectedHitsOnPresumedShipLocation(ship, [row, column], orientation);
           if (connectedHits === 0) continue;
           if (connectedHits > 1) {
-            const multiplierIncreaser = this.trackModeMultiplierIncreaser * connectedHits - 1;
-            multiplier = this.baseProbabilityMultiplier * multiplierIncreaser;
+            const multiplierIncreaser = trackModeMultiplierIncreaser * connectedHits - 1;
+            multiplier = baseProbabilityMultiplier * multiplierIncreaser;
           }
         }
 
@@ -104,8 +90,7 @@ class Ai extends PlayerSetup {
           const segmentCellIsHit = this._shotsTable[segmentRow][segmentColumn] === "x";
           if (this._isTrackMode && (segmentCellIsHit || !segmentCellNearHit)) continue;
 
-          if (!this._isTrackMode && this.parityFilterOn && this._isCellOddParity([segmentRow, segmentColumn])) continue;
-
+          if (!this._isTrackMode && hasParityFilter && this._isCellOddParity([segmentRow, segmentColumn])) continue;
           this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
@@ -116,9 +101,12 @@ class Ai extends PlayerSetup {
     const shipLength = this._shipInfo.length[ship];
     return this.runFunctionByShipOrientation(
       orientation,
-      () => this._shotsTable[row].slice(column, column + shipLength).some((cell) => cell === 1),
       () => {
-        for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === 1) return true;
+        const presumedShipLocationShots = this._shotsTable[row].slice(column, column + shipLength);
+        return presumedShipLocationShots.includes(1) || presumedShipLocationShots.includes("o");
+      },
+      () => {
+        for (let i = row; i < row + shipLength; i++) if (this._shotsTable[i][column] === 1 || this._shotsTable[i][column] === "o") return true;
         return false;
       }
     );
@@ -178,7 +166,7 @@ class Ai extends PlayerSetup {
 
     for (let i = 0; i < 10; i++) {
       for (let j = 0; j < 10; j++) {
-        if (this._probabilityTable[i][j] == 1) continue;
+        if (this._probabilityTable[i][j] === 1) continue;
         random -= this._probabilityTable[i][j] * 1000;
         if (random <= 0) return [i, j];
       }
