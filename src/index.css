@@ -6,7 +6,7 @@ body {
   background-image: linear-gradient(to top, #172c32, #050e11);
 }
 
-.body--tutorial * {
+.body--tutorial {
   pointer-events: none;
 }
 
@@ -33,7 +33,7 @@ body {
 }
 
 .homescreen__title {
-  margin-bottom: 64px;
+  margin-bottom: 96px;
 }
 
 .homescreen button {
