@@ -1,7 +1,7 @@
 // manual tests
 
 function updateProbabilityDisplay() {
-  if (!ai.willDisplayProbability) return;
+  if (!willDisplayProbability) return;
 
   const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
@@ -48,9 +48,9 @@ inspectorButton.addEventListener("click", () => {
 
 const probabilityDisplayToggler = document.querySelector(".inspector__switch--probability");
 probabilityDisplayToggler.addEventListener("click", () => {
-  ai.willDisplayProbability = !ai.willDisplayProbability;
+  willDisplayProbability = !willDisplayProbability;
 
-  if (ai.willDisplayProbability) {
+  if (willDisplayProbability) {
     addElementState(probabilityDisplayToggler, "on");
     updateProbabilityDisplay();
   } else {
@@ -61,22 +61,22 @@ probabilityDisplayToggler.addEventListener("click", () => {
 
 const parityFilterToggler = document.querySelector(".inspector__switch--parity");
 parityFilterToggler.addEventListener("click", () => {
-  ai.hasParityFilter = !ai.hasParityFilter;
+  hasParityFilter = !hasParityFilter;
 
-  ai.hasParityFilter ? addElementState(parityFilterToggler, "on") : removeElementState(parityFilterToggler, "on");
+  hasParityFilter ? addElementState(parityFilterToggler, "on") : removeElementState(parityFilterToggler, "on");
   ai.updateProbabilityTable(user.getSailingShips());
   updateProbabilityDisplay();
 });
 
 const baseMultiplierInput = document.querySelector(".inspector__input[name='base']");
-const trackModeMultiplierIncreaserInput = document.querySelector(".inspector__input[name='increaser']");
+const multiplierIncreaserInput = document.querySelector(".inspector__input[name='increaser']");
 
 baseMultiplierInput.addEventListener("input", () => updateMultiplier(baseMultiplierInput));
-trackModeMultiplierIncreaserInput.addEventListener("input", () => updateMultiplier(trackModeMultiplierIncreaserInput));
+multiplierIncreaserInput.addEventListener("input", () => updateMultiplier(multiplierIncreaserInput));
 
 function updateMultiplier(inputElem) {
-  if (inputElem.name === "base") ai.baseProbabilityMultiplier = Number(inputElem.value);
-  else if (inputElem.name === "increaser") ai.trackModeMultiplierIncreaser = Number(inputElem.value);
+  if (inputElem.name === "base") baseProbabilityMultiplier = Number(inputElem.value);
+  else if (inputElem.name === "increaser") trackModeMultiplierIncreaser = Number(inputElem.value);
 
   ai.updateProbabilityTable(user.getSailingShips());
   updateProbabilityDisplay();
@@ -90,6 +90,6 @@ resetBaseMultiplierButton.addEventListener("click", () => {
 
 const resetTrackModeMultiplierIncreaserButton = document.querySelector(".inspector__reset--increaser");
 resetBaseMultiplierButton.addEventListener("click", () => {
-  trackModeMultiplierIncreaserInput.value = 1.4;
-  updateMultiplier(trackModeMultiplierIncreaserInput);
+  multiplierIncreaserInput.value = 1.4;
+  updateMultiplier(multiplierIncreaserInput);
 });
