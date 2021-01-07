@@ -41,8 +41,8 @@ function showNextTutorialPopup() {
   prevTutorialPopup && hideElement(prevTutorialPopup);
 
   // setup tutorial
-  if (tutorialPart === 3 || tutorialPart === 5) {
-    if (tutorialPart === 5) tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
+  if (tutorialPart === 3 || tutorialPart === 6) {
+    if (tutorialPart === 6) tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
     removeElementState(document.body, "tutorial");
     tutorialPart++;
     return;
