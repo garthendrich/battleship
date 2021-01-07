@@ -116,8 +116,8 @@ body {
 }
 
 .tutorial--last::after {
-  content: "click to start";
-  font-size: 1rem;
+  content: "click to BEGIN";
+  font-size: 0.8rem;
 }
 
 @keyframes lookHerePlsLeft {
