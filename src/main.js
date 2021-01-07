@@ -15,6 +15,7 @@ const randomizeBoardButton = document.querySelector(".ship-menu__button--random"
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 const finishGameSetupButton = document.querySelector(".finish-setup-button");
 
+const inspectorSettings = document.querySelector(".inspector");
 const gameOverModal = document.querySelector(".modal--game-over");
 const gameOverModalDialogue = gameOverModal.querySelector(".modal__dialogue");
 const playAgainButton = document.querySelector(".play-again-button");
@@ -54,6 +55,7 @@ function displayScreenForGameFight() {
   hideElement(sidebar);
   hideElement(finishGameSetupButton);
   showElement(aiBoard.parentElement);
+  showElement(inspectorSettings);
 }
 
 function startGameFight() {
@@ -95,6 +97,8 @@ function hasWinner() {
 
   aiBoard.removeEventListener("click", aiBoardClickHandler);
   addElementState(finishGameSetupButton, "prohibited");
+  hideElement(inspectorSettings);
+
   canStartNewGame = true;
 
   return true;
