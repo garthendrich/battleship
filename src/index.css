@@ -3,11 +3,10 @@ body {
   display: flex;
   justify-content: center;
   background-image: linear-gradient(to top, #172c32, #050e11);
-  /* background-image: linear-gradient(to top, #328fa6, #2a6c7d, #214a57, #172c32, #050e11); */
 }
 
-body.grabbing,
-body.grabbing * {
+.body--grabbing,
+.body--grabbing * {
   cursor: grabbing;
 }
 
@@ -241,11 +240,11 @@ body.grabbing * {
   cursor: default;
 }
 
-body.grabbing .board--user .ship {
+.body--grabbing .board--user .ship {
   pointer-events: none;
 }
 
-body.grabbing .board--user .ship--to-move {
+.body--grabbing .board--user .ship--to-move {
   opacity: 0.5;
 }
 
