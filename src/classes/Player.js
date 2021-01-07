@@ -41,7 +41,7 @@ class Player {
       },
     };
 
-    this._shipNames = "cbdsp";
+    this._shipNames = ["c", "b", "d", "s", "p"];
   }
 
   runFunctionByShipOrientation(orientation, horizontalFunction, verticalFunction) {

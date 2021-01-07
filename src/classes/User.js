@@ -7,9 +7,7 @@ class User extends UserSetup {
     return this._shotsTable[row][column] === 0;
   }
 
-  getShipsToSearch() {
-    const shipsToSearch = [];
-    for (let ship of this._shipNames) if (!this.isShipSunk(ship)) shipsToSearch.push(ship);
-    return shipsToSearch;
+  getSailingShips() {
+    return this._shipNames.filter((shipName) => !this.isShipSunk(shipName));
   }
 }

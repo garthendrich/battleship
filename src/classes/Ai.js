@@ -23,7 +23,7 @@ class Ai extends PlayerSetup {
 
     this._updateTrackModeState();
 
-    this.updateProbabilityTable(userInstance.getShipsToSearch());
+    this.updateProbabilityTable(userInstance.getSailingShips());
   }
 
   updateEnemyShotsDisplay(shotsTable, shipHit = null) {
