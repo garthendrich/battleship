@@ -7,6 +7,7 @@ let willDisplayProbability = false;
 
 let user, ai;
 let canStartNewGame = true;
+let isTutorialMode = true;
 let tutorialPart = 0;
 
 const homeScreen = document.querySelector(".homescreen");
@@ -31,11 +32,7 @@ const playAgainButton = document.querySelector(".play-again-button");
 
 playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
-tutorialButton.addEventListener("click", () => {
-  tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
-  showNextTutorialPopup();
-  startGameSetupHandler();
-});
+tutorialButton.addEventListener("click", () => {});
 
 function showNextTutorialPopup() {
   if (tutorialPart === 0 || tutorialPart === 4) addElementState(document.body, "tutorial");
@@ -66,6 +63,11 @@ function startGameSetupHandler() {
 
   user.attachGameSetupHandlers();
   displayScreenForGameSetup();
+
+  if (isTutorialMode) {
+    tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
+    showNextTutorialPopup();
+  }
 }
 
 function displayScreenForGameSetup() {
