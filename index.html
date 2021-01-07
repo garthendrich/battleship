@@ -8,10 +8,11 @@
     <link rel="stylesheet" href="src/index.css" />
     <title>Battleship</title>
   </head>
-  <body>
+  <body class="body">
     <div class="homescreen">
       <h1 class="homescreen__title">Battleship</h1>
       <button class="play-button button--primary"><h3>Play</h3></button>
+      <button class="tutorial-button button--primary"><h3>Tutorial</h3></button>
     </div>
 
     <div class="sidebar">
@@ -21,6 +22,7 @@
             <img src="./src/assets/carrier.svg" />
           </div>
           <div class="ship-menu__label">Carrier</div>
+          <div class="tutorial tutorial--hidden tutorial--right tutorial--0">Hold a ship and drag it onto the board</div>
         </li>
         <li class="ship-menu__item" id="b">
           <div class="ship-menu__display">
@@ -50,6 +52,7 @@
 
       <div class="sidebar__button__wrapper">
         <button class="sidebar__button button--secondary ship-menu__button--random"><p>Randomize</p></button>
+        <div class="tutorial tutorial--hidden tutorial--right tutorial--1">You can modify the board using these buttons</div>
       </div>
 
       <div class="sidebar__button__wrapper">
@@ -65,9 +68,16 @@
     <div class="board-wrapper board-wrapper--hidden">
       <h3 class="board-wrapper__label">Ai board</h3>
       <table class="board board--ai"></table>
+      <!-- no tutorial--3 -->
+      <div class="tutorial tutorial--hidden tutorial--left tutorial--board tutorial--4">
+        Fight time!<br />Attack the enemy by clicking one of the cells
+      </div>
     </div>
 
-    <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
+    <div class="finish-setup-button__wrapper">
+      <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
+      <div class="tutorial tutorial--hidden tutorial--left tutorial--2">You can only click the start button if all ships are placed</div>
+    </div>
 
     <div class="inspector inspector--closed inspector--hidden">
       <div class="inspector__column">
