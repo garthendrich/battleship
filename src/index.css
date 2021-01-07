@@ -561,10 +561,15 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 3;
+  text-align: center;
 }
 
 .modal--hidden {
   display: none;
+}
+
+.modal--how-to-play {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .modal__box {
@@ -577,8 +582,17 @@ body {
   justify-content: center;
 }
 
-.modal__dialogue {
+.modal__title {
   margin-bottom: 32px;
+}
+
+.modal__text {
+  margin: 8px 0;
+  text-transform: none;
+}
+
+.modal__buttons {
+  margin-top: 24px;
 }
 
 @media only screen and (max-width: 1200px) {

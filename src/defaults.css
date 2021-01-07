@@ -60,6 +60,12 @@ h4 {
   font-size: 0.8rem;
 }
 
+p {
+  line-height: 1.6rem;
+  transform: scaleY(1.25);
+  padding: 0.4rem 0;
+}
+
 svg {
   height: 100%;
   width: 100%;
