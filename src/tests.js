@@ -1,6 +1,6 @@
 // manual tests
 
-function displayProbability() {
+function updateProbabilityDisplay() {
   const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
@@ -50,7 +50,7 @@ probabilityDisplayToggler.addEventListener("click", () => {
 
   if (ai.willDisplayProbability) {
     addElementState(probabilityDisplayToggler, "on");
-    displayProbability();
+    updateProbabilityDisplay();
   } else {
     removeElementState(probabilityDisplayToggler, "on");
     for (let row = 0; row < 10; row++) for (let column = 0; column < 10; column++) userBoard.rows[row].cells[column].style.background = null;
@@ -59,7 +59,11 @@ probabilityDisplayToggler.addEventListener("click", () => {
 
 const parityFilterToggler = document.querySelector(".inspector__switch--parity");
 parityFilterToggler.addEventListener("click", () => {
-  elementHasState(parityFilterToggler, "on") ? removeElementState(parityFilterToggler, "on") : addElementState(parityFilterToggler, "on");
+  ai.hasParityFilter = !ai.hasParityFilter;
+
+  ai.hasParityFilter ? addElementState(parityFilterToggler, "on") : removeElementState(parityFilterToggler, "on");
+  ai.updateProbabilityTable(user.getShipsToSearch());
+  updateProbabilityDisplay();
 });
 
 function setProbabilityMultiplier(multiplier) {
