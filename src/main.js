@@ -7,18 +7,22 @@ let willDisplayProbability = false;
 
 let user, ai;
 let canStartNewGame = true;
+let tutorialPart = 0;
 
 const homeScreen = document.querySelector(".homescreen");
 const playButton = document.querySelector(".play-button");
+const tutorialButton = document.querySelector(".tutorial-button");
 
-const userBoard = document.querySelector(".board--user");
-const aiBoard = document.querySelector(".board--ai");
+const tutorialPopups = document.querySelectorAll(".tutorial");
 
 const sidebar = document.querySelector(".sidebar");
 const shipMenuItems = document.querySelectorAll(".ship-menu__item");
 const randomizeBoardButton = document.querySelector(".ship-menu__button--random");
 const resetBoardButton = document.querySelector(".ship-menu__button--reset");
 const finishGameSetupButton = document.querySelector(".finish-setup-button");
+
+const userBoard = document.querySelector(".board--user");
+const aiBoard = document.querySelector(".board--ai");
 
 const inspectorSettings = document.querySelector(".inspector");
 const gameOverModal = document.querySelector(".modal--game-over");
@@ -27,6 +31,32 @@ const playAgainButton = document.querySelector(".play-again-button");
 
 playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
+tutorialButton.addEventListener("click", () => {
+  tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
+  showNextTutorialPopup();
+  startGameSetupHandler();
+});
+
+function showNextTutorialPopup() {
+  console.log(tutorialPart);
+  if (tutorialPart === 0 || tutorialPart === 4) addElementState(document.body, "tutorial");
+
+  const prevTutorialPopup = document.querySelector(`.tutorial--${tutorialPart - 1}`);
+  prevTutorialPopup && hideElement(prevTutorialPopup);
+
+  // setup tutorial
+  if (tutorialPart === 3 || tutorialPart === 5) {
+    if (tutorialPart === 5) tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
+    removeElementState(document.body, "tutorial");
+    tutorialPart++;
+    return;
+  }
+
+  const currTutorialPopup = document.querySelector(`.tutorial--${tutorialPart}`);
+  showElement(currTutorialPopup);
+
+  tutorialPart++;
+}
 
 function startGameSetupHandler() {
   if (!canStartNewGame) return;
@@ -54,6 +84,7 @@ finishGameSetupButton.addEventListener("click", () => {
   user.detachGameSetupHandlers();
   startGameFight();
   displayScreenForGameFight();
+  if (tutorialPart > 0) showNextTutorialPopup();
 });
 
 function displayScreenForGameFight() {
