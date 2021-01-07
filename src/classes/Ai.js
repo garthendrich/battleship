@@ -36,6 +36,8 @@ class Ai extends PlayerSetup {
       .fill()
       .map(() => Array(10).fill(1));
 
+    this.shortestShipToSearch = shipsToSearch[shipsToSearch.length - 1];
+
     for (let ship of shipsToSearch) {
       this._addProbabilityForShipByOrientation(ship, "h");
       this._addProbabilityForShipByOrientation(ship, "v");
@@ -90,7 +92,7 @@ class Ai extends PlayerSetup {
           const segmentCellIsHit = this._shotsTable[segmentRow][segmentColumn] === "x";
           if (this._isTrackMode && (segmentCellIsHit || !segmentCellNearHit)) continue;
 
-          if (!this._isTrackMode && hasParityFilter && this._isCellOddParity([segmentRow, segmentColumn])) continue;
+          if (!this._isTrackMode && hasParityFilter && !this._cellPassesParityFilter([segmentRow, segmentColumn])) continue;
           this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
@@ -146,8 +148,8 @@ class Ai extends PlayerSetup {
     return false;
   }
 
-  _isCellOddParity([row, column]) {
-    return (row + column) % 2 === 0;
+  _cellPassesParityFilter([row, column]) {
+    return (row - column) % this._shipInfo.length[this.shortestShipToSearch] === 0;
   }
 
   increaseCellProbability([row, column], multiplier) {
