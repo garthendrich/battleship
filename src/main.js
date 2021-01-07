@@ -1,5 +1,10 @@
 "use strict";
 
+let hasParityFilter = true;
+let baseProbabilityMultiplier = 1.2;
+let trackModeMultiplierIncreaser = 1.4;
+let willDisplayProbability = false;
+
 let user, ai;
 let canStartNewGame = true;
 

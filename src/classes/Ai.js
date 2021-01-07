@@ -4,11 +4,6 @@ class Ai extends PlayerSetup {
 
     this._probabilityTable;
     this._isTrackMode = false;
-    this.hasParityFilter = true;
-
-    this.baseProbabilityMultiplier = 1.2;
-    this.trackModeMultiplierIncreaser = 1.4;
-    this.willDisplayProbability = false;
 
     this._randomizeShips();
   }
@@ -68,13 +63,13 @@ class Ai extends PlayerSetup {
       for (let column = 0; column <= maxColumn; column++) {
         if (this._presumedShipLocationOverlapMissOrSunkenShots(ship, [row, column], orientation)) continue;
 
-        let multiplier = this.baseProbabilityMultiplier;
+        let multiplier = baseProbabilityMultiplier;
         if (this._isTrackMode) {
           const connectedHits = this._getConnectedHitsOnPresumedShipLocation(ship, [row, column], orientation);
           if (connectedHits === 0) continue;
           if (connectedHits > 1) {
-            const multiplierIncreaser = this.trackModeMultiplierIncreaser * connectedHits - 1;
-            multiplier = this.baseProbabilityMultiplier * multiplierIncreaser;
+            const multiplierIncreaser = trackModeMultiplierIncreaser * connectedHits - 1;
+            multiplier = baseProbabilityMultiplier * multiplierIncreaser;
           }
         }
 
@@ -85,7 +80,7 @@ class Ai extends PlayerSetup {
           const segmentCellIsHit = this._shotsTable[segmentRow][segmentColumn] === "x";
           if (this._isTrackMode && (segmentCellIsHit || !segmentCellNearHit)) continue;
 
-          if (!this._isTrackMode && this.hasParityFilter && this._isCellOddParity([segmentRow, segmentColumn])) continue;
+          if (!this._isTrackMode && hasParityFilter && this._isCellOddParity([segmentRow, segmentColumn])) continue;
           this.increaseCellProbability([segmentRow, segmentColumn], multiplier);
         }
       }
