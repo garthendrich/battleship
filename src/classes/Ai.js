@@ -46,6 +46,16 @@ class Ai extends PlayerSetup {
 
   _updateTrackModeState() {
     this._isTrackMode = this._shotsTable.flat().includes("x");
+
+    addElementState(multiplierIncreaserInput.parentNode, "inactive");
+    let hits = 0;
+    for (let shot of this._shotsTable.flat()) {
+      if (shot === "x") hits++;
+      if (hits > 1) {
+        removeElementState(multiplierIncreaserInput.parentNode, "inactive");
+        break;
+      }
+    }
   }
 
   _addProbabilityForShipByOrientation(ship, orientation) {
