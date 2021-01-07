@@ -203,12 +203,12 @@ class UserSetup extends PlayerSetup {
       this._shipInfo.orientation[this._grabbedShip],
       () => {
         for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) {
-          addElementState(this._boardElem.rows[cellOriginRow].cells[cellOriginColumn + i], placeState);
+          addElementState(this.boardElem.rows[cellOriginRow].cells[cellOriginColumn + i], placeState);
         }
       },
       () => {
         for (let i = 0; i < this._getShipLength(this._grabbedShip); i++) {
-          addElementState(this._boardElem.rows[cellOriginRow + i].cells[cellOriginColumn], placeState);
+          addElementState(this.boardElem.rows[cellOriginRow + i].cells[cellOriginColumn], placeState);
         }
       }
     );
@@ -217,8 +217,8 @@ class UserSetup extends PlayerSetup {
   _removeAllCellHighlights() {
     for (let row = 0; row < 10; row++) {
       for (let column = 0; column < 10; column++) {
-        removeElementState(this._boardElem.rows[row].cells[column], "unoccupied");
-        removeElementState(this._boardElem.rows[row].cells[column], "occupied");
+        removeElementState(this.boardElem.rows[row].cells[column], "unoccupied");
+        removeElementState(this.boardElem.rows[row].cells[column], "occupied");
       }
     }
   }

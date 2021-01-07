@@ -26,7 +26,7 @@ class Ai extends PlayerSetup {
 
     if (shipHit && this.isShipSunk(shipHit)) {
       const [shipOriginRow, shipOriginColumn] = this._shipInfo.origin[shipHit];
-      const shipOriginCell = this._boardElem.rows[shipOriginRow].cells[shipOriginColumn];
+      const shipOriginCell = this.boardElem.rows[shipOriginRow].cells[shipOriginColumn];
       shipOriginCell.append(this._createShipElem(shipHit, { sunk: true }));
     }
   }
