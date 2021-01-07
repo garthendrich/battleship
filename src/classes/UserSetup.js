@@ -42,7 +42,7 @@ class UserSetup extends PlayerSetup {
     if (clickedShipAlreadyPlaced) return;
 
     this._disableSetupButtons();
-    document.body.classList.add("grabbing");
+    addElementState(document.body, "grabbing");
 
     this._grabbedShip = shipElem.id;
     this._grabbedShipSegmentIndexUnderCursor = this._getGrabbedShipMiddleSegmentIndex();
@@ -77,7 +77,7 @@ class UserSetup extends PlayerSetup {
       this._removeShipData(this._grabbedShip);
 
       this._disableSetupButtons();
-      document.body.classList.add("grabbing");
+      addElementState(document.body, "grabbing");
 
       const grabbedShipElem = document.querySelector(`.ship#${this._grabbedShip}`);
       addElementState(grabbedShipElem, "to-move");
@@ -100,7 +100,7 @@ class UserSetup extends PlayerSetup {
     this._canMoveShip = false; // reset
 
     this._enableSetupButtons();
-    document.body.classList.remove("grabbing");
+    removeElementState(document.body, "grabbing");
 
     this._hideAllShipPopups();
 
