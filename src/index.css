@@ -32,6 +32,10 @@ body.grabbing * {
   margin-bottom: 64px;
 }
 
+.homescreen button {
+  margin: 8px 0;
+}
+
 .homescreen--hidden {
   display: none;
 }
