@@ -7,7 +7,6 @@ let willDisplayProbability = false;
 
 let user, ai;
 let canStartNewGame = true;
-let isTutorialMode = false;
 let tutorialPart = 0;
 
 const homeScreen = document.querySelector(".homescreen");
@@ -33,7 +32,6 @@ const playAgainButton = document.querySelector(".play-again-button");
 playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
 tutorialButton.addEventListener("click", () => {
-  isTutorialMode = true;
   tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
   showNextTutorialPopup();
   startGameSetupHandler();
@@ -41,14 +39,16 @@ tutorialButton.addEventListener("click", () => {
 
 function showNextTutorialPopup() {
   console.log(tutorialPart);
-  if (tutorialPart === 0) addElementState(document.body, "tutorial");
+  if (tutorialPart === 0 || tutorialPart === 4) addElementState(document.body, "tutorial");
 
   const prevTutorialPopup = document.querySelector(`.tutorial--${tutorialPart - 1}`);
   prevTutorialPopup && hideElement(prevTutorialPopup);
 
-  if (tutorialPart === 3) {
-    tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
+  // setup tutorial
+  if (tutorialPart === 3 || tutorialPart === 5) {
+    if (tutorialPart === 5) tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
     removeElementState(document.body, "tutorial");
+    tutorialPart++;
     return;
   }
 
@@ -84,6 +84,7 @@ finishGameSetupButton.addEventListener("click", () => {
   user.detachGameSetupHandlers();
   startGameFight();
   displayScreenForGameFight();
+  if (tutorialPart > 0) showNextTutorialPopup();
 });
 
 function displayScreenForGameFight() {

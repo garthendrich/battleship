@@ -58,6 +58,7 @@ body {
   background: linear-gradient(rgba(25, 72, 83, 0.9), rgba(50, 143, 166, 0.9));
   cursor: pointer;
   pointer-events: all;
+  z-index: 1;
 }
 
 .tutorial--hidden {
@@ -72,6 +73,11 @@ body {
 .tutorial--right {
   left: calc(100% + 14px);
   animation: lookHerePlsRight 2s infinite;
+}
+
+.tutorial--board {
+  top: 50%;
+  right: 100%;
 }
 
 .tutorial::after {
@@ -242,6 +248,7 @@ body {
 }
 
 .board-wrapper {
+  position: relative;
   height: 100%;
   padding: 0 48px;
   display: flex;
