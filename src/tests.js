@@ -89,7 +89,7 @@ resetBaseMultiplierButton.addEventListener("click", () => {
 });
 
 const resetTrackModeMultiplierIncreaserButton = document.querySelector(".inspector__reset--increaser");
-resetBaseMultiplierButton.addEventListener("click", () => {
+resetTrackModeMultiplierIncreaserButton.addEventListener("click", () => {
   multiplierIncreaserInput.value = 1.4;
   updateMultiplier(multiplierIncreaserInput);
 });
