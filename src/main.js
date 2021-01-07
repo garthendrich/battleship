@@ -7,11 +7,15 @@ let willDisplayProbability = false;
 
 let user, ai;
 let canStartNewGame = true;
+let isTutorialMode = true;
 let tutorialPart = 0;
 
 const homeScreen = document.querySelector(".homescreen");
 const playButton = document.querySelector(".play-button");
-const tutorialButton = document.querySelector(".tutorial-button");
+
+const howToPlayButton = document.querySelector(".how-to-play-button");
+const howToPlayModal = document.querySelector(".modal--how-to-play");
+const closeHowToPlayButton = document.querySelector(".modal--how-to-play button");
 
 const tutorialPopups = document.querySelectorAll(".tutorial");
 
@@ -26,36 +30,22 @@ const aiBoard = document.querySelector(".board--ai");
 
 const inspectorSettings = document.querySelector(".inspector");
 const gameOverModal = document.querySelector(".modal--game-over");
-const gameOverModalDialogue = gameOverModal.querySelector(".modal__dialogue");
+const gameOverModalDialogue = gameOverModal.querySelector(".modal__title");
 const playAgainButton = document.querySelector(".play-again-button");
 
 playButton.addEventListener("click", startGameSetupHandler);
 playAgainButton.addEventListener("click", startGameSetupHandler);
-tutorialButton.addEventListener("click", () => {
-  tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
-  showNextTutorialPopup();
+
+howToPlayButton.addEventListener("click", () => {
+  isTutorialMode = false;
   startGameSetupHandler();
+  showElement(howToPlayModal);
 });
-
-function showNextTutorialPopup() {
-  if (tutorialPart === 0 || tutorialPart === 4) addElementState(document.body, "tutorial");
-
-  const prevTutorialPopup = document.querySelector(`.tutorial--${tutorialPart - 1}`);
-  prevTutorialPopup && hideElement(prevTutorialPopup);
-
-  // setup tutorial
-  if (tutorialPart === 3 || tutorialPart === 5) {
-    if (tutorialPart === 5) tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
-    removeElementState(document.body, "tutorial");
-    tutorialPart++;
-    return;
-  }
-
-  const currTutorialPopup = document.querySelector(`.tutorial--${tutorialPart}`);
-  showElement(currTutorialPopup);
-
-  tutorialPart++;
-}
+closeHowToPlayButton.addEventListener("click", () => {
+  isTutorialMode = true;
+  startTutorial();
+  hideElement(howToPlayModal);
+});
 
 function startGameSetupHandler() {
   if (!canStartNewGame) return;
@@ -66,6 +56,33 @@ function startGameSetupHandler() {
 
   user.attachGameSetupHandlers();
   displayScreenForGameSetup();
+
+  if (isTutorialMode) startTutorial();
+}
+
+function startTutorial() {
+  tutorialPopups.forEach((popup) => popup.addEventListener("click", showNextTutorialPopup));
+  showNextTutorialPopup();
+}
+
+function showNextTutorialPopup() {
+  if (tutorialPart === 0 || tutorialPart === 4) addElementState(document.body, "tutorial");
+
+  const prevTutorialPopup = document.querySelector(`.tutorial--${tutorialPart - 1}`);
+  prevTutorialPopup && hideElement(prevTutorialPopup);
+
+  // setup tutorial
+  if (tutorialPart === 3 || tutorialPart === 6) {
+    if (tutorialPart === 6) tutorialPopups.forEach((popup) => popup.removeEventListener("click", showNextTutorialPopup));
+    removeElementState(document.body, "tutorial");
+    tutorialPart++;
+    return;
+  }
+
+  const currTutorialPopup = document.querySelector(`.tutorial--${tutorialPart}`);
+  showElement(currTutorialPopup);
+
+  tutorialPart++;
 }
 
 function displayScreenForGameSetup() {
