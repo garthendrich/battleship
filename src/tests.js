@@ -1,6 +1,8 @@
 // manual tests
 
 function updateProbabilityDisplay() {
+  if (!ai.willDisplayProbability) return;
+
   const userBoard = document.querySelector(".board--user");
   for (let row = 0; row < 10; row++) {
     for (let column = 0; column < 10; column++) {
@@ -66,16 +68,28 @@ parityFilterToggler.addEventListener("click", () => {
   updateProbabilityDisplay();
 });
 
-const baseMultiplierInput = document.querySelector(".inspector__input--base");
-baseMultiplierInput.addEventListener("change", () => {
-  ai.baseProbabilityMultiplier = baseMultiplierInput.value;
+const baseMultiplierInput = document.querySelector(".inspector__input[name='base']");
+const trackModeMultiplierIncreaserInput = document.querySelector(".inspector__input[name='increaser']");
+
+baseMultiplierInput.addEventListener("input", () => updateMultiplier(baseMultiplierInput));
+trackModeMultiplierIncreaserInput.addEventListener("input", () => updateMultiplier(trackModeMultiplierIncreaserInput));
+
+function updateMultiplier(inputElem) {
+  if (inputElem.name === "base") ai.baseProbabilityMultiplier = Number(inputElem.value);
+  else if (inputElem.name === "increaser") ai.trackModeMultiplierIncreaser = Number(inputElem.value);
+
   ai.updateProbabilityTable(user.getSailingShips());
   updateProbabilityDisplay();
+}
+
+const resetBaseMultiplierButton = document.querySelector(".inspector__reset--base");
+resetBaseMultiplierButton.addEventListener("click", () => {
+  baseMultiplierInput.value = 1.2;
+  updateMultiplier(baseMultiplierInput);
 });
 
-const multiplierIncreaserInput = document.querySelector(".inspector__input--increaser");
-multiplierIncreaserInput.addEventListener("change", () => {
-  ai.trackModeMultiplierIncreaser = multiplierIncreaserInput.value;
-  ai.updateProbabilityTable(user.getSailingShips());
-  updateProbabilityDisplay();
+const resetTrackModeMultiplierIncreaserButton = document.querySelector(".inspector__reset--increaser");
+resetBaseMultiplierButton.addEventListener("click", () => {
+  trackModeMultiplierIncreaserInput.value = 1.4;
+  updateMultiplier(trackModeMultiplierIncreaserInput);
 });
