@@ -46,7 +46,7 @@ class Ai extends PlayerSetup {
       this._addProbabilityForShipByOrientation(ship, "v");
     }
 
-    if (this.willDisplayProbability) updateProbabilityDisplay();
+    updateProbabilityDisplay();
   }
 
   _updateTrackModeState() {
