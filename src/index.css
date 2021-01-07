@@ -329,7 +329,7 @@ body.grabbing .board--user .ship--to-move {
   transition: background 0.3s;
 }
 
-.inspector--hidden {
+.inspector--closed {
   background: none;
 }
 
@@ -341,13 +341,12 @@ body.grabbing .board--user .ship--to-move {
 .inspector__column {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   justify-content: space-evenly;
   margin-right: 24px;
   transition: opacity 0.3s;
 }
 
-.inspector--hidden .inspector__column {
+.inspector--closed .inspector__column {
   opacity: 0;
   pointer-events: none;
 }
@@ -355,7 +354,7 @@ body.grabbing .board--user .ship--to-move {
 .inspector__item {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   flex: 1;
   padding: 2px 4px;
 }
@@ -380,6 +379,17 @@ body.grabbing .board--user .ship--to-move {
   height: 22.4px;
   width: 32px;
   margin-right: 8px;
+}
+
+.inspector__text__container {
+  margin-right: 8px;
+}
+
+.inspector__reset {
+  font-size: 0.8rem;
+  padding: 0 4px;
+  margin-left: auto;
+  display: block;
 }
 
 .modal {

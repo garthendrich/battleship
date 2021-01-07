@@ -46,6 +46,11 @@
   right: -8px;
 }
 
+.button--primary--no-accent::before,
+.button--primary--no-accent::after {
+  display: none;
+}
+
 .button--secondary {
   border: none;
   padding: 8px 12px;

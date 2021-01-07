@@ -67,7 +67,7 @@
 
     <button class="finish-setup-button button--primary finish-setup-button--prohibited">Start</button>
 
-    <div class="inspector inspector--hidden">
+    <div class="inspector inspector--closed">
       <div class="inspector__column">
         <div class="inspector__item inspector__switch inspector__switch--probability">
           <div class="inspector__display"></div>
@@ -79,19 +79,21 @@
         </div>
       </div>
       <div class="inspector__column">
-        <div class="inspector__item inspector__item--base">
-          <input type="range" class="inspector__input" min="1.01" max="3" step="0.01" value="1.2" />
-          <div>
+        <div class="inspector__item">
+          <input type="range" class="inspector__input inspector__input--base" min="1.01" max="3" step="0.01" value="1.2" />
+          <div class="inspector__text__container">
             <h4>Base probability</h4>
             <h4>multiplier</h4>
           </div>
+          <button class="inspector__reset button--primary button--primary--no-accent">reset</button>
         </div>
-        <div class="inspector__item inspector__item--increaser">
-          <input type="range" class="inspector__input" min="1.01" max="3" step="0.01" value="1.4" />
-          <div>
+        <div class="inspector__item">
+          <input type="range" class="inspector__input inspector__input--increaser" min="1.01" max="2" step="0.01" value="1.4" />
+          <div class="inspector__text__container">
             <h4>Track mode probability</h4>
             <h4>multiplier increaser</h4>
           </div>
+          <button class="inspector__reset button--primary button--primary--no-accent">reset</button>
         </div>
       </div>
       <div class="inspector__button__wrapper"><h4 class="inspector__button">inspector</h4></div>

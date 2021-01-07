@@ -41,7 +41,7 @@ function updateProbabilityDisplay() {
 const inspectorButton = document.querySelector(".inspector__button");
 const inspectorContainer = document.querySelector(".inspector");
 inspectorButton.addEventListener("click", () => {
-  elementHasState(inspectorContainer, "hidden") ? showElement(inspectorContainer) : hideElement(inspectorContainer);
+  elementHasState(inspectorContainer, "closed") ? removeElementState(inspectorContainer, "closed") : addElementState(inspectorContainer, "closed");
 });
 
 const probabilityDisplayToggler = document.querySelector(".inspector__switch--probability");
@@ -66,15 +66,16 @@ parityFilterToggler.addEventListener("click", () => {
   updateProbabilityDisplay();
 });
 
-function setProbabilityMultiplier(multiplier) {
-  if (multiplier < 1.01) {
-    console.log("Multiplier must be greater than or equal to 1.01");
-    return;
-  }
-  if (multiplier > 3) {
-    console.log("Multiplier must be less than or equal to 3");
-    return;
-  }
-  ai.probabilityMultiplier = multiplier;
-  ai.updateProbabilityTable();
-}
+const baseMultiplierInput = document.querySelector(".inspector__input--base");
+baseMultiplierInput.addEventListener("change", () => {
+  ai.baseProbabilityMultiplier = baseMultiplierInput.value;
+  ai.updateProbabilityTable(user.getSailingShips());
+  updateProbabilityDisplay();
+});
+
+const multiplierIncreaserInput = document.querySelector(".inspector__input--increaser");
+multiplierIncreaserInput.addEventListener("change", () => {
+  ai.trackModeMultiplierIncreaser = multiplierIncreaserInput.value;
+  ai.updateProbabilityTable(user.getSailingShips());
+  updateProbabilityDisplay();
+});
